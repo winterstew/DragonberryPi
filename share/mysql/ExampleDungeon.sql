@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `Adventure`;
 CREATE TABLE `Adventure` (
   `idAdventure` smallint(6) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
-  `description` varchar(80) DEFAULT NULL,
+  `description` varchar(320) DEFAULT NULL,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`idAdventure`),
   KEY `updated` (`updated`)

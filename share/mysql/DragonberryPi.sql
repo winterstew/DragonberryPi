@@ -226,7 +226,7 @@ DROP TABLE IF EXISTS `DragonberryPi`.`Adventure` ;
 CREATE  TABLE IF NOT EXISTS `DragonberryPi`.`Adventure` (
   `idAdventure` SMALLINT(6) NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NULL ,
-  `description` VARCHAR(80) NULL ,
+  `description` VARCHAR(320) NULL ,
   `updated` TIMESTAMP NOT NULL ,
   PRIMARY KEY (`idAdventure`) ,
   INDEX `updated` (`updated` ASC) )
