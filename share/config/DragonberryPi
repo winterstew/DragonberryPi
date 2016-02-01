@@ -1,0 +1,18 @@
+Alias /DragonberryPi /home/pi/DragonberryPi/app/public/
+
+<Directory "/home/pi/DragonberryPi/app/public">
+    Options Indexes FollowSymLinks 
+    AllowOverride All
+    Order allow,deny
+    allow from all
+    # The APP_ROOT is what should be the same as the Alias for this directory
+    # If it has its own virtual site or some such thing this should be omitted
+    SetEnv APP_ROOT /DragonberryPi
+    # This decides what ends up in the app logs
+    SetEnv SLIM_MODE development
+    # database connection
+    SetEnv DB_USER dragon
+    SetEnv DB_PASSWORD berry
+    SetEnv DB_NAME DragonberryPi
+</Directory>
+

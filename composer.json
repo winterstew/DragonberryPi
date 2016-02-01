@@ -1,0 +1,26 @@
+{
+    "name": "winterstew/DragonberryPi",
+    "description": "Dynamic RPG adventure map management for table top gaming",
+    "require": {
+        "php": ">=5.3.0",
+        "ext-pdo": "*",
+        "slim/slim": "2.4.*",
+        "slim/extras": "*",
+        "sinergi/browser-detector": "^6.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Steven Weigand",
+            "email": "github@winterstew.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "SampleApp\\": "app/lib/"
+        }
+    },
+    "archive": {
+        "exclude": ["vendor", ".DS_Store", "*.log"]
+    }
+}

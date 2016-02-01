@@ -1,0 +1,92 @@
+  <g
+     inkscape:groupmode="layer"
+     id="background"
+     inkscape:label="background"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <circle
+       transform="translate(4.6484375e-7,4.6582031e-6)"
+       style="display:inline;fill:#ff00ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       id="path3046"
+       cx="285.10162"
+       cy="349.99973"
+       r="210" />
+  </g>
+  <g
+     inkscape:label="roundImage"
+     inkscape:groupmode="layer"
+     id="roundImage"
+     transform="translate(35.101634,-452.36219)"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <image
+       sodipodi:absref="/home/pi/DragonberryPi/app/public/images/blank.png"
+       y="552.36218"
+       x="41"
+       id="imageRoundImage"
+       xlink:href="/DragonberryPi/images/blank.png"
+       preserveAspectRatio="none"
+       height="500"
+       width="429"
+       clip-path="url(#clipPath4750)"
+       style="fill:none;stroke:none" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="ringColor"
+     inkscape:label="ringColor"
+     style="display:inline"
+     transform="translate(35.101634,99.999975)"
+     sodipodi:insensitive="true">
+    <path
+       style="fill:#00ffff;fill-opacity:1;stroke:none"
+       d="m 427.38026,72.973311 a 250,250 0 0 0 -353.553388,0 250,250 0 0 0 0,353.553389 250,250 0 0 0 353.553388,0 250,250 0 0 0 0,-353.553389 z m -28.99138,28.284269 a 210,210 0 0 1 0,296.98485 210,210 0 0 1 -296.98484,0 210,210 0 0 1 0,-296.98485 210,210 0 0 1 296.98484,0 z"
+       id="pathRingColor"
+       inkscape:connector-curvature="0" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="ringShading"
+     inkscape:label="ringShading"
+     style="display:inline"
+     transform="translate(35.101634,99.999975)"
+     sodipodi:insensitive="true">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:url(#radialGradient7227);fill-opacity:1;stroke:none"
+       d="m 426.67318,72.973282 a 250,250 0 0 0 -353.553386,0 250,250 0 0 0 -5.7e-5,353.553448 250,250 0 0 0 353.553443,-6e-5 250,250 0 0 0 0,-353.553388 z m -28.99137,28.284268 a 210,210 0 0 1 0,296.98485 210,210 0 0 1 -296.98491,6e-5 210,210 0 0 1 6e-5,-296.98491 210,210 0 0 1 296.98485,0 z"
+       id="pathRingShading" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="modifiers"
+     inkscape:label="modifiers"
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="heightIndicator"
+     inkscape:label="heightIndicator"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <g
+       id="height"
+       transform="matrix(1.44,0,0,1.44,-236.90908,-280.32315)"
+       style="opacity:1">
+      <title
+         id="title4706">height</title>
+      <text
+         inkscape:transform-center-y="-96.226167"
+         inkscape:transform-center-x="15.193596"
+         sodipodi:linespacing="125%"
+         id="textHeight"
+         y="676.94495"
+         x="331.96698"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:121.52777863px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:#ffff00;stroke-width:3.47222233;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter4692)"
+         xml:space="preserve"><tspan
+           y="676.94495"
+           x="331.96698"
+           id="tspanHeight"
+           sodipodi:role="line"></tspan></text>
+    </g>
+  </g>
+</svg>
