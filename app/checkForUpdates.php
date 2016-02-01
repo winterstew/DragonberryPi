@@ -42,7 +42,7 @@ while (count($checkList) > 1) {
       $diff = date_diff(date_create($row['updated']),
                         date_create($updated));
       //array_push($rows,$diff->format("%s"));
-      if ($diff->format("%s") > 0.0) {
+      if ($diff->format("%s") >= 0) {
         $sql2 = "SELECT * FROM ";
         if ($table == "Map") {
           $sql2 .= "`MapMapType`";
