@@ -512,7 +512,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,TRADITIONAL,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`dm`@`localhost`*/ /*!50003 TRIGGER updatePawnInsertTrigger AFTER INSERT ON Modifiers
+/*!50003 CREATE*/ /*!50017 DEFINER=`dragon`@`localhost`*/ /*!50003 TRIGGER updatePawnInsertTrigger AFTER INSERT ON Modifiers
 FOR EACH ROW UPDATE Pawn SET updated=NOW() WHERE idPawn=NEW.idPawn */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -528,7 +528,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,TRADITIONAL,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`dm`@`localhost`*/ /*!50003 TRIGGER updatePawnUpdateTrigger AFTER UPDATE ON Modifiers
+/*!50003 CREATE*/ /*!50017 DEFINER=`dragon`@`localhost`*/ /*!50003 TRIGGER updatePawnUpdateTrigger AFTER UPDATE ON Modifiers
 FOR EACH ROW UPDATE Pawn SET updated=NEW.updated WHERE idPawn=NEW.idPawn AND NEW.updated>updated */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -544,7 +544,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,TRADITIONAL,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`dm`@`localhost`*/ /*!50003 TRIGGER updatePawnDeleteTrigger AFTER DELETE ON Modifiers
+/*!50003 CREATE*/ /*!50017 DEFINER=`dragon`@`localhost`*/ /*!50003 TRIGGER updatePawnDeleteTrigger AFTER DELETE ON Modifiers
 FOR EACH ROW UPDATE Pawn SET updated=NOW() WHERE idPawn=OLD.idPawn */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -894,7 +894,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `AdventureIllustation` AS select `A`.`idAdventure` AS `idAdventure`,`A`.`name` AS `name`,`A`.`description` AS `description`,`M`.`idMap` AS `idMap`,`M`.`name` AS `mapName`,`M`.`pixelsPerFoot` AS `pixelsPerFoot`,`M`.`feetPerInch` AS `feetPerInch`,`M`.`widthInches` AS `widthInches`,`M`.`heightInches` AS `heightInches`,`M`.`rotate` AS `rotate`,`M`.`scale` AS `scale`,`M`.`translateX` AS `translateX`,`M`.`translateY` AS `translateY`,`M`.`visible` AS `visible`,`M`.`dmVisible` AS `dmVisible`,`M`.`depth` AS `depth`,`M`.`backgroundColor` AS `backgroundColor` from (((`Adventure` `A` join `AdventureMap` `AM` on((`A`.`idAdventure` = `AM`.`idAdventure`))) join `Map` `M` on((`AM`.`idMap` = `M`.`idMap`))) join `MapType` `MT` on((`M`.`idMapType` = `MT`.`idMapType`))) where (`MT`.`name` = 'illustration') */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -913,7 +913,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `AdventureOverviewMap` AS select `A`.`idAdventure` AS `idAdventure`,`A`.`name` AS `name`,`A`.`description` AS `description`,`M`.`idMap` AS `idMap`,`M`.`name` AS `mapName`,`M`.`pixelsPerFoot` AS `pixelsPerFoot`,`M`.`feetPerInch` AS `feetPerInch`,`M`.`widthInches` AS `widthInches`,`M`.`heightInches` AS `heightInches`,`M`.`rotate` AS `rotate`,`M`.`scale` AS `scale`,`M`.`translateX` AS `translateX`,`M`.`translateY` AS `translateY`,`M`.`visible` AS `visible`,`M`.`dmVisible` AS `dmVisible`,`M`.`depth` AS `depth`,`M`.`backgroundColor` AS `backgroundColor` from (((`Adventure` `A` join `AdventureMap` `AM` on((`A`.`idAdventure` = `AM`.`idAdventure`))) join `Map` `M` on((`AM`.`idMap` = `M`.`idMap`))) join `MapType` `MT` on((`M`.`idMapType` = `MT`.`idMapType`))) where (`MT`.`name` = 'overviewMap') */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -932,7 +932,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `AdventurePawnGrid` AS select `A`.`idAdventure` AS `idAdventure`,`A`.`name` AS `name`,`A`.`description` AS `description`,`M`.`idMap` AS `idMap`,`M`.`name` AS `mapName`,`M`.`pixelsPerFoot` AS `pixelsPerFoot`,`M`.`feetPerInch` AS `feetPerInch`,`M`.`widthInches` AS `widthInches`,`M`.`heightInches` AS `heightInches`,`M`.`rotate` AS `rotate`,`M`.`scale` AS `scale`,`M`.`translateX` AS `translateX`,`M`.`translateY` AS `translateY`,`M`.`visible` AS `visible`,`M`.`dmVisible` AS `dmVisible`,`M`.`depth` AS `depth`,`M`.`backgroundColor` AS `backgroundColor` from (((`Adventure` `A` join `AdventureMap` `AM` on((`A`.`idAdventure` = `AM`.`idAdventure`))) join `Map` `M` on((`AM`.`idMap` = `M`.`idMap`))) join `MapType` `MT` on((`M`.`idMapType` = `MT`.`idMapType`))) where (`MT`.`name` = 'pawnGrid') */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -951,7 +951,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `AllAdventureMap` AS select `A`.`idAdventure` AS `idAdventure`,`A`.`name` AS `adventureName`,`A`.`description` AS `adventureDescription`,`M`.`idMap` AS `idMap`,`M`.`name` AS `name`,`M`.`pixelsPerFoot` AS `pixelsPerFoot`,`M`.`feetPerInch` AS `feetPerInch`,`M`.`widthInches` AS `widthInches`,`M`.`heightInches` AS `heightInches`,`M`.`rotate` AS `rotate`,`M`.`scale` AS `scale`,`M`.`translateX` AS `translateX`,`M`.`translateY` AS `translateY`,`M`.`visible` AS `visible`,`M`.`dmVisible` AS `dmVisible`,`M`.`depth` AS `depth`,`M`.`backgroundColor` AS `backgroundColor`,`M`.`idDisplay` AS `idDisplay`,`M`.`idMapType` AS `idMapType`,`M`.`updated` AS `updated` from ((`Adventure` `A` join `AdventureMap` `AM` on((`A`.`idAdventure` = `AM`.`idAdventure`))) join `Map` `M` on((`AM`.`idMap` = `M`.`idMap`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -970,7 +970,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `MapDmVisibleOnDisplay` AS select `D`.`idDisplay` AS `idDisplay`,`D`.`name` AS `dName`,`D`.`position` AS `dPos`,`D`.`width` AS `dWidth`,`D`.`height` AS `dHeight`,`D`.`top` AS `dTop`,`D`.`bottom` AS `dBot`,`D`.`left` AS `dLeft`,`D`.`right` AS `dRight`,`D`.`backgroundColor` AS `dBackC`,`D`.`depth` AS `dDepth`,`M`.`idAdventure` AS `idAdventure`,`M`.`adventureName` AS `adventureName`,`M`.`idMap` AS `idMap`,`M`.`name` AS `mName`,`M`.`pixelsPerFoot` AS `mPPF`,`M`.`feetPerInch` AS `mFPI`,`M`.`widthInches` AS `mWidth`,`M`.`heightInches` AS `mHeight`,`M`.`rotate` AS `mRot`,`M`.`scale` AS `mScale`,`M`.`translateX` AS `mX`,`M`.`translateY` AS `mY`,`M`.`visible` AS `mVis`,`M`.`dmVisible` AS `mDmVis`,`M`.`depth` AS `mDepth`,`M`.`backgroundColor` AS `mBackC`,`MT`.`idMapType` AS `idMapType`,`MT`.`name` AS `mtName` from ((`Display` `D` join `AllAdventureMap` `M` on((`D`.`idDisplay` = `M`.`idDisplay`))) join `MapType` `MT` on((`M`.`idMapType` = `MT`.`idMapType`))) where (`M`.`dmVisible` = 1) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -989,7 +989,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `MapMapType` AS select `M`.`idAdventure` AS `idAdventure`,`M`.`adventureName` AS `adventureName`,`M`.`idMap` AS `idMap`,`M`.`name` AS `mapName`,`M`.`pixelsPerFoot` AS `pixelsPerFoot`,`M`.`feetPerInch` AS `feetPerInch`,`M`.`widthInches` AS `widthInches`,`M`.`heightInches` AS `heightInches`,`M`.`rotate` AS `rotate`,`M`.`scale` AS `scale`,`M`.`translateX` AS `translateX`,`M`.`translateY` AS `translateY`,`M`.`visible` AS `visible`,`M`.`dmVisible` AS `dmVisible`,`M`.`depth` AS `depth`,`M`.`backgroundColor` AS `backgroundColor`,`M`.`idDisplay` AS `idDisplay`,`M`.`updated` AS `updated`,`MT`.`name` AS `mapType` from (`AllAdventureMap` `M` join `MapType` `MT` on((`M`.`idMapType` = `MT`.`idMapType`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -1008,7 +1008,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `ModifierList` AS select `MS`.`idModifiers` AS `idModifiers`,`MS`.`updated` AS `updated`,`MS`.`idPawn` AS `idPawn`,`M`.`idModifier` AS `idModifier`,`M`.`name` AS `name`,`M`.`shapeSvg` AS `shapeSvg` from (`Modifiers` `MS` join `Modifier` `M` on((`MS`.`idModifier` = `M`.`idModifier`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -1027,7 +1027,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `PawnRoleImageSourceLocation` AS select `P`.`idPawn` AS `idPawn`,`P`.`name` AS `name`,`P`.`selectKey` AS `selectKey`,`P`.`rotate` AS `rotate`,`P`.`sizeFeet` AS `sizeFeet`,`P`.`translateX` AS `translateX`,`P`.`translateY` AS `translateY`,`P`.`height` AS `height`,`P`.`attackRange` AS `attackRange`,`P`.`attackType` AS `attackType`,`P`.`color` AS `color`,`P`.`visible` AS `visible`,`P`.`dmVisible` AS `dmVisible`,`P`.`depth` AS `depth`,`P`.`backgroundColor` AS `backgroundColor`,`P`.`imageX` AS `imageX`,`P`.`imageY` AS `imageY`,`P`.`imageScale` AS `imageScale`,`P`.`idMap` AS `idMap`,`P`.`updated` AS `updated`,`R`.`idRole` AS `idRole`,`R`.`name` AS `roleName`,`I`.`idImage` AS `idImage`,`I`.`filename` AS `filename`,`I`.`width` AS `imageWidth`,`I`.`height` AS `imageHeight`,`I`.`type` AS `imageType`,if((`P`.`ruleLink` is not null),`P`.`ruleLink`,`I`.`ruleLink`) AS `ruleLink`,`S`.`idSource` AS `idSource`,`S`.`name` AS `sourceName`,`S`.`description` AS `sourceDescription`,`S`.`copyright` AS `copyright`,`L`.`idLocation` AS `idLocation`,`L`.`name` AS `directory`,`L`.`depth` AS `treeDepth`,`L`.`idParent` AS `idParent` from ((((`Pawn` `P` join `Role` `R` on((`P`.`idRole` = `R`.`idRole`))) join `Image` `I` on((`P`.`idImage` = `I`.`idImage`))) join `Source` `S` on((`I`.`idSource` = `S`.`idSource`))) join `Location` `L` on((`I`.`idLocation` = `L`.`idLocation`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -1046,7 +1046,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `TileDmVisibleOnDisplay` AS select `D`.`idDisplay` AS `idDisplay`,`D`.`name` AS `dName`,`D`.`position` AS `dPos`,`D`.`width` AS `dWidth`,`D`.`height` AS `dHeight`,`D`.`top` AS `dTop`,`D`.`bottom` AS `dBot`,`D`.`left` AS `dLeft`,`D`.`right` AS `dRight`,`D`.`backgroundColor` AS `dBackC`,`D`.`depth` AS `dDepth`,`M`.`idAdventure` AS `idAdventure`,`M`.`adventureName` AS `adventureName`,`M`.`idMap` AS `idMap`,`M`.`name` AS `mName`,`M`.`pixelsPerFoot` AS `mPPF`,`M`.`feetPerInch` AS `mFPI`,`M`.`widthInches` AS `mWidth`,`M`.`heightInches` AS `mHeight`,`M`.`rotate` AS `mRot`,`M`.`scale` AS `mScale`,`M`.`translateX` AS `mX`,`M`.`translateY` AS `mY`,`M`.`visible` AS `mVis`,`M`.`dmVisible` AS `mDmVis`,`M`.`depth` AS `mDepth`,`M`.`backgroundColor` AS `mBackC`,`MT`.`idMapType` AS `idMapType`,`MT`.`name` AS `mtName`,`T`.`idTile` AS `idTile`,`T`.`name` AS `tName`,`T`.`scale` AS `tScale`,`T`.`rotate` AS `tRot`,`T`.`translateX` AS `tX`,`T`.`translateY` AS `tY`,`T`.`visible` AS `tVis`,`T`.`dmVisible` AS `tDmVis`,`T`.`depth` AS `tDepth`,`T`.`backgroundColor` AS `tBackC` from (((`Display` `D` join `AllAdventureMap` `M` on((`D`.`idDisplay` = `M`.`idDisplay`))) join `Tile` `T` on((`M`.`idMap` = `T`.`idMap`))) join `MapType` `MT` on((`M`.`idMapType` = `MT`.`idMapType`))) where ((`M`.`dmVisible` = 1) and (`T`.`dmVisible` = 1)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -1065,7 +1065,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `TileImageSourceLocation` AS select `T`.`idTile` AS `idTile`,`T`.`name` AS `name`,`T`.`rotate` AS `rotate`,`T`.`scale` AS `scale`,`T`.`translateX` AS `translateX`,`T`.`translateY` AS `translateY`,`T`.`visible` AS `visible`,`T`.`dmVisible` AS `dmVisible`,`T`.`depth` AS `depth`,`T`.`idMap` AS `idMap`,`T`.`updated` AS `updated`,`I`.`idImage` AS `idImage`,`I`.`filename` AS `filename`,`I`.`width` AS `imageWidth`,`I`.`height` AS `imageHeight`,`I`.`type` AS `imageType`,if((`T`.`ruleLink` is not null),`T`.`ruleLink`,`I`.`ruleLink`) AS `ruleLink`,`S`.`idSource` AS `idSource`,`S`.`name` AS `sourceName`,`S`.`description` AS `sourceDescription`,`S`.`copyright` AS `copyright`,`L`.`idLocation` AS `idLocation`,`L`.`name` AS `directory`,`L`.`depth` AS `treeDepth`,`L`.`idParent` AS `idParent` from (((`Tile` `T` join `Image` `I` on((`T`.`idImage` = `I`.`idImage`))) join `Source` `S` on((`I`.`idSource` = `S`.`idSource`))) join `Location` `L` on((`I`.`idLocation` = `L`.`idLocation`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -1084,7 +1084,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8 */;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`dm`@`localhost` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`dragon`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `TileVisibleOnDisplay` AS select `D`.`idDisplay` AS `idDisplay`,`D`.`name` AS `dName`,`D`.`position` AS `dPos`,`D`.`width` AS `dWidth`,`D`.`height` AS `dHeight`,`D`.`top` AS `dTop`,`D`.`bottom` AS `dBot`,`D`.`left` AS `dLeft`,`D`.`right` AS `dRight`,`D`.`backgroundColor` AS `dBackC`,`D`.`depth` AS `dDepth`,`M`.`idAdventure` AS `idAdventure`,`M`.`adventureName` AS `adventureName`,`M`.`idMap` AS `idMap`,`M`.`name` AS `mName`,`M`.`pixelsPerFoot` AS `mPPF`,`M`.`feetPerInch` AS `mFPI`,`M`.`widthInches` AS `mWidth`,`M`.`heightInches` AS `mHeight`,`M`.`rotate` AS `mRot`,`M`.`scale` AS `mScale`,`M`.`translateX` AS `mX`,`M`.`translateY` AS `mY`,`M`.`visible` AS `mVis`,`M`.`dmVisible` AS `mDmVis`,`M`.`depth` AS `mDepth`,`M`.`backgroundColor` AS `mBackC`,`MT`.`idMapType` AS `idMapType`,`MT`.`name` AS `mtName`,`T`.`idTile` AS `idTile`,`T`.`name` AS `tName`,`T`.`scale` AS `tScale`,`T`.`rotate` AS `tRot`,`T`.`translateX` AS `tX`,`T`.`translateY` AS `tY`,`T`.`visible` AS `tVis`,`T`.`dmVisible` AS `tDmVis`,`T`.`depth` AS `tDepth`,`T`.`backgroundColor` AS `tBackC` from (((`Display` `D` join `AllAdventureMap` `M` on((`D`.`idDisplay` = `M`.`idDisplay`))) join `Tile` `T` on((`M`.`idMap` = `T`.`idMap`))) join `MapType` `MT` on((`M`.`idMapType` = `MT`.`idMapType`))) where ((`M`.`visible` = 1) and (`T`.`visible` = 1)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
