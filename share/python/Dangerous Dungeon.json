@@ -1,0 +1,919 @@
+{
+  "layer": [
+    {
+      "opacity": 100.0, 
+      "name": "Trapped Door 2", 
+      "offsets": [
+        28, 
+        976
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 2, 
+      "size": [
+        93, 
+        98
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Room 6", 
+      "offsets": [
+        17, 
+        624
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 3, 
+      "size": [
+        211, 
+        402
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 6b", 
+      "offsets": [
+        27, 
+        1019
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 4, 
+      "size": [
+        95, 
+        407
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 6a", 
+      "offsets": [
+        26, 
+        1318
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 5, 
+      "size": [
+        219, 
+        107
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Trapped Door 1", 
+      "offsets": [
+        575, 
+        923
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 6, 
+      "size": [
+        104, 
+        106
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Room 5", 
+      "offsets": [
+        221, 
+        926
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 7, 
+      "size": [
+        410, 
+        498
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Room 4", 
+      "offsets": [
+        819, 
+        920
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 8, 
+      "size": [
+        210, 
+        201
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 5d", 
+      "offsets": [
+        721, 
+        919
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 9, 
+      "size": [
+        107, 
+        202
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 5c", 
+      "offsets": [
+        621, 
+        920
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 10, 
+      "size": [
+        115, 
+        205
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 5b", 
+      "offsets": [
+        629, 
+        1119
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 11, 
+      "size": [
+        413, 
+        114
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 5a", 
+      "offsets": [
+        1017, 
+        715
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 12, 
+      "size": [
+        107, 
+        513
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Stair Up", 
+      "offsets": [
+        923, 
+        419
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 13, 
+      "size": [
+        118, 
+        197
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 4", 
+      "offsets": [
+        1017, 
+        424
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 14, 
+      "size": [
+        106, 
+        190
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 3b", 
+      "offsets": [
+        922, 
+        601
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 15, 
+      "size": [
+        200, 
+        150
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Locked Door 1", 
+      "offsets": [
+        776, 
+        825
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 16, 
+      "size": [
+        101, 
+        103
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Secret Door 1", 
+      "offsets": [
+        520, 
+        571
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 17, 
+      "size": [
+        114, 
+        107
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 3a", 
+      "offsets": [
+        818, 
+        627
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 18, 
+      "size": [
+        118, 
+        300
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Room 3", 
+      "offsets": [
+        230, 
+        625
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 19, 
+      "size": [
+        598, 
+        302
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Room 2", 
+      "offsets": [
+        622, 
+        325
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 20, 
+      "size": [
+        309, 
+        298
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Stair Down", 
+      "offsets": [
+        121, 
+        420
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 21, 
+      "size": [
+        491, 
+        108
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 2e", 
+      "offsets": [
+        520, 
+        429
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 22, 
+      "size": [
+        94, 
+        189
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 2d", 
+      "offsets": [
+        127, 
+        521
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 23, 
+      "size": [
+        490, 
+        99
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 2c", 
+      "offsets": [
+        127, 
+        324
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 24, 
+      "size": [
+        501, 
+        101
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 2b", 
+      "offsets": [
+        0, 
+        324
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 25, 
+      "size": [
+        132, 
+        296
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 2a", 
+      "offsets": [
+        0, 
+        215
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 26, 
+      "size": [
+        530, 
+        114
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Room 1", 
+      "offsets": [
+        0, 
+        0
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 27, 
+      "size": [
+        531, 
+        228
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Corridor 1", 
+      "offsets": [
+        927, 
+        120
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 28, 
+      "size": [
+        223, 
+        306
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Entry", 
+      "offsets": [
+        525, 
+        0
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 29, 
+      "size": [
+        625, 
+        125
+      ]
+    }, 
+    {
+      "opacity": 49.80392156862745, 
+      "name": "GM Map", 
+      "offsets": [
+        0, 
+        0
+      ], 
+      "visible": true, 
+      "bpp": 4, 
+      "id": 30, 
+      "size": [
+        1151, 
+        1451
+      ]
+    }, 
+    {
+      "opacity": 100.0, 
+      "name": "Player Map", 
+      "offsets": [
+        0, 
+        0
+      ], 
+      "visible": false, 
+      "bpp": 4, 
+      "id": 31, 
+      "size": [
+        1151, 
+        1451
+      ]
+    }
+  ], 
+  "image": {
+    "name": "Dangerous Dungeon", 
+    "uri": "file:///C:/Users/steve/Projects/DragonberryPi/app/public/images/Dangerous%20Dungeon.xcf", 
+    "filename": "Dangerous Dungeon.xcf", 
+    "ext": ".xcf", 
+    "path": "C:\\Users\\steve\\Projects\\DragonberryPi\\app\\public\\images", 
+    "resolution": [
+      72.0, 
+      72.0
+    ], 
+    "size": [
+      1151, 
+      1451
+    ]
+  }, 
+  "Player Map": {
+    "opacity": 100.0, 
+    "name": "Player Map", 
+    "offsets": [
+      0, 
+      0
+    ], 
+    "visible": false, 
+    "bpp": 4, 
+    "id": 31, 
+    "size": [
+      1151, 
+      1451
+    ]
+  }, 
+  "Secret Door 1": {
+    "opacity": 100.0, 
+    "name": "Secret Door 1", 
+    "offsets": [
+      520, 
+      571
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 17, 
+    "size": [
+      114, 
+      107
+    ]
+  }, 
+  "Room 6": {
+    "opacity": 100.0, 
+    "name": "Room 6", 
+    "offsets": [
+      17, 
+      624
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 3, 
+    "size": [
+      211, 
+      402
+    ]
+  }, 
+  "Room 5": {
+    "opacity": 100.0, 
+    "name": "Room 5", 
+    "offsets": [
+      221, 
+      926
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 7, 
+    "size": [
+      410, 
+      498
+    ]
+  }, 
+  "Room 4": {
+    "opacity": 100.0, 
+    "name": "Room 4", 
+    "offsets": [
+      819, 
+      920
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 8, 
+    "size": [
+      210, 
+      201
+    ]
+  }, 
+  "Room 3": {
+    "opacity": 100.0, 
+    "name": "Room 3", 
+    "offsets": [
+      230, 
+      625
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 19, 
+    "size": [
+      598, 
+      302
+    ]
+  }, 
+  "Room 2": {
+    "opacity": 100.0, 
+    "name": "Room 2", 
+    "offsets": [
+      622, 
+      325
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 20, 
+    "size": [
+      309, 
+      298
+    ]
+  }, 
+  "Room 1": {
+    "opacity": 100.0, 
+    "name": "Room 1", 
+    "offsets": [
+      0, 
+      0
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 27, 
+    "size": [
+      531, 
+      228
+    ]
+  }, 
+  "Corridor 5b": {
+    "opacity": 100.0, 
+    "name": "Corridor 5b", 
+    "offsets": [
+      629, 
+      1119
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 11, 
+    "size": [
+      413, 
+      114
+    ]
+  }, 
+  "Corridor 5c": {
+    "opacity": 100.0, 
+    "name": "Corridor 5c", 
+    "offsets": [
+      621, 
+      920
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 10, 
+    "size": [
+      115, 
+      205
+    ]
+  }, 
+  "Corridor 5a": {
+    "opacity": 100.0, 
+    "name": "Corridor 5a", 
+    "offsets": [
+      1017, 
+      715
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 12, 
+    "size": [
+      107, 
+      513
+    ]
+  }, 
+  "Trapped Door 2": {
+    "opacity": 100.0, 
+    "name": "Trapped Door 2", 
+    "offsets": [
+      28, 
+      976
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 2, 
+    "size": [
+      93, 
+      98
+    ]
+  }, 
+  "Corridor 3a": {
+    "opacity": 100.0, 
+    "name": "Corridor 3a", 
+    "offsets": [
+      818, 
+      627
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 18, 
+    "size": [
+      118, 
+      300
+    ]
+  }, 
+  "Corridor 3b": {
+    "opacity": 100.0, 
+    "name": "Corridor 3b", 
+    "offsets": [
+      922, 
+      601
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 15, 
+    "size": [
+      200, 
+      150
+    ]
+  }, 
+  "Trapped Door 1": {
+    "opacity": 100.0, 
+    "name": "Trapped Door 1", 
+    "offsets": [
+      575, 
+      923
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 6, 
+    "size": [
+      104, 
+      106
+    ]
+  }, 
+  "GM Map": {
+    "opacity": 49.80392156862745, 
+    "name": "GM Map", 
+    "offsets": [
+      0, 
+      0
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 30, 
+    "size": [
+      1151, 
+      1451
+    ]
+  }, 
+  "Corridor 4": {
+    "opacity": 100.0, 
+    "name": "Corridor 4", 
+    "offsets": [
+      1017, 
+      424
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 14, 
+    "size": [
+      106, 
+      190
+    ]
+  }, 
+  "Corridor 1": {
+    "opacity": 100.0, 
+    "name": "Corridor 1", 
+    "offsets": [
+      927, 
+      120
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 28, 
+    "size": [
+      223, 
+      306
+    ]
+  }, 
+  "Entry": {
+    "opacity": 100.0, 
+    "name": "Entry", 
+    "offsets": [
+      525, 
+      0
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 29, 
+    "size": [
+      625, 
+      125
+    ]
+  }, 
+  "Corridor 6b": {
+    "opacity": 100.0, 
+    "name": "Corridor 6b", 
+    "offsets": [
+      27, 
+      1019
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 4, 
+    "size": [
+      95, 
+      407
+    ]
+  }, 
+  "Corridor 6a": {
+    "opacity": 100.0, 
+    "name": "Corridor 6a", 
+    "offsets": [
+      26, 
+      1318
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 5, 
+    "size": [
+      219, 
+      107
+    ]
+  }, 
+  "Locked Door 1": {
+    "opacity": 100.0, 
+    "name": "Locked Door 1", 
+    "offsets": [
+      776, 
+      825
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 16, 
+    "size": [
+      101, 
+      103
+    ]
+  }, 
+  "Stair Down": {
+    "opacity": 100.0, 
+    "name": "Stair Down", 
+    "offsets": [
+      121, 
+      420
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 21, 
+    "size": [
+      491, 
+      108
+    ]
+  }, 
+  "Stair Up": {
+    "opacity": 100.0, 
+    "name": "Stair Up", 
+    "offsets": [
+      923, 
+      419
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 13, 
+    "size": [
+      118, 
+      197
+    ]
+  }, 
+  "Corridor 5d": {
+    "opacity": 100.0, 
+    "name": "Corridor 5d", 
+    "offsets": [
+      721, 
+      919
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 9, 
+    "size": [
+      107, 
+      202
+    ]
+  }, 
+  "Corridor 2e": {
+    "opacity": 100.0, 
+    "name": "Corridor 2e", 
+    "offsets": [
+      520, 
+      429
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 22, 
+    "size": [
+      94, 
+      189
+    ]
+  }, 
+  "Corridor 2d": {
+    "opacity": 100.0, 
+    "name": "Corridor 2d", 
+    "offsets": [
+      127, 
+      521
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 23, 
+    "size": [
+      490, 
+      99
+    ]
+  }, 
+  "Corridor 2c": {
+    "opacity": 100.0, 
+    "name": "Corridor 2c", 
+    "offsets": [
+      127, 
+      324
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 24, 
+    "size": [
+      501, 
+      101
+    ]
+  }, 
+  "Corridor 2b": {
+    "opacity": 100.0, 
+    "name": "Corridor 2b", 
+    "offsets": [
+      0, 
+      324
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 25, 
+    "size": [
+      132, 
+      296
+    ]
+  }, 
+  "Corridor 2a": {
+    "opacity": 100.0, 
+    "name": "Corridor 2a", 
+    "offsets": [
+      0, 
+      215
+    ], 
+    "visible": true, 
+    "bpp": 4, 
+    "id": 26, 
+    "size": [
+      530, 
+      114
+    ]
+  }
+}

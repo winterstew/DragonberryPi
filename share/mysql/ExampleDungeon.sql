@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.45, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.44, for debian-linux-gnu (armv7l)
 --
 -- Host: localhost    Database: DragonberryPi
 -- ------------------------------------------------------
--- Server version	5.5.45-cll-lve
+-- Server version	5.5.44-0+deb7u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -327,7 +327,7 @@ CREATE TABLE `Map` (
 
 LOCK TABLES `Map` WRITE;
 /*!40000 ALTER TABLE `Map` DISABLE KEYS */;
-INSERT INTO `Map` (`idMap`, `name`, `pixelsPerFoot`, `feetPerInch`, `widthInches`, `heightInches`, `rotate`, `scale`, `translateX`, `translateY`, `visible`, `dmVisible`, `depth`, `backgroundColor`, `idDisplay`, `idMapType`, `updated`) VALUES (1,'Dangerous Dungeon Grid Map',10,5,32,20,-90,1,-152.322796935,196.120689655,1,1,5,NULL,1,1,'2016-02-01 19:47:49'),(2,'Port View',10,5,10,10,-90,1,0,0,0,1,1,NULL,4,3,'2016-02-01 19:58:20');
+INSERT INTO `Map` (`idMap`, `name`, `pixelsPerFoot`, `feetPerInch`, `widthInches`, `heightInches`, `rotate`, `scale`, `translateX`, `translateY`, `visible`, `dmVisible`, `depth`, `backgroundColor`, `idDisplay`, `idMapType`, `updated`) VALUES (1,'Dangerous Dungeon',10,5,32,20,-90,1,-152.32279693487,96.12068965517,1,1,1,NULL,1,1,'2016-02-04 14:25:10'),(2,'Port View',10,5,10,10,-90,1,0,0,0,1,1,NULL,4,3,'2016-02-04 14:23:37');
 /*!40000 ALTER TABLE `Map` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -492,7 +492,7 @@ CREATE TABLE `Modifiers` (
   KEY `idPawn` (`idPawn`),
   KEY `idModifier` (`idModifier`),
   KEY `updated` (`updated`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -501,7 +501,7 @@ CREATE TABLE `Modifiers` (
 
 LOCK TABLES `Modifiers` WRITE;
 /*!40000 ALTER TABLE `Modifiers` DISABLE KEYS */;
-INSERT INTO `Modifiers` (`idModifiers`, `idPawn`, `idModifier`, `updated`) VALUES (14,5,8,'2016-02-01 21:58:14');
+INSERT INTO `Modifiers` (`idModifiers`, `idPawn`, `idModifier`, `updated`) VALUES (13,5,8,'2016-02-04 14:21:27');
 /*!40000 ALTER TABLE `Modifiers` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -598,7 +598,7 @@ CREATE TABLE `Pawn` (
 
 LOCK TABLES `Pawn` WRITE;
 /*!40000 ALTER TABLE `Pawn` DISABLE KEYS */;
-INSERT INTO `Pawn` (`idPawn`, `name`, `selectKey`, `rotate`, `sizeFeet`, `translateX`, `translateY`, `color`, `height`, `attackRange`, `attackType`, `visible`, `dmVisible`, `depth`, `backgroundColor`, `ruleLink`, `idImage`, `imageX`, `imageY`, `imageScale`, `idMap`, `idRole`, `updated`) VALUES (1,'Baldfist','1',-90,5,1246.02346743,91.939655173,'#FF0101',0,0,'None',1,1,1,'#FFFFFF',NULL,1,0,0,1,1,1,'2016-02-01 21:57:44'),(2,'Filerna','2',-90,5,1296.02346743,90.443007663,'#01FF01',0,0,'None',1,1,1,'#FFFFFF',NULL,1,0,0,1,1,1,'2016-02-01 20:09:08'),(3,'Grub','3',-135,5,1296.02346743,40.443007662,'#0101FF',0,0,'None',1,1,1,'#FFFFFF',NULL,1,0,0,1,1,1,'2016-02-01 20:09:08'),(4,'goblin 1','q',45,5,996.46312261,141.973180077,'#017050',0,15,'None',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/goblin.html#goblin',1,0,0,1,1,3,'2016-02-01 21:03:27'),(5,'goblin 2','w',0,5,1295.98659004,-58.50335249,'#017050',0,0,'None',1,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/goblin.html#goblin',1,0,0,1,1,3,'2016-02-01 21:58:14'),(6,'goblin 3','e',45,5,1095.51005747,141.020114943,'#017050',0,0,'None',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/goblin.html#goblin',1,0,0,1,1,3,'2016-02-01 21:04:13'),(7,'orc 1','r',90,5,648.026819923,389.932950192,'#015001',0,0,'None',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/orc.html#orc',1,0,0,1,1,6,'2016-02-01 19:47:49'),(8,'orc 2','t',-90,5,947.550287356,390.953065134,'#015001',0,0,'Line',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/orc.html#orc',1,0,0,1,1,6,'2016-02-01 19:47:49'),(9,'ogre','y',45,10,494.966475096,830.610632184,'#501010',0,0,'None',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/ogre.html#ogre',1,0,0,1,1,7,'2016-02-01 19:47:49');
+INSERT INTO `Pawn` (`idPawn`, `name`, `selectKey`, `rotate`, `sizeFeet`, `translateX`, `translateY`, `color`, `height`, `attackRange`, `attackType`, `visible`, `dmVisible`, `depth`, `backgroundColor`, `ruleLink`, `idImage`, `imageX`, `imageY`, `imageScale`, `idMap`, `idRole`, `updated`) VALUES (1,'Baldfist','1',-90,5,946.0234674329,340.44300766286,'#FF0101',0,0,'None',1,1,1,'#FFFFFF',NULL,1,0,0,1,1,1,'2016-02-04 14:21:52'),(2,'Filerna','2',-90,5,996.0234674329,343.436302682,'#01FF01',0,0,'None',1,1,1,'#FFFFFF',NULL,1,0,0,1,1,1,'2016-02-04 14:21:54'),(3,'Grub','3',-135,5,1046.0234674329,293.436302682,'#0101FF',0,0,'None',1,1,1,'#FFFFFF',NULL,1,0,0,1,1,1,'2016-02-04 14:22:07'),(4,'goblin 1','q',45,5,746.46312260536,391.97318007663,'#017050',0,15,'None',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/goblin.html#goblin',1,0,0,1,1,3,'2016-02-04 14:21:12'),(5,'goblin 2','w',0,5,1045.9865900383,191.49664750958,'#017050',0,0,'None',1,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/goblin.html#goblin',1,0,0,1,1,3,'2016-02-04 14:24:48'),(6,'goblin 3','e',45,5,845.51005747125,391.02011494253,'#017050',0,0,'None',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/goblin.html#goblin',1,0,0,1,1,3,'2016-02-04 14:21:17'),(7,'orc 1','r',90,5,398.02681992337,639.93295019158,'#015001',0,0,'None',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/orc.html#orc',1,0,0,1,1,6,'2016-02-04 14:20:14'),(8,'orc 2','t',-90,5,697.55028735632,640.9530651341,'#015001',0,0,'Line',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/orc.html#orc',1,0,0,1,1,6,'2016-02-04 14:20:14'),(9,'ogre','y',45,10,444.96647509579,980.61063218391,'#501010',0,0,'None',0,1,1,'#FFFFFF','http://paizo.com/pathfinderRPG/prd/bestiary/ogre.html#ogre',1,0,0,1,1,7,'2016-02-04 14:20:35');
 /*!40000 ALTER TABLE `Pawn` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -730,7 +730,7 @@ CREATE TABLE `Tile` (
   KEY `idImage` (`idImage`),
   KEY `idMap` (`idMap`),
   KEY `updated` (`updated`)
-) ENGINE=MyISAM AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='specify geometric location and the visibility of Tile elemen';
+) ENGINE=MyISAM AUTO_INCREMENT=61 DEFAULT CHARSET=utf8 COMMENT='specify geometric location and the visibility of Tile elemen';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -739,7 +739,7 @@ CREATE TABLE `Tile` (
 
 LOCK TABLES `Tile` WRITE;
 /*!40000 ALTER TABLE `Tile` DISABLE KEYS */;
-INSERT INTO `Tile` (`idTile`, `name`, `rotate`, `scale`, `translateX`, `translateY`, `visible`, `dmVisible`, `depth`, `backgroundColor`, `ruleLink`, `idImage`, `idMap`, `updated`) VALUES (1,'Corridor 1',0,1,1176.05363985,-129.932950192,1,1,37,NULL,NULL,3,1,'2016-02-01 22:11:59'),(2,'Corridor 2a',0,1,250.409482759,-35.5100574713,0,1,35,NULL,NULL,4,1,'2016-02-01 19:47:49'),(3,'Corridor 2b',0,1,250.543582375,74.4899425287,0,1,34,NULL,NULL,5,1,'2016-02-01 19:47:49'),(4,'Corridor 2c',0,1,377.006704981,74.0134099617,0,1,33,NULL,NULL,6,1,'2016-02-01 19:47:49'),(5,'Corridor 2d',0,1,378.026819923,270.543582375,0,1,32,NULL,NULL,7,1,'2016-02-01 19:47:49'),(6,'Corridor 2e',0,1,770.067049808,179.046934866,0,1,31,NULL,NULL,8,1,'2016-02-01 19:47:49'),(7,'Corridor 3a',0,1,1067.48323755,376.463122605,0,1,27,NULL,NULL,9,1,'2016-02-01 19:47:49'),(8,'Corridor 3b',0,1,1171.49664751,350.543582375,0,1,24,NULL,NULL,10,1,'2016-02-01 19:47:49'),(9,'Corridor 4',0,1,1266.53017241,174.013409962,0,1,23,NULL,NULL,11,1,'2016-02-01 19:47:49'),(10,'Corridor 5a',0,1,1266.05363985,465.443007663,0,1,21,NULL,NULL,12,1,'2016-02-01 19:47:49'),(11,'Corridor 5b',0,1,879.046934866,869.456417625,0,1,20,NULL,NULL,13,1,'2016-02-01 19:47:49'),(12,'Corridor 5c',0,1,871.087164751,669.590517241,0,1,19,NULL,NULL,14,1,'2016-02-01 19:47:49'),(13,'Corridor 5d',0,1,971.49664751,668.50335249,0,1,18,NULL,NULL,15,1,'2016-02-01 19:47:49'),(14,'Corridor 6a',0,1,275.510057471,1068.02681992,0,1,14,NULL,NULL,16,1,'2016-02-01 19:47:49'),(15,'Corridor 6b',0,1,276.530172414,769.932950192,0,1,13,NULL,NULL,17,1,'2016-02-01 19:47:49'),(16,'Dangerous Dungeon',0,1,250,-250,0,0,40,NULL,NULL,18,1,'2016-02-01 13:11:05'),(17,'Entry',0,1,774.08045977,-250.476532567,1,1,38,NULL,NULL,19,1,'2016-02-01 19:47:49'),(18,'Locked Door 1',0,1,1025.98659004,574.489942529,0,1,25,NULL,NULL,20,1,'2016-02-01 19:47:49'),(19,'Room 1',0,1,249.456417625,-250.543582375,0,1,36,NULL,NULL,21,1,'2016-02-01 19:47:49'),(20,'Room 2',0,1,872.040229885,75.0335249042,0,1,29,NULL,NULL,22,1,'2016-02-01 21:58:08'),(21,'Room 3',0,1,480.543582375,374.556992337,0,1,28,NULL,NULL,23,1,'2016-02-01 19:47:49'),(22,'Room 4',0,1,1068.09386973,670.476532567,0,1,17,NULL,NULL,24,1,'2016-02-01 19:47:49'),(23,'Room 5',0,1,471.49664751,675.986590038,0,1,16,NULL,NULL,25,1,'2016-02-01 19:47:49'),(24,'Room 6',0,1,266.530172414,374.013409962,0,1,12,NULL,NULL,26,1,'2016-02-01 19:47:49'),(25,'Secret Door 1',0,1,769.932950192,321.429597701,0,1,26,NULL,NULL,27,1,'2016-02-01 19:47:49'),(26,'Stair Down',0,1,371.563697318,170.067049808,0,1,30,NULL,NULL,28,1,'2016-02-01 19:47:49'),(27,'Star Up',0,1,1173.46982759,168.979885057,0,1,22,NULL,NULL,29,1,'2016-02-01 19:47:49'),(28,'Trapped Door 1',0,1,824.489942529,672.993295019,0,1,15,NULL,NULL,30,1,'2016-02-01 19:47:49'),(29,'Trapped Door 2',0,1,277.006704981,727.006704981,0,1,11,NULL,NULL,31,1,'2016-02-01 19:47:49'),(30,'overview',0,1.3,-340,24.4396551724,1,1,10,NULL,NULL,2,2,'2016-02-01 19:47:49');
+INSERT INTO `Tile` (`idTile`, `name`, `rotate`, `scale`, `translateX`, `translateY`, `visible`, `dmVisible`, `depth`, `backgroundColor`, `ruleLink`, `idImage`, `idMap`, `updated`) VALUES (31,'Corridor 1',0,1,927,120,1,1,38,NULL,NULL,3,1,'2016-02-04 14:14:04'),(32,'Corridor 2a',0,1,0,215,0,1,36,NULL,NULL,4,1,'2016-02-04 14:23:23'),(33,'Corridor 2b',0,1,0,324,0,1,35,NULL,NULL,5,1,'2016-02-04 14:23:23'),(34,'Corridor 2c',0,1,127,324,0,1,34,NULL,NULL,6,1,'2016-02-04 14:23:23'),(35,'Corridor 2d',0,1,127,521,0,1,33,NULL,NULL,7,1,'2016-02-04 14:23:23'),(36,'Corridor 2e',0,1,520,429,0,1,32,NULL,NULL,8,1,'2016-02-04 14:23:23'),(37,'Corridor 3a',0,1,818,627,0,1,28,NULL,NULL,9,1,'2016-02-04 14:23:23'),(38,'Corridor 3b',0,1,922,601,0,1,25,NULL,NULL,10,1,'2016-02-04 14:23:23'),(39,'Corridor 4',0,1,1017,424,0,1,24,NULL,NULL,11,1,'2016-02-04 14:23:23'),(40,'Corridor 5a',0,1,1017,715,0,1,22,NULL,NULL,12,1,'2016-02-04 14:23:23'),(41,'Corridor 5b',0,1,629,1119,0,1,21,NULL,NULL,13,1,'2016-02-04 14:23:23'),(42,'Corridor 5c',0,1,621,920,0,1,20,NULL,NULL,14,1,'2016-02-04 14:23:23'),(43,'Corridor 5d',0,1,721,919,0,1,19,NULL,NULL,15,1,'2016-02-04 14:23:23'),(44,'Corridor 6a',0,1,26,1318,0,1,15,NULL,NULL,16,1,'2016-02-04 14:23:23'),(45,'Corridor 6b',0,1,27,1019,0,1,14,NULL,NULL,17,1,'2016-02-04 14:23:23'),(46,'Entry',0,1,525,0,1,1,39,NULL,NULL,19,1,'2016-02-04 14:14:04'),(47,'Locked Door 1',0,1,776,825,0,1,26,NULL,NULL,20,1,'2016-02-04 14:23:23'),(48,'Room 1',0,1,0,0,0,1,37,NULL,NULL,21,1,'2016-02-04 14:23:23'),(49,'Room 2',0,1,622,325,0,1,30,NULL,NULL,22,1,'2016-02-04 14:23:23'),(50,'Room 3',0,1,230,625,0,1,29,NULL,NULL,23,1,'2016-02-04 14:23:23'),(51,'Room 4',0,1,819,920,0,1,18,NULL,NULL,24,1,'2016-02-04 14:23:23'),(52,'Room 5',0,1,221,926,0,1,17,NULL,NULL,25,1,'2016-02-04 14:23:23'),(53,'Room 6',0,1,17,624,0,1,13,NULL,NULL,26,1,'2016-02-04 14:23:23'),(54,'Secret Door 1',0,1,520,571,0,1,27,NULL,NULL,27,1,'2016-02-04 14:23:23'),(55,'Stair Down',0,1,121,420,0,1,31,NULL,NULL,28,1,'2016-02-04 14:23:23'),(56,'Star Up',0,1,250,250,0,1,35,NULL,NULL,29,1,'2016-02-04 14:23:23'),(57,'Trapped Door 1',0,1,575,923,0,1,16,NULL,NULL,30,1,'2016-02-04 14:23:23'),(58,'Trapped Door 2',0,1,28,976,0,1,12,NULL,NULL,31,1,'2016-02-04 14:23:23'),(59,'Dangerous Dungeon',0,1,0,0,0,0,10,NULL,NULL,18,1,'2016-02-04 14:19:22'),(60,'overview',0,1.3,-340,24.439655172414,1,1,5,NULL,NULL,2,2,'2016-02-04 14:16:11');
 /*!40000 ALTER TABLE `Tile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1100,4 +1100,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-01 19:36:33
+-- Dump completed on 2016-02-04  8:26:08

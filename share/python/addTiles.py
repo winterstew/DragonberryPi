@@ -1,4 +1,4 @@
-import os,re,sys,subprocess,argparse
+import os,re,sys,subprocess,argparse,json
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.compiler import compiles
@@ -41,7 +41,9 @@ associated with multiple Map entries or multiple places in the same Map.
         help='Tile ruleLink  (default is null)')
     parser.add_argument('--tMap','-m',type=int,action='store',
         help='Tile idMap  (default is null)')
-    parser.add_argument('idImage', type=int, nargs="+",
+    parser.add_argument('--json','-j',type=str,action='store',
+        help='JSON file to assign depth and offset based on match with name and size')
+    parser.add_argument('idImage', type=str, nargs="+",
         help='Image idImage numbers to be Tiles')
     # parse the command line arguments and options
     args = parser.parse_args()
@@ -59,10 +61,29 @@ associated with multiple Map entries or multiple places in the same Map.
     if (not args.tMap): 
         eMapIdMap = null()
         args.tMap = null()
+    # if a JSON file is provided, extract the layer information
+    #  This will be used to assign depth and offset so long
+    #  as the name matches
+    params = {}
+    if (args.json and os.path.isfile(args.json)): 
+        jsonfile = file(args.json,'r')
+        params = json.load(jsonfile)
 
     eTiles = [];
+    # If we are given a range of idImages use them all
+    for i in args.idImage:
+        if (type(i) == str and '..' in i):
+            st,ed = re.split('\.\.',i)
+            c = args.idImage.index(i) + 1
+            args.idImage.insert(c,int(ed))
+            for r in range(int(st),int(ed)):
+                args.idImage.insert(c,r)
+                c += 1
+            args.idImage.remove(i)
+
     #print args
     for idImage in args.idImage:
+        idImage = int(idImage)
         eImage = None;
         eTile = None;
         #print idImage
@@ -78,6 +99,15 @@ associated with multiple Map entries or multiple places in the same Map.
             tY = args.tY or 0.0+10.0*len(eTiles)
             # set special default for tDepth based on current Tile count
             tDepth = args.tDepth or 10.0+len(eTiles)
+            # set visibility
+            tVisible=1
+            # if there is a JSON entry for this
+            #  tile, use it instead
+            if (params.has_key(tName)):
+                tX = params[tName]['offsets'][0]
+                tY = params[tName]['offsets'][1]
+                tDepth = 10 + params[tName]['id']
+                tVisible = params[tName]['visible']
             #print eImage.filename
             rTile = tTile.select(tTile.c.idImage==eImage.idImage).execute()
             # Is there already a Tile for this Image?  If so, 
@@ -88,7 +118,7 @@ associated with multiple Map entries or multiple places in the same Map.
                                                scale=args.tScale,
                                                translateX=tX,
                                                translateY=tY,
-                                               visible=0,
+                                               visible=tVisible,
                                                dmVisible=1,
                                                depth=tDepth,
                                                backgroundColor=args.tBackColor,

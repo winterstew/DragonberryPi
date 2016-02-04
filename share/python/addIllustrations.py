@@ -49,14 +49,26 @@ type maps can be linked to multiple adventures via AdventureMap entries.
         help='Tile translateY  (default is 0)')
     parser.add_argument('--tLink','-l',action='store',
         help='Tile ruleLink  (default is null)')
-    parser.add_argument('idImage', type=int, nargs="+",
+    parser.add_argument('idImage', type=str, nargs="+",
         help='Image idImage numbers to be Tiles')
     # parse the command line arguments and options
     args = parser.parse_args()
     if (not args.tLink): args.tLink = null()
 
+    # If we are given a range of idImages use them all
+    for i in args.idImage:
+        if (type(i) == str and '..' in i):
+            st,ed = re.split('\.\.',i)
+            c = args.idImage.index(i) + 1
+            args.idImage.insert(c,int(ed))
+            for r in range(int(st),int(ed)):
+                args.idImage.insert(c,r)
+                c += 1
+            args.idImage.remove(i)
+
     #print args
     for idImage in args.idImage:
+        idImage = int(idImage)
         eImage = None;
         eTile = None;
         eMap = None;
