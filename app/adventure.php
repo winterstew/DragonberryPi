@@ -269,6 +269,7 @@ function updateFromDatabase( table ) {
         }
         document.getElementById(id).setAttribute("updated",attribute["updated"]);
       }
+      updateDisplayVisibility();
       updateListHTML += "</p>";
       if (testDebug == "visList") {
         var test = document.getElementById("visList2");
@@ -282,6 +283,23 @@ function updateFromDatabase( table ) {
   // arguments: url, callback object, request method, data (stringified), data type
   dw_makeXHRRequest( 'checkForUpdates', callback, 'POST', JSON.stringify(table), 'application/json' );
 }
+
+function updateDisplayVisibility(){
+  var divs = document.getElementsByTagName("div")
+  for (i = 0; i < divs.length; i++) {
+      var maps = divs[i].getElementsByClassName("Map")
+      isVisible = (maps.length > 0) ? false : true;
+      for (j = 0; j < maps.length; j++) {
+          if (maps[j].getAttribute("visibility") != "hidden") {isVisible = true}
+      }
+      if (isVisible) {
+          divs[i].setAttribute("class",divs[i].getAttribute("id") + "Visible")
+      } else {
+          divs[i].setAttribute("class",divs[i].getAttribute("id") + "Hidden")
+      }
+  }
+}
+
 
 function updateHeightAndAttackRange(table,id,attribute) {
   if (table == "Pawn") {
@@ -1012,7 +1030,7 @@ $displays = $conn->query("SELECT * FROM Display ORDER BY depth DESC");
 if ($displays->num_rows > 0) {
   while($d = $displays->fetch_assoc()) {
     // output div CSS block for each display
-    echo "div#display".$d["idDisplay"]." {\n";
+   echo "div.display".$d["idDisplay"]."Visible {\n";
     if ($d["position"] != NULL) {echo "  position: ".$d["position"].";\n";}
     if ($d["width"] != NULL) {echo "  width: ".$d["width"].";\n";}
     if ($d["height"] != NULL) {echo "  height: ".$d["height"].";\n";}
@@ -1024,12 +1042,26 @@ if ($displays->num_rows > 0) {
     if ($d["backgroundColor"] != NULL) {echo "  background-color: ".$d["backgroundColor"].";\n";}
     if (strpos($d['name'],"List") or strpos($d['name'],"Selectors")) { echo "  overflow-x: hidden;\n  overflow-y: auto;\n";}
     echo "  visibility: inherit;\n";
-    //echo "  border:1px solid #000000;\n";
+    #echo "  border:1px solid #A0A0A0;\n";
+    echo "}\n";
+   echo "div.display".$d["idDisplay"]."Hidden {\n";
+    if ($d["position"] != NULL) {echo "  position: ".$d["position"].";\n";}
+    echo "  width: 0;\n";
+    if ($d["height"] != NULL) {echo "  height: ".$d["height"].";\n";}
+    if ($d["top"] != NULL) {echo "  top: ".$d["top"].";\n";}
+    if ($d["bottom"] != NULL) {echo "  bottom: ".$d["bottom"].";\n";}
+    if ($d["left"] != NULL) {echo "  left: ".$d["left"].";\n";}
+    if ($d["right"] != NULL) {echo "  right: ".$d["right"].";\n";}
+    if ($d["transform"] != NULL) {echo "  transform: ".$d["transform"].";\n";}
+    if ($d["backgroundColor"] != NULL) {echo "  background-color: ".$d["backgroundColor"].";\n";}
+    if (strpos($d['name'],"List") or strpos($d['name'],"Selectors")) { echo "  overflow-x: hidden;\n  overflow-y: auto;\n";}
+    echo "  visibility: inherit;\n";
+    #echo "  border:1px solid #000000;\n";
     echo "}\n";
   }
-  // reset the select table back to the start
-  $displays->data_seek(0);
 }
+// reset the select table back to the start
+$displays->data_seek(0);
 ?>
 button.toggleListVisible {
   margin: 0px;
@@ -1077,7 +1109,7 @@ if ($displays->num_rows > 0) {
     // List displays and modifierSelectors only exist for the DM
     if (strpos($d['name'],"List") && $mapMode == "dm") {
       // output div element for display
-      echo '<div id="display'.$d["idDisplay"].'">'."\n";
+      echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
       // select all the DM visible Maps for this list
       $maps = $conn->query("SELECT * FROM MapDmVisibleOnDisplay WHERE mtName=\"".str_replace("List","",$d['name'])."\" AND idAdventure=".$aId." ORDER BY mName ASC");
       // Lets put buttons to toggle the PC visibility for each DM visible map of this type
@@ -1090,7 +1122,7 @@ if ($displays->num_rows > 0) {
       }
     } elseif (($d['name'] == "modifierSelectors") && $mapMode == "dm") {
       // output div element for display
-      echo '<div id="display'.$d["idDisplay"].'">'."\n";
+      echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
       // select all the Modifiers for this list
       $modifiers = $conn->query("SELECT * FROM Modifier ORDER BY name");
       // Lets put buttons to toggle the toggle modfiers for selected Pawns
@@ -1103,13 +1135,13 @@ if ($displays->num_rows > 0) {
       echo '<button id="saveButton" onclick="forceSave()">Save</button>';
     } elseif (($d['name'] == "modifierSelectors") && $mapMode == "pc") {
       // output div element for display
-      echo '<div id="display'.$d["idDisplay"].'">'."\n";
+      echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
       // give the PCs a save button
       echo '<button id="saveButton" onclick="forceSave()">Save</button>';
       //echo '<button id="saveButton" onclick="fillOutPawns()">Pawn&nbsp;Redraw</button>';
     } elseif ((! strpos($d['name'],"List")) && ($d['name'] != "modifierSelectors")) {
       // output div element for each display
-      echo '<div id="display'.$d["idDisplay"].'">'."\n";
+      echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
     } 
 
     // select maps
