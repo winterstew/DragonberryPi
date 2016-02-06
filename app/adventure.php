@@ -6,6 +6,8 @@
 $conn = db_connect($app->config('db'));
 // What is the root directory for this app
 $appRoot = $app->config('root');
+// What is the run mmode
+$appMode = $app->config('mode');
 // starting point for scale is 96 dpi
 // globalScale is used applied to the pawnGrid maps so they can match 
 // the size desired for the physical pawns and display
@@ -1354,11 +1356,12 @@ if ($displays->num_rows > 0) {
   }
 }
 ?>
-<?php $conn->close(); ?>
-<p id="<?php if (array_key_exists("test",$_GET)) {echo $_GET['test'];} ?>">
-</p>
-<p id="<?php if (array_key_exists("test",$_GET)) {echo $_GET['test'];} ?>2">
-</p>
+<?php $conn->close(); 
+if (array_key_exists("test",$_GET) && ($appMode == 'development')) {
+    echo '<p id="'. $_GET['test']. '"></p>';
+    echo '<p id="'. $_GET['test']. '2"></p>';
+}
+?>
 <script>
 var updateTimer = setInterval(updateAll,1000);
 //Don't think I want to save automatic
