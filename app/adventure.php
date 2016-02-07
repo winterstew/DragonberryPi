@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 <?php 
 // Create connection
 $conn = db_connect($app->config('db'));
@@ -31,9 +32,6 @@ $browser = new Sinergi\BrowserDetector\Browser();
 if ($mapMode == 'pc') {
   if ($browser->getName() == $browser::CHROME) {
     $browserAlert = "Pawns load best with Firefox";
-  }
-  if ($browser->getName() == $browser::FIREFOX) {
-    $browserAlert = "Maps can be moved best with Chrome";
   }
   if ($browser->getName() == $browser::IE) {
     $browserAlert = "Does not work well in Explorer";
@@ -587,8 +585,9 @@ function inactivateModifierSelectors() {
   }
 }
 
-function startMapMove(ev,id) {
-  ev = ev || event || window.event;
+function startMapMove(event,id) {
+  ev = event || window.event;
+  ev.preventDefault();
   // starts a Map move by storing the start variables
   // Maps can be moved with a mouse left click and drag,
   //  rotated with a Shift-left click and drag,
@@ -601,10 +600,11 @@ function startMapMove(ev,id) {
   oldTransform = unpackTransform(map.getAttribute("transform"),"map");
 }
 
-function endMapMove(ev,id) {
+function endMapMove(event,id) {
   // ends a Map move by
   // resetting the start positions back to 0
-  ev = ev || event || window.event;
+  ev = event || window.event;
+  ev.preventDefault();
   startX = 0;
   startY = 0;
   startR = 0;
@@ -615,11 +615,12 @@ function endMapMove(ev,id) {
   scaleRes = 0.1;
 }
 
-function doingMapMove(ev,id) {
+function doingMapMove(event,id) {
   // do a Map move by transforming the element
   // based on the mouse movement
   if ((startX != 0) && (startY != 0)) {
-    ev = ev || event || window.event;
+    ev = event || window.event;
+    ev.preventDefault();
     if (ev.altKey) { mode = "s"; }
     if (ev.ctrlKey) { mode = "r"; }
     if (ev.shiftKey) { moveRes = 1.0; rotRes = 1.0; scaleRes = 0.001; }
@@ -732,13 +733,13 @@ function moveTileOrPawn(elem,type,mode,dir,res) {
   needsSave = true;
 }
 
-function interpretKeyUp(ev) {
+function interpretKeyUp(event) {
   // reset the key hold flag when a key is released
   keyHold = null;
 }
 
-function interpretKeyDown(ev) {
-  ev = ev || event || window.event;
+function interpretKeyDown(event) {
+  ev = event || window.event;
   var key = ev.which || ev.keyCode;
   var keyHTML = "pressed: "+key+" = " + String.fromCharCode(key).toLowerCase() + "<br>";
   if ((key == 83) && (! keyHold)) { 
@@ -1255,7 +1256,7 @@ if ($displays->num_rows > 0) {
           // pawnGrids need to not change aspect 
           echo 'preserveAspectRatio="xMinYMin slice" ';
           // put map move controls here so that the mouse active area does not change when the map's transformation does
-          echo 'onmousedown="startMapMove(event,\'map'.$m["idMap"].'g\')" onmouseup="endMapMove(event,\'map'.$m["idMap"].'g\')" onmousemove="doingMapMove(event,\'map'.$m["idMap"].'g\')" ';
+          echo 'onmousedown="startMapMove(evt,\'map'.$m["idMap"].'g\')" onmouseup="endMapMove(evt,\'map'.$m["idMap"].'g\')" onmousemove="doingMapMove(evt,\'map'.$m["idMap"].'g\')" ';
           echo 'style="border:1px solid #EEEEEE" '; // red for testing
         }
         //echo 'style="border:1px solid #FF0000" '; // red for testing
