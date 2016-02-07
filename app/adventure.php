@@ -229,12 +229,33 @@ function updateAll() {
     } else {
       inactivateModifierSelectors();
     }
+    if ((selectedTileOrPawn.id.slice(0,4) == "pawn") && 
+        ((mapMode != 'pc') || 
+         ((mapMode == 'pc') && 
+          (selectedTileOrPawn.getAttribute("rolename").substr(0,2) == 'pc')))) {
+      updatePawnStatsDisplay(selectedTileOrPawn);
+    }
   }
   // output for testing purposes
   if (testDebug == "visList") {
     var test = document.getElementById("visList");
     if (test) { test.innerHTML = myHTML; }
   }
+}
+
+function updatePawnStatsDisplay(p) {
+  var myE = document.getElementById("pawnStats");
+  var bS = ""; var bE = "";
+  if (p.getAttribute("leader") == 1) {bS = "<b>";bE = "</b>";}
+  myHTML = '<table class="pawnStats"><tr>'+"\n";
+  myHTML += '<td>'+ bS + p.getAttribute("selectkey") + bE + "</td>\n";
+  myHTML += '<td><a href="'+ p.getAttribute("rulelink") +'">'+ p.getAttribute("name") +"</a></td>\n";
+  myHTML += '<td>'+ p.getAttribute("role") +":"+ p.getAttribute("rolename") +"</td>\n";
+  myHTML += '<td>'+ p.getAttribute("height") +"</td>\n";
+  myHTML += '<td>'+ p.getAttribute("attackrange") +"</td>\n";
+  myHTML += '</tr><tr><th>key</th><th>name</th><th>role</th><th>height</th><th>atck rng</th></tr>';
+  myHTML += "</table>\n";
+  myE.innerHTML = myHTML;
 }
 
 function updateFromDatabase( table ) {
@@ -306,6 +327,13 @@ function updateDisplayVisibility(){
 function updateHeightAndAttackRange(table,id,attribute) {
   if (table == "Pawn") {
     var myE = document.getElementById(id);
+    myE.setAttribute("height",attribute["height"]);
+    myE.setAttribute("rulelink",attribute["ruleLink"]);
+    myE.setAttribute("name",attribute["name"]);
+    myE.setAttribute("role",attribute["idRole"]);
+    myE.setAttribute("rolename",attribute["roleName"]);
+    myE.setAttribute("height",attribute["height"]);
+    myE.setAttribute("attackrange",attribute["attackRange"]);
     if (myE.getAttribute("attacktype")!="Height") {myE.setAttribute("attacktype",attribute["attackType"]);}
     var groups = myE.getElementsByTagName("g");
     for(gIndex = 0; gIndex < groups.length; gIndex++) {
@@ -1043,13 +1071,14 @@ if ($displays->num_rows > 0) {
     if ($d["transform"] != NULL) {echo "  transform: ".$d["transform"].";\n";}
     if ($d["backgroundColor"] != NULL) {echo "  background-color: ".$d["backgroundColor"].";\n";}
     if (strpos($d['name'],"List") or strpos($d['name'],"Selectors")) { echo "  overflow-x: hidden;\n  overflow-y: auto;\n";}
+    if ($d['name'] == "pawnStats") { echo "  padding: 0px;\n  margin: 0px;\n";}
     echo "  visibility: inherit;\n";
     #echo "  border:1px solid #A0A0A0;\n";
     echo "}\n";
    echo "div.display".$d["idDisplay"]."Hidden {\n";
     if ($d["position"] != NULL) {echo "  position: ".$d["position"].";\n";}
     echo "  width: 0;\n";
-    if ($d["height"] != NULL) {echo "  height: ".$d["height"].";\n";}
+    echo "  height: 0;\n";
     if ($d["top"] != NULL) {echo "  top: ".$d["top"].";\n";}
     if ($d["bottom"] != NULL) {echo "  bottom: ".$d["bottom"].";\n";}
     if ($d["left"] != NULL) {echo "  left: ".$d["left"].";\n";}
@@ -1100,6 +1129,20 @@ button.modifierSelectorOff {
   background-color: transparent;
   color: Black;
 }
+p.pawnStats {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+  border: 0px;
+}
+table.pawnStats {
+  text-align: left;
+  font-size: 0.5em;
+  border: 0px;
+  padding: 0px 0px 0px 0px;
+  width: 100%;
+  height: 100%;
+}
+
 </style>
 </head>
 <body onkeydown="interpretKeyDown(event)" onkeyup="interpretKeyUp(event)">
@@ -1122,6 +1165,10 @@ if ($displays->num_rows > 0) {
           echo '" onclick="toggleVisibility(\'Map\','.$m["idMap"].')">'.$m["mName"]."</button><br>\n";
         }
       }
+    } elseif ($d['name'] == "pawnStats") {
+      // output div element for each display
+      echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
+      echo '<p id="pawnStats" class="pawnStats"></p>'. "\n";
     } elseif (($d['name'] == "modifierSelectors") && $mapMode == "dm") {
       // output div element for display
       echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
@@ -1304,6 +1351,9 @@ if ($displays->num_rows > 0) {
             echo 'leader="0" ';
             echo 'role="'. $p["idRole"]. '" ';
             echo 'rolename="'. $p["roleName"]. '" ';
+            echo 'height="'. $p["height"] .'" ';
+            echo 'attackrange="'. $p["attackRange"] .'" ';
+            echo 'attacktype="'. $p["attackType"] .'" ';
             echo 'pawnimagehref="'. $appRoot . getDirName($conn,$p["idLocation"],$p["treeDepth"])."/".rawurlencode($p["filename"]) .'" ';
             if ($p["selectKey"] && (($p["roleName"] == "pc")||($mapMode == "dm"))) {echo 'selectkey="'.$p["selectKey"].'" ';}
             //echo 'selectkey="'.$p["selectKey"].'" ';
@@ -1325,7 +1375,6 @@ if ($displays->num_rows > 0) {
             echo 'scale('. ($p["sizeFeet"] * $pawnScale) .') ';
             echo '" ';
             echo 'pawnscale="'. $pawnScale .'" ';
-            echo 'attacktype="'. $p["attackType"] .'" ';
             echo '>'." \n";
             // svg associated with this Pawn
             // echo $p["pawnShape"];
