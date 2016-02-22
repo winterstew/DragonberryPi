@@ -242,18 +242,28 @@ function updateAll() {
 }
 
 function updatePawnStatsDisplay(p) {
-  var myE = document.getElementById("pawnStats");
+  var heightCellColor = "black";
+  var attackRangeCellColor = "black";
+  if ((selectedTileOrPawn.getAttribute("attacktype")=="Height") || 
+      (selectedTileOrPawn.getAttribute("attacktype")=="None")) {
+    heightCellColor = "orange";
+  } else {
+    attackRangeCellColor = "orange";
+  }
   var bS = ""; var bE = "";
-  if (p.getAttribute("leader") == 1) {bS = "<b>";bE = "</b>";}
+  if (p.getAttribute("leader") == 1) {bS = '<b style="color:red">';bE = "</b>";}
   myHTML = '<table class="pawnStats"><tr>'+"\n";
-  myHTML += '<td>'+ bS + p.getAttribute("selectkey") + bE + "</td>\n";
-  myHTML += '<td><a href="'+ p.getAttribute("rulelink") +'">'+ p.getAttribute("name") +"</a></td>\n";
-  myHTML += '<td>'+ p.getAttribute("role") +":"+ p.getAttribute("rolename") +"</td>\n";
-  myHTML += '<td>'+ p.getAttribute("height") +"</td>\n";
-  myHTML += '<td>'+ p.getAttribute("attackrange") +"</td>\n";
+  myHTML += '<td class="selectKeyCell">'+ bS + p.getAttribute("selectkey") + bE + "</td>\n";
+  myHTML += '<td class="nameCell"><a href="'+ p.getAttribute("rulelink") +'">'+ p.getAttribute("name") +"</a></td>\n";
+  myHTML += '<td class="roleCell">'+ p.getAttribute("role") +":"+ p.getAttribute("rolename") +"</td>\n";
+  myHTML += '<td class="heightCell" style="color:'+ heightCellColor +'">'+ p.getAttribute("height") +"</td>\n";
+  myHTML += '<td class="attackRangeCell" style="color:'+ attackRangeCellColor +'">'+ p.getAttribute("attackrange") +"</td>\n";
   myHTML += '</tr><tr><th>key</th><th>name</th><th>role</th><th>height</th><th>atck rng</th></tr>';
   myHTML += "</table>\n";
-  myE.innerHTML = myHTML;
+  var stats = document.getElementsByClassName("pawnStats")
+  for (j = 0; j < stats.length; j++) {
+    stats[j].innerHTML = myHTML;
+  }
 }
 
 function updateFromDatabase( table ) {
@@ -941,16 +951,18 @@ function selectTileOrPawn(id) {
   selectHTML = selectedTileOrPawn.id+" -> ";
   var newSelectedTileOrPawn = document.getElementById(id);
   var newType = newSelectedTileOrPawn.getAttribute("class");
-  var highlightOn = {"Pawn":"outline: 20px solid orange; outline-offset: 2px;",
-                     "Tile":"outline: thick solid orange; outline-offset: 2px;"}[newType];
-  var highlightOff = "outline: none; outline-offset: 0px;"
+  //var highlightOn = {"Pawn":"outline: 20px solid orange; outline-offset: 2px;",
+  //                   "Tile":"outline: thick solid orange; outline-offset: 2px;"}[newType];
+  //var highlightOff = "outline: none; outline-offset: 0px;"
   if (selectedTileOrPawn.id) {
     // remove outline from previously selected Tile or Pawn
-    selectedTileOrPawn.setAttribute("style",highlightOff);
+    //selectedTileOrPawn.setAttribute("style",highlightOff);
+    document.getElementById("highlight"+selectedTileOrPawn.id).setAttribute("visibility","hidden")
     // select the new Tile or Pawn if it is not the same one
     if (selectedTileOrPawn.id != id) {
       selectedTileOrPawn = newSelectedTileOrPawn;
-      selectedTileOrPawn.setAttribute("style",highlightOn);
+      //selectedTileOrPawn.setAttribute("style",highlightOn);
+      document.getElementById("highlight"+selectedTileOrPawn.id).setAttribute("visibility","visible")
       if ((newType == "Pawn") && (mapMode != 'pc')) {updateModifierSelectors(selectedTileOrPawn.id.slice(4));}
       if (selectedTileOrPawn.getAttribute("rulelink") && document.getElementById("ruleLink")) {
         selectHTML += selectedTileOrPawn.getAttribute("rulelink");
@@ -969,7 +981,8 @@ function selectTileOrPawn(id) {
   } else {
     // select the new Tile or Pawn
     selectedTileOrPawn = newSelectedTileOrPawn;
-    selectedTileOrPawn.setAttribute("style",highlightOn);
+    //selectedTileOrPawn.setAttribute("style",highlightOn);
+    document.getElementById("highlight"+selectedTileOrPawn.id).setAttribute("visibility","visible")
     if ((newType == "Pawn") && (mapMode != 'pc')) {updateModifierSelectors(selectedTileOrPawn.id.slice(4))}
     if (selectedTileOrPawn.getAttribute("rulelink") && document.getElementById("ruleLink")) {
       selectHTML += selectedTileOrPawn.getAttribute("rulelink");
@@ -1073,6 +1086,8 @@ if ($displays->num_rows > 0) {
     if ($d["backgroundColor"] != NULL) {echo "  background-color: ".$d["backgroundColor"].";\n";}
     if (strpos($d['name'],"List") or strpos($d['name'],"Selectors")) { echo "  overflow-x: hidden;\n  overflow-y: auto;\n";}
     if ($d['name'] == "pawnStats") { echo "  padding: 0px;\n  margin: 0px;\n";}
+    if ($d['name'] == "pawnStatsDown") { echo "  padding: 0px;\n  margin: 0px;\n";}
+    if ($d['name'] == "pawnStatsUp") { echo "  -ms-transform: rotate(180deg);\n  -webkit-transform: rotate(180deg);\n transform: rotate(180deg);\n   padding: 0px;\n  margin: 0px;\n";}
     echo "  visibility: inherit;\n";
     #echo "  border:1px solid #A0A0A0;\n";
     echo "}\n";
@@ -1136,7 +1151,8 @@ p.pawnStats {
   border: 0px;
 }
 table.pawnStats {
-  text-align: left;
+  table-layout: auto;
+  text-align: center;
   font-size: 0.5em;
   border: 0px;
   padding: 0px 0px 0px 0px;
@@ -1166,10 +1182,10 @@ if ($displays->num_rows > 0) {
           echo '" onclick="toggleVisibility(\'Map\','.$m["idMap"].')">'.$m["mName"]."</button><br>\n";
         }
       }
-    } elseif ($d['name'] == "pawnStats") {
+    } elseif (substr($d['name'],0,9) == "pawnStats") {
       // output div element for each display
       echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
-      echo '<p id="pawnStats" class="pawnStats"></p>'. "\n";
+      echo '<p id="'. $d['name'] .'" class="pawnStats"></p>'. "\n";
     } elseif (($d['name'] == "modifierSelectors") && $mapMode == "dm") {
       // output div element for display
       echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
@@ -1322,6 +1338,7 @@ if ($displays->num_rows > 0) {
             // image associated with this Tile
             echo "<image width=".$t["imageWidth"]." height=".$t["imageHeight"];
             echo ' xlink:href="'. $appRoot . getDirName($conn,$t["idLocation"],$t["treeDepth"])."/".$t["filename"].'"></image>'."\n";
+            echo '<rect class="highlight" id="highlighttile'.$t["idTile"].'" width='.$t["imageWidth"].' height='.$t["imageHeight"].' style="fill:none;stroke-width:5;stroke:orange" visibility="hidden"/>';
             echo "</g> <!-- close tile-->\n";
           }
         }
@@ -1386,6 +1403,7 @@ if ($displays->num_rows > 0) {
             echo "</g>\n";
             include 'pawn_defs.svg';
             include "pawn_" . $p["roleName"] . ".svg";
+            echo '<rect class="highlight" id="highlightpawn'.$p["idPawn"].'" width=570px height=700px style="fill:none;stroke-width:50;stroke:orange" visibility="hidden"/>';
             echo "</g> <!-- close Pawn-->\n";
           }
         }
