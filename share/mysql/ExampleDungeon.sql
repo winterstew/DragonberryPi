@@ -82,11 +82,11 @@ CREATE TABLE `AdventureMap` (
   `idAdventureMap` smallint(6) NOT NULL AUTO_INCREMENT,
   `idAdventure` smallint(6) NOT NULL,
   `idMap` smallint(6) NOT NULL,
-  `unpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`idAdventureMap`),
   KEY `idAdventure` (`idAdventure`),
   KEY `idMap` (`idMap`),
-  KEY `updated` (`unpdated`)
+  KEY `updated` (`updated`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='Linking table between adventures and maps.\n';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -96,7 +96,7 @@ CREATE TABLE `AdventureMap` (
 
 LOCK TABLES `AdventureMap` WRITE;
 /*!40000 ALTER TABLE `AdventureMap` DISABLE KEYS */;
-INSERT INTO `AdventureMap` (`idAdventureMap`, `idAdventure`, `idMap`, `unpdated`) VALUES (1,1,1,'2016-01-31 06:24:46'),(2,1,2,'2016-01-31 06:24:46'),(3,1,3,'2016-02-05 08:04:01'),(4,1,4,'2016-02-05 08:04:01');
+INSERT INTO `AdventureMap` (`idAdventureMap`, `idAdventure`, `idMap`, `updated`) VALUES (1,1,1,'2016-01-31 06:24:46'),(2,1,2,'2016-01-31 06:24:46'),(3,1,3,'2016-02-05 08:04:01'),(4,1,4,'2016-02-05 08:04:01');
 /*!40000 ALTER TABLE `AdventureMap` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -222,7 +222,7 @@ CREATE TABLE `Display` (
 
 LOCK TABLES `Display` WRITE;
 /*!40000 ALTER TABLE `Display` DISABLE KEYS */;
-INSERT INTO `Display` (`idDisplay`, `name`, `position`, `width`, `height`, `top`, `bottom`, `left`, `right`, `transform`, `backgroundColor`, `depth`, `updated`) VALUES (1,'Main Map','fixed','90%','100%','0',NULL,'10%',NULL,NULL,NULL,10,'2016-02-06 22:36:19'),(2,'TL Inset','fixed','200px','200px','0',NULL,'0',NULL,NULL,NULL,1,'2016-02-05 08:28:21'),(3,'BL Inset','fixed','200px','200px',NULL,'0','0',NULL,NULL,NULL,1,'2016-02-05 08:28:21'),(4,'CL Inset','fixed','300px','300px','50%',NULL,'0',NULL,'translateY(-50%)',NULL,2,'2016-02-05 08:28:21'),(5,'pawnGridList','fixed','200px','5%','0',NULL,NULL,'0',NULL,NULL,6,'2016-02-05 08:28:21'),(6,'illustrationList','fixed','200px','80%','5%',NULL,NULL,'0',NULL,NULL,5,'2016-02-05 08:28:21'),(7,'overviewMapList','fixed','200px','15%','85%','0',NULL,'0',NULL,NULL,4,'2016-02-05 08:28:21'),(8,'modifierSelectors','fixed','50px','100%','0',NULL,NULL,'0',NULL,NULL,3,'2016-02-05 08:28:21'),(9,'pawnStatsDown','fixed','70%','30px',NULL,'15px','20%',NULL,NULL,'rgba(211, 211, 211, 0.5)',8,'2016-02-08 12:01:26'),(10,'pawnStatsUp','fixed','70%','30px','15px',NULL,'20%',NULL,NULL,'rgba(211, 211, 211, 0.5)',8,'2016-02-08 12:01:26');
+INSERT INTO `Display` (`idDisplay`, `name`, `position`, `width`, `height`, `top`, `bottom`, `left`, `right`, `transform`, `backgroundColor`, `depth`, `updated`) VALUES (1,'Main Map','fixed','90%','100%','0',NULL,'10%',NULL,NULL,NULL,10,'2016-02-06 22:36:19'),(2,'TL Inset','fixed','200px','200px','0',NULL,'0',NULL,NULL,NULL,1,'2016-02-05 08:28:21'),(3,'BL Inset','fixed','200px','200px',NULL,'0','0',NULL,NULL,NULL,1,'2016-02-05 08:28:21'),(4,'CL Inset','fixed','300px','300px','50%',NULL,'0',NULL,'translateY(-50%)',NULL,2,'2016-02-05 08:28:21'),(5,'pawnGridList','fixed','140px','5%','0',NULL,NULL,'60px',NULL,NULL,6,'2016-02-05 08:28:21'),(6,'illustrationList','fixed','140px','80%','5%',NULL,NULL,'60px',NULL,NULL,5,'2016-02-05 08:28:21'),(7,'overviewMapList','fixed','140px','15%','85%','0',NULL,'60px',NULL,NULL,4,'2016-02-05 08:28:21'),(8,'modifierSelectors','fixed','60px','100%','0',NULL,NULL,'0',NULL,NULL,3,'2016-02-05 08:28:21'),(9,'pawnStatsDown','fixed','70%','30px',NULL,'15px','20%',NULL,NULL,'rgba(211, 211, 211, 0.5)',8,'2016-02-08 12:01:26'),(10,'pawnStatsUp','fixed','70%','30px','15px',NULL,'20%',NULL,NULL,'rgba(211, 211, 211, 0.5)',8,'2016-02-08 12:01:26');
 /*!40000 ALTER TABLE `Display` ENABLE KEYS */;
 UNLOCK TABLES;
 

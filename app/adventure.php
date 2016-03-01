@@ -254,11 +254,16 @@ function updatePawnStatsDisplay(p) {
   if (p.getAttribute("leader") == 1) {bS = '<b style="color:red">';bE = "</b>";}
   myHTML = '<table class="pawnStats"><tr>'+"\n";
   myHTML += '<td class="selectKeyCell">'+ bS + p.getAttribute("selectkey") + bE + "</td>\n";
-  myHTML += '<td class="nameCell"><a href="'+ p.getAttribute("rulelink") +'">'+ p.getAttribute("name") +"</a></td>\n";
+  if (p.getAttribute("rulelink") != 'null') {
+    myHTML += '<td class="nameCell"><a href="'+ p.getAttribute("rulelink") +'">'+ p.getAttribute("name") +"</a></td>\n";
+  } else {
+    myHTML += '<td class="nameCell">' + p.getAttribute("name") +"</td>\n";
+  }
   myHTML += '<td class="roleCell">'+ p.getAttribute("role") +":"+ p.getAttribute("rolename") +"</td>\n";
   myHTML += '<td class="heightCell" style="color:'+ heightCellColor +'">'+ p.getAttribute("height") +"</td>\n";
   myHTML += '<td class="attackRangeCell" style="color:'+ attackRangeCellColor +'">'+ p.getAttribute("attackrange") +"</td>\n";
-  myHTML += '</tr><tr><th>key</th><th>name</th><th>role</th><th>height</th><th>atck rng</th></tr>';
+  myHTML += '<td class="modifiersListCell">'+ p.getAttribute("modifierlist") +"</td>\n";
+  myHTML += '</tr><tr><th>key</th><th>name</th><th>role</th><th>height</th><th>atck rng</th><th>modifiers</th></tr>';
   myHTML += "</table>\n";
   var stats = document.getElementsByClassName("pawnStats")
   for (j = 0; j < stats.length; j++) {
@@ -468,11 +473,16 @@ function updateModifiers(table,id,attribute,modifierList) {
   }
   if (! ((mapMode == "pc") && (pawn.getAttribute("visibility") == "hidden"))) {
     var count = 0
+    var modifierlist = '';
     for(index = 0; index < modifierList.length; index++) {
+      // instert the modifier SVG
       modInsertHTML += modifierList[index]["shapeSvg"];
+      // insert to the modifiers list attribute
+      modifierlist += modifierList[index]["name"] + " ";
       count++;
     }
     updateListHTML += count + "<br>";
+    pawn.setAttribute("modifierlist",modifierlist);
   }
   if (modE) { modE.innerHTML = modInsertHTML; }
 }
@@ -1084,7 +1094,7 @@ if ($displays->num_rows > 0) {
     if ($d["right"] != NULL) {echo "  right: ".$d["right"].";\n";}
     if ($d["transform"] != NULL) {echo "  transform: ".$d["transform"].";\n";}
     if ($d["backgroundColor"] != NULL) {echo "  background-color: ".$d["backgroundColor"].";\n";}
-    if (strpos($d['name'],"List") or strpos($d['name'],"Selectors")) { echo "  overflow-x: hidden;\n  overflow-y: auto;\n";}
+    if (strpos($d['name'],"List") or strpos($d['name'],"Selectors")) { echo " white-space: nowrap; overflow-x: auto;\n  overflow-y: auto;\n";}
     if ($d['name'] == "pawnStats") { echo "  padding: 0px;\n  margin: 0px;\n";}
     if ($d['name'] == "pawnStatsDown") { echo "  padding: 0px;\n  margin: 0px;\n";}
     if ($d['name'] == "pawnStatsUp") { echo "  -ms-transform: rotate(180deg);\n  -webkit-transform: rotate(180deg);\n transform: rotate(180deg);\n   padding: 0px;\n  margin: 0px;\n";}
@@ -1101,7 +1111,7 @@ if ($displays->num_rows > 0) {
     if ($d["right"] != NULL) {echo "  right: ".$d["right"].";\n";}
     if ($d["transform"] != NULL) {echo "  transform: ".$d["transform"].";\n";}
     if ($d["backgroundColor"] != NULL) {echo "  background-color: ".$d["backgroundColor"].";\n";}
-    if (strpos($d['name'],"List") or strpos($d['name'],"Selectors")) { echo "  overflow-x: hidden;\n  overflow-y: auto;\n";}
+    if (strpos($d['name'],"List") or strpos($d['name'],"Selectors")) { echo "  overflow-x: auto;\n  overflow-y: auto;\n";}
     echo "  visibility: inherit;\n";
     #echo "  border:1px solid #000000;\n";
     echo "}\n";
@@ -1159,6 +1169,12 @@ table.pawnStats {
   width: 100%;
   height: 100%;
 }
+td.selectKeyCell { width: 10%; }
+td.nameCell { width: 15%; }
+td.roleCell {width: 15%; }
+td.heightCell {width: 10%; }
+td.attackRangeCell {width: 10%; }
+td.modifiersListCell { width: 40%; word-wrap:break-word;}
 
 </style>
 </head>
@@ -1194,10 +1210,10 @@ if ($displays->num_rows > 0) {
       // Lets put buttons to toggle the toggle modfiers for selected Pawns
       if ($modifiers->num_rows > 0) {
         while($m = $modifiers->fetch_assoc()) {
-          echo '<button id="modifier'.$m["idModifier"].'" name="modifierSelector" class="modifierSelectorInactive" onclick="toggleModifier('.$m["idModifier"].')">'.$m["name"]."</button>\n";
+          echo '<button id="modifier'.$m["idModifier"].'" name="modifierSelector" class="modifierSelectorInactive" onclick="toggleModifier('.$m["idModifier"].')">'.$m["name"]."</button><br>\n";
         }
       }
-      echo '<a id="ruleLink" href="http://paizo.com/prd/" target="_blank">PRD</a>';
+      echo '<a id="ruleLink" href="http://paizo.com/prd/" target="_blank">PRD</a><br>';
       echo '<button id="saveButton" onclick="forceSave()">Save</button>';
     } elseif (($d['name'] == "modifierSelectors") && $mapMode == "pc") {
       // output div element for display
@@ -1372,6 +1388,7 @@ if ($displays->num_rows > 0) {
             echo 'height="'. $p["height"] .'" ';
             echo 'attackrange="'. $p["attackRange"] .'" ';
             echo 'attacktype="'. $p["attackType"] .'" ';
+            echo 'modifierlist=" " ';
             echo 'pawnimagehref="'. $appRoot . getDirName($conn,$p["idLocation"],$p["treeDepth"])."/".rawurlencode($p["filename"]) .'" ';
             if ($p["selectKey"] && (($p["roleName"] == "pc")||($mapMode == "dm"))) {echo 'selectkey="'.$p["selectKey"].'" ';}
             //echo 'selectkey="'.$p["selectKey"].'" ';
