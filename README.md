@@ -57,56 +57,54 @@ bring up both modes and have both tabs visible on your desktop so you can see
 how they work together.
 
 ## Installation
-``
-install jessie on card
-sudo rasi-config
-expand filesystem
-international options
-turn on ssh
-passwd?
-
-sudo apt-get update
-sudo apt-get upgrade
-#Gnome WebKit's Web does not work well for DragonberryPi
-
-sudo apt-get install iceweasel
-#iceweasel seems to work pretty well
-
-sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy
-# enter a root password for mariadb
-# point phpmyadmin to use apache
-
-git clone https://github.com/winterstew/DragonberryPi
-
-mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb
-# open Local instance 3306
-# ignore error
-# Go to Users and Privileges
-#  new Login => `dragon` password `berry` on localhost
-#  Administrative Roles => DBDesigner
-#  Schema Privileges => DragonberryPi: Everything but GRANT
-
-cd DragonberryPi/share/mysql
-# install empty dungeon schema
-mysql -u dragon -p < DragonberryPi.sql
-# install example dungeon schema
-mysql -u dragon -p < ExampleDungeon.sql
-# or to install it with higher timestamp resolution
-sed 's/timestamp/timestamp(3)/' ExampleDungeon.sql | mysql -u dragon -p DragonberryPi
-
-cd ~/DragonberryPi/share/config
-sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
-sudo a2enmod rewrite
-# had to edit DragonberryPi.conf for apache 2.4
-# Require all granted
-# instead of
-# Order allow,deny
-# Allow from all
-
-Try is out with firefox
-http://x.x.x.x/DragonberryPi
-sudo a2ensite DragonberryPi
-sudo service apache2 reload
-
-mysql -u
-``
+    install jessie on card
+    sudo rasi-config
+    expand filesystem
+    international options
+    turn on ssh
+    passwd?
+    
+    sudo apt-get update
+    sudo apt-get upgrade
+    #Gnome WebKit's Web does not work well for DragonberryPi
+    
+    sudo apt-get install iceweasel
+    #iceweasel seems to work pretty well
+    
+    sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy
+    # enter a root password for mariadb
+    # point phpmyadmin to use apache
+    
+    git clone https://github.com/winterstew/DragonberryPi
+    
+    mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb
+    # open Local instance 3306
+    # ignore error
+    # Go to Users and Privileges
+    #  new Login => `dragon` password `berry` on localhost
+    #  Administrative Roles => DBDesigner
+    #  Schema Privileges => DragonberryPi: Everything but GRANT
+    
+    cd DragonberryPi/share/mysql
+    # install empty dungeon schema
+    mysql -u dragon -p < DragonberryPi.sql
+    # install example dungeon schema
+    mysql -u dragon -p < ExampleDungeon.sql
+    # or to install it with higher timestamp resolution
+    sed 's/timestamp/timestamp(3)/' ExampleDungeon.sql | mysql -u dragon -p DragonberryPi
+    
+    cd ~/DragonberryPi/share/config
+    sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
+    sudo a2enmod rewrite
+    # had to edit DragonberryPi.conf for apache 2.4
+    # Require all granted
+    # instead of
+    # Order allow,deny
+    # Allow from all
+    
+    Try is out with firefox
+    http://x.x.x.x/DragonberryPi
+    sudo a2ensite DragonberryPi
+    sudo service apache2 reload
+    
+    mysql -u
