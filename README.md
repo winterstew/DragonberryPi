@@ -89,9 +89,10 @@ first clone the code
 then create the user for installing the database.  I like mysql-workbench for
 this. 
 
-    mysql-workbench
+   `mysql-workbench`
 
     * with mysql-workbench do the following:
+
         * open Local instance 3306
         * ignore error
         * Go to Users and Privileges
@@ -114,7 +115,6 @@ jesse, you can have higher time resolution on the save states.
     mysql -u dragon -p < ExampleDungeon.sql
     # or to install it with higher timestamp resolution
     sed 's/timestamp/timestamp(3)/' ExampleDungeon.sql | mysql -u dragon -p DragonberryPi
-
     
 Install Apache configuration 
 
