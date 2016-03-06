@@ -50,15 +50,15 @@ any access to it.
 
 * in a terminal type
 
-    sudo rasi-config
+    `sudo rasi-config`
 
-In rasi-config do the following:
+    * then in rasi-config do the following:
 
-* choose *expand filesystem*
-* set you international options based on what you want
-* turn on ssh.  This is useful for access if you want to do your adventure prep from a PC and just copy files over
-* reset your password
-* reboot
+        * choose *expand filesystem*
+        * set you international options based on what you want
+        * turn on ssh.  This is useful for access if you want to do your adventure prep from a PC and just copy files over
+        * reset your password
+        * reboot
     
 ### Install necessary packages
 
@@ -69,8 +69,8 @@ DragonberryPi needs
     sudo apt-get upgrade
 
 Gnome WebKit's Web does not work well for DragonberryPi, better to use
-iceweasel.  Likewise Firefox is the best browser for viewing from a PC.
-mysql-workbench, phpmyadm, and python-sqlalchemy are ways to work with the
+Iceweasel.  Likewise Firefox is the best browser for viewing from a PC.
+Mysql-workbench, phpmyadm, and python-sqlalchemy are ways to work with the
 database of adventure prep (i.e. adding content).  I do not have custom
 browser-apps for that.  I use Gimp for slicing up the map into tiles, but
 typically I do it on the PC anyway.
@@ -90,15 +90,19 @@ then create the user for installing the database.  I like mysql-workbench for
 this. 
 
     mysql-workbench
-    # open Local instance 3306
-    # ignore error
-    # Go to Users and Privileges
-    #  new Login => `dragon` password `berry` on localhost
-    #  Administrative Roles => DBDesigner
-    #  Schema Privileges => DragonberryPi: Everything but GRANT
+
+    * with mysql-workbench do the following:
+        * open Local instance 3306
+        * ignore error
+        * Go to Users and Privileges
+        *  new Login => `dragon` password `berry` on localhost
+        *  Administrative Roles => DBDesigner
+        *  Schema Privileges => DragonberryPi: Everything but GRANT
 
 You can also use mysql-workbench to take a look at the database design layout,
-if you like.  mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb
+if you like.  
+
+    `mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb`
     
 Install the database and/or the example dungeon.  If you are using MariaDB on
 jesse, you can have higher time resolution on the save states.
@@ -150,7 +154,7 @@ touching tiles and the keyboard commands, I do not need to use my mouse very
 much.  This makes it easier to switch from rolling dice and taking notes to
 moving a pawn or turning a tile visible.  
 
-For the players, I have an second Raspberry Pi running iceweasel to display the
+For the players, I have an second Raspberry Pi running Iceweasel to display the
 pc version of the map.  It is a bit too much work for my Raspberry Pi2 to serve
 up apache and MariaDB while also having graphics and javascript to worry about,
 hence the second Pi.  I have it hooked to my TV which is laying flat on the
