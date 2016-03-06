@@ -1,8 +1,10 @@
 # DragonberryPi
+
 Dynamic RPG adventure map management for table top gaming 
 via a Raspberry Pi based server.
 
 ## Backstory
+
 Recently my daughter came across my old AD&D books at her grandma's house, and
 she got interested in playing.  I thought it would be fun to GM a game for her,
 but I wanted to use a newer rule system with lots of published content
@@ -17,6 +19,7 @@ wrote DragonberryPi.
 [Pathfinder]: http://paizo.com
 
 ## Introduction
+
 DragonberryPi (along with my flat-screen TV laid down on my table) allows me to
 use content I purchased without making it available to anybody else.  This is
 different than using some sort of remote table-top RPG service.  My intention
@@ -40,13 +43,17 @@ any access to it.
 [donjon]: http://donjon.bin.sh/
 
 ## Installation
+
 * [Install jessie][pi-install] on the Raspberry Pi.
 
 ### raspi-config
+
 * in a terminal type
+
     sudo rasi-config
 
 In rasi-config do the following:
+
 * choose *expand filesystem*
 * set you international options based on what you want
 * turn on ssh.  This is useful for access if you want to do your adventure prep from a PC and just copy files over
@@ -54,8 +61,10 @@ In rasi-config do the following:
 * reboot
     
 ### Install necessary packages
+
 You will want to make sure everything is up to date and install the packages
 DragonberryPi needs
+
     sudo apt-get update
     sudo apt-get upgrade
 
@@ -65,17 +74,21 @@ mysql-workbench, phpmyadm, and python-sqlalchemy are ways to work with the
 database of adventure prep (i.e. adding content).  I do not have custom
 browser-apps for that.  I use Gimp for slicing up the map into tiles, but
 typically I do it on the PC anyway.
+    
     sudo apt-get install iceweasel
     sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy
     # enter a root password for mariadb
     # point phpmyadmin to use apache
     
 ### Install DragonberryPi
+
 first clone the code
+
     git clone https://github.com/winterstew/DragonberryPi
     
 then create the user for installing the database.  I like mysql-workbench for
 this. 
+
     mysql-workbench
     # open Local instance 3306
     # ignore error
@@ -89,6 +102,7 @@ if you like.  mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb
     
 Install the database and/or the example dungeon.  If you are using MariaDB on
 jesse, you can have higher time resolution on the save states.
+
     cd DragonberryPi/share/mysql
     # install empty dungeon schema
     mysql -u dragon -p < DragonberryPi.sql
@@ -99,6 +113,7 @@ jesse, you can have higher time resolution on the save states.
 
     
 Install Apache configuration 
+
     cd ~/DragonberryPi/share/config
     sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
     sudo a2enmod rewrite
@@ -106,11 +121,13 @@ Install Apache configuration
     sudo service apache2 reload
     
 Try is out with firefox
+
     http://x.x.x.x/DragonberryPi
 
 [pi-install]: https://www.raspberrypi.org/documentation/installation/installing-images/README.md
 
 ## Usage
+
 Of course if you have fully your own content or open content, you can use it on
 your own website (assuming you have one and that it supports MySQL and PHP).
 Take a look at http://dragonberrypi.winterstew.com/ as an example.
