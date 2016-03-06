@@ -39,6 +39,77 @@ any access to it.
 [Roll20]: https://roll20.net/
 [donjon]: http://donjon.bin.sh/
 
+## Installation
+* [Install jessie][pi-install] on the Raspberry Pi.
+
+### raspi-config
+* in a terminal type
+    sudo rasi-config
+
+In rasi-config do the following:
+* choose *expand filesystem*
+* set you international options based on what you want
+* turn on ssh.  This is useful for access if you want to do your adventure prep from a PC and just copy files over
+* reset your password
+* reboot
+    
+### Install necessary packages
+You will want to make sure everything is up to date and install the packages
+DragonberryPi needs
+    sudo apt-get update
+    sudo apt-get upgrade
+
+Gnome WebKit's Web does not work well for DragonberryPi, better to use
+iceweasel.  Likewise Firefox is the best browser for viewing from a PC.
+mysql-workbench, phpmyadm, and python-sqlalchemy are ways to work with the
+database of adventure prep (i.e. adding content).  I do not have custom
+browser-apps for that.  I use Gimp for slicing up the map into tiles, but
+typically I do it on the PC anyway.
+    sudo apt-get install iceweasel
+    sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy
+    # enter a root password for mariadb
+    # point phpmyadmin to use apache
+    
+### Install DragonberryPi
+first clone the code
+    git clone https://github.com/winterstew/DragonberryPi
+    
+then create the user for installing the database.  I like mysql-workbench for
+this. 
+    mysql-workbench
+    # open Local instance 3306
+    # ignore error
+    # Go to Users and Privileges
+    #  new Login => `dragon` password `berry` on localhost
+    #  Administrative Roles => DBDesigner
+    #  Schema Privileges => DragonberryPi: Everything but GRANT
+
+You can also use mysql-workbench to take a look at the database design layout,
+if you like.  mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb
+    
+Install the database and/or the example dungeon.  If you are using MariaDB on
+jesse, you can have higher time resolution on the save states.
+    cd DragonberryPi/share/mysql
+    # install empty dungeon schema
+    mysql -u dragon -p < DragonberryPi.sql
+    # install example dungeon schema
+    mysql -u dragon -p < ExampleDungeon.sql
+    # or to install it with higher timestamp resolution
+    sed 's/timestamp/timestamp(3)/' ExampleDungeon.sql | mysql -u dragon -p DragonberryPi
+
+    
+Install Apache configuration 
+    cd ~/DragonberryPi/share/config
+    sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
+    sudo a2enmod rewrite
+    sudo a2ensite DragonberryPi
+    sudo service apache2 reload
+    
+Try is out with firefox
+    http://x.x.x.x/DragonberryPi
+
+[pi-install]: https://www.raspberrypi.org/documentation/installation/installing-images/README.md
+
 ## Usage
 Of course if you have fully your own content or open content, you can use it on
 your own website (assuming you have one and that it supports MySQL and PHP).
@@ -51,60 +122,23 @@ actually be one inch.  I lay my TV down on the table, put a clear acrylic
 pane over it to protect the screen from scratches and then lay a ruler down
 on the grid and adjust the scale to match.
 
-Once you have the scale you want click on either the PC mode or DM mode links.
-The DM mode link opens a new tab, so what I suggest for this walk through it to
-bring up both modes and have both tabs visible on your desktop so you can see
-how they work together.
+Once you have the scale you want click on either the PC mode or DM mode links
+in the green box.  The DM mode link opens a new tab, so what I suggest for this
+walk through it to bring up both modes and have both tabs visible on your
+desktop so you can see how they work together.  Controls for the various
+elements are shown if you mouse over the orange box.
 
-## Installation
-    install jessie on card
-    sudo rasi-config
-    expand filesystem
-    international options
-    turn on ssh
-    passwd?
-    
-    sudo apt-get update
-    sudo apt-get upgrade
-    #Gnome WebKit's Web does not work well for DragonberryPi
-    
-    sudo apt-get install iceweasel
-    #iceweasel seems to work pretty well
-    
-    sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy
-    # enter a root password for mariadb
-    # point phpmyadmin to use apache
-    
-    git clone https://github.com/winterstew/DragonberryPi
-    
-    mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb
-    # open Local instance 3306
-    # ignore error
-    # Go to Users and Privileges
-    #  new Login => `dragon` password `berry` on localhost
-    #  Administrative Roles => DBDesigner
-    #  Schema Privileges => DragonberryPi: Everything but GRANT
-    
-    cd DragonberryPi/share/mysql
-    # install empty dungeon schema
-    mysql -u dragon -p < DragonberryPi.sql
-    # install example dungeon schema
-    mysql -u dragon -p < ExampleDungeon.sql
-    # or to install it with higher timestamp resolution
-    sed 's/timestamp/timestamp(3)/' ExampleDungeon.sql | mysql -u dragon -p DragonberryPi
-    
-    cd ~/DragonberryPi/share/config
-    sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
-    sudo a2enmod rewrite
-    # had to edit DragonberryPi.conf for apache 2.4
-    # Require all granted
-    # instead of
-    # Order allow,deny
-    # Allow from all
-    
-    Try is out with firefox
-    http://x.x.x.x/DragonberryPi
-    sudo a2ensite DragonberryPi
-    sudo service apache2 reload
-    
-    mysql -u
+The way I use it is to have my touch-screen laptop open to the DM screen.  With
+touching tiles and the keyboard commands, I do not need to use my mouse very
+much.  This makes it easier to switch from rolling dice and taking notes to
+moving a pawn or turning a tile visible.  
+
+For the players, I have an second Raspberry Pi running iceweasel to display the
+pc version of the map.  It is a bit too much work for my Raspberry Pi2 to serve
+up apache and MariaDB while also having graphics and javascript to worry about,
+hence the second Pi.  I have it hooked to my TV which is laying flat on the
+table, and have a tiny, remote-control-sized wireless keyboard which the
+players hand around the table to control their PCs.
+
+## Adventure Prep
+
