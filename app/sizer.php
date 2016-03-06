@@ -15,16 +15,35 @@ div#main {
 	width: 100%;
 	height: 100%;
 }
+div#displayIntro {
+	position: static;
+}
 div#displayInfo {
 	position: static;
+}
+div#controls {
+	position: fixed;
+	background-color: white;	
+        padding:2px;
+	border:2px solid orange;
+	bottom: 0%;
+	left: 10%;
+	right: 10%;
+}
+div#controlsList {
+  font-size: 75%;
+  overflow-y: auto;
 }
 div#adventureSelect {
 	position: fixed;
 	background-color: white;	
         padding:2px;
 	border:2px solid #00FF00;
-	top: 50%;
+	top: 30%;
 	right: 50%;
+}
+th,td {
+  padding-right: 10px;
 }
 div#theGrid {
 	position: static;
@@ -32,6 +51,27 @@ div#theGrid {
 </style>
 <script>
 var globalScale = 0.348;
+var controlsHTML = "<tr><td style=\"text-align:right; font-weight:bold;\">mouse click</td><td>select/deselect a pawn or tile</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">1, 2, or 3</td><td>select/deselect a specific PC pawn</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">q, w, e, r, t, or y</td><td>select/deselect a specific monster pawn</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">mouse dbl-click</td><td>toggle visibility of a pawn or tile</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">v</td><td>toggle visibility of the selected pawn or tile</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">arrow keys</td><td>coarse translate selected pawn or tile</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">Ctrl-left arrow, Ctrl-right arrow</td><td>coarse rotate selected pawn or tile</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">Ctrl-up arrow, Ctrl-right arrow</td><td>coarse scale selected pawn or tile</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">Shift ...</td><td>enable fine control of movement and scale of arrow key based commands</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">mouse click-and-drag</td><td>translate whole pawn grid</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">Ctrl mouse click-and-drag left&amp;right</td><td>rotate whole pawn grid</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">Alt mouse click-and-drag up&amp;down</td><td>scale whole pawn grid</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">Shift ...</td><td>enable fine control of click-and-drag based commands</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">s</td><td>save new position of pawn grid or tile movements to database.  Pawn movements and visibility changes are auto-saved</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">a</td><td>turn selected pawn into a leader of its group such that its movements apply to all in the group</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">l</td><td>toggle indicator of line based attack ranges</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">k</td><td>toggle indicator of conical based attack ranges</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">j</td><td>toggle indicator of spherical based attack ranges</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">h</td><td>toggle selection of height adjustment</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">,</td><td>decrease attack range or height (as selected above) by five feet</td</tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">.</td><td>increase attack range or height (as selected above) by five feet</td></tr>" 
 function useScale() {
   var inpObj = document.getElementById("globalScaleInp");
   if(inpObj.checkValidity() == false) {
@@ -43,6 +83,14 @@ function useScale() {
     //document.getElementById("globalScaleInvalidP").innerHTML = globalScale;
     reScale();
   }
+}
+function mouseOver() {
+  if (document.getElementById('controlsTable').innerHTML == "") {
+   document.getElementById('controlsTable').innerHTML = controlsHTML;
+  }
+}
+function mouseOut() {
+  document.getElementById('controlsTable').innerHTML = "";
 }
 function reScale() {
   // even with the capability of specifiying units in inches, being able 
@@ -85,7 +133,9 @@ function reScale() {
 <body>
 <!-- the division is where I should define the display -->
 <div id="main">
-<div id="displayInfo">
+<div id="displayIntro">
+<h2>DragonberryPi</h2>
+<h3>pawn grid sizer</h3>
 <p id="globalScaleP">
 The box below should be 10 inches x 10 inches with 1 inch squares.<br>
 Enter a global scale factor so this is the case on your display.
@@ -93,7 +143,6 @@ Enter a global scale factor so this is the case on your display.
 <p id="globalScaleInvalidP"></p>
 <input id="globalScaleInp" type="number" name="globalScale" 
        min="0.1" max=10.0" step="0.001" onchange="useScale()">
-<p id="displayDetail"></p>
 </div>
 <div id="adventureSelect">
 <?php 
@@ -117,6 +166,12 @@ if ($adventures->num_rows > 0) {
 $conn->close();
 ?>
 </div>
+<div id="controls" onmouseover="mouseOver()" onmouseout="mouseOut()">
+<p>Choose an adventure in the green box.  The DM mode will have the full controls and visibility, whereas the PC mode will have controls for the PCs only and visibility only for those parts which the DM allows.  Mouse over this box to see the full controls</p>
+<div id="controlsList">
+<table id="controlsTable"></table>
+</div>
+</div>
 <div id="theGrid">
 <svg id="grid" 
      width="10in" height="10in" viewBox="0 0 500 500" preserveAspectRatio="xMinYMin slice"
@@ -132,6 +187,9 @@ for ($x = 0;$x < 500; $x+=50){
 }
 ?>
 </svg>
+</div>
+<div id="displayIntro">
+<p id="displayDetail"></p>
 </div>
 </div>
 <script>
