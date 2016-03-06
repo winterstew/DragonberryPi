@@ -50,7 +50,7 @@ any access to it.
 
 in a terminal type
 
-    `sudo rasi-config`
+    sudo rasi-config
 
 * then in rasi-config do the following:
 
@@ -84,12 +84,12 @@ typically I do it on the PC anyway.
 
 first clone the code
 
-    `git clone https://github.com/winterstew/DragonberryPi`
+    git clone https://github.com/winterstew/DragonberryPi
     
 then create the user for installing the database.  I like mysql-workbench for
-this. 
+this: 
 
-   `mysql-workbench`
+    mysql-workbench
 
 * with mysql-workbench do the following:
 
@@ -103,7 +103,7 @@ this.
 You can also use mysql-workbench to take a look at the database design layout,
 if you like.  
 
-    `mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb`
+    mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb
     
 Install the database and/or the example dungeon.  If you are using MariaDB on
 jesse, you can have higher time resolution on the save states.
