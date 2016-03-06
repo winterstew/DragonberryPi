@@ -62,13 +62,13 @@ any access to it.
     
 ### Install necessary packages
 
-You will want to make sure everything is up to date and install the packages
+* You will want to make sure everything is up to date and install the packages
 DragonberryPi needs
 
     sudo apt-get update
     sudo apt-get upgrade
 
-Gnome WebKit's Web does not work well for DragonberryPi, better to use
+* Gnome WebKit's Web does not work well for DragonberryPi, better to use
 Iceweasel.  Likewise Firefox is the best browser for viewing from a PC.
 Mysql-workbench, phpmyadm, and python-sqlalchemy are ways to work with the
 database of adventure prep (i.e. adding content).  I do not have custom
@@ -82,11 +82,11 @@ typically I do it on the PC anyway.
     
 ### Install DragonberryPi
 
-first clone the code
+* first clone the code
 
     git clone https://github.com/winterstew/DragonberryPi
     
-then create the user for installing the database.  I like mysql-workbench for
+* then create the user for installing the database.  I like mysql-workbench for
 this. 
 
    `mysql-workbench`
@@ -100,12 +100,12 @@ this.
         *  Administrative Roles => DBDesigner
         *  Schema Privileges => DragonberryPi: Everything but GRANT
 
-You can also use mysql-workbench to take a look at the database design layout,
+* You can also use mysql-workbench to take a look at the database design layout,
 if you like.  
 
     `mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb`
     
-Install the database and/or the example dungeon.  If you are using MariaDB on
+* Install the database and/or the example dungeon.  If you are using MariaDB on
 jesse, you can have higher time resolution on the save states.
 
     cd DragonberryPi/share/mysql
@@ -116,7 +116,7 @@ jesse, you can have higher time resolution on the save states.
     # or to install it with higher timestamp resolution
     sed 's/timestamp/timestamp(3)/' ExampleDungeon.sql | mysql -u dragon -p DragonberryPi
     
-Install Apache configuration 
+* Install Apache configuration 
 
     cd ~/DragonberryPi/share/config
     sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
@@ -124,7 +124,7 @@ Install Apache configuration
     sudo a2ensite DragonberryPi
     sudo service apache2 reload
     
-Try is out with firefox
+* Try is out with firefox
 
     http://x.x.x.x/DragonberryPi
 
