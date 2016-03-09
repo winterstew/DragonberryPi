@@ -3,12 +3,12 @@
 Dynamic RPG adventure map management for table top gaming 
 via a Raspberry Pi based server.
 
-[Backstory](#backstory)
-[Introduction](#introduction)
-[Installation](#installation)
-[Usage](#usage)
-[DatabaseDesign](#database-design)
-[Adventure Prep](#adventure-prep)
+* [Backstory](#backstory)
+* [Introduction](#introduction)
+* [Installation](#installation)
+* [Usage](#usage)
+* [DatabaseDesign](#database-design)
+* [Adventure Prep](#adventure-prep)
 
 ## Backstory
 
@@ -83,7 +83,7 @@ browser-apps for that.  I use Gimp for slicing up the map into tiles, but
 typically I do it on the PC anyway.
     
     sudo apt-get install iceweasel
-    sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy
+    sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy imagemagick
     # enter a root password for mariadb
     # point phpmyadmin to use apache
     
