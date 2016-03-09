@@ -161,5 +161,12 @@ hence the second Pi.  I have it hooked to my TV which is laying flat on the
 table, and have a tiny, remote-control-sized wireless keyboard which the
 players hand around the table to control their PCs.
 
+## Database Design
+
+![Database Diagram][database]
+
+[database]: share/mysql/DragonberryPi.png "DragonberryPi Database Diagram"
+
 ## Adventure Prep
+
 
