@@ -196,10 +196,93 @@ the players.
 
 ### Map table
 
+A Map record is attached to a particular Display via its idDisplay column, and
+is linked to a particular Adventure via records in the AdventureMap table.
+MapTypes which resolve to the name pawnGrid are moveable via the mouse in the
+final rendering.  Also if pixelsPerFoot and feetPerInch are defined, then the
+size of the display is decided based on this and the widthInches and
+heighInches.  These two will be chosen to match the monitor you use for the
+game.  The size of other MapTypes are set based on the Display size and the Map
+scale.  If dmVisible is true, then the Map will show up on the DMs list of
+available Maps in the various \*List displays.  The visible column is toggled by
+the DM interface during game play.
+
 ### Tile table
+
+Tile records define the parts of the Map referenced by the idMap column.  In
+the case of illustrations or overviewMaps, this may be a single Tile.  In the
+case of a pawnGrid, this will likely be many overlapping Tiles defining the
+whole dungeon.  A Tile is made up of a single Image referenced by the idImage
+column.  The scale and orientation of the Tile is decided by the record, and
+the visibility columns determine if the Tile shows up on the PC and/or DM
+interface.  The ruleLink column provides a means to reference a URL for any
+available rules relating to the Tile (if defined, it overrides the ruleLink
+defined by the Image).
 
 ### Pawn table
 
+The Pawn table is similar to the Tile table in that they can only be associated
+with one Map.  To use the "same" Pawn on multiple maps, just change the record
+or make duplicates.  The latter method means that your Pawn Locations are saved
+for each Map.  The sizeFeet column works in conjunction with the pawnGrid scale
+options to determine the size of the Pawn on the Map.  The selectKey is the
+shortcut key used to select the Pawn during game play.  The height,
+attackRange, and attackType are dynamically changed by the interface during
+game play, and the visibility columns work the same as those for the Tile
+records.  The Image which can be defined for a Pawn will be clipped to fit
+within the Pawn, and its scale and location are decided my the imageX, imageY,
+and imageScale columns.  A Pawn is identified as being part of a group based on
+its like to the Role table.  The Modifiers table links a Pawn to a list of SVG
+tokens from the Modifier table which mark the status of a Mondifiersparticular
+Pawn.
+
 ## Adventure Prep
 
+There is a group of [python scripts][share/python] (one of which is a
+[Gimp][] plugin.  However, at this time a fair amount of manual record
+entry needs to be done to prepare for an adventure.  For this I prefer either
+[Mysql Workbench][] or [phpMyAdmin][].  Typically I
+use [Putty][] to SSH into the Pi from my laptop and tunnel the MySQL port
+(3306), then use workbench on my laptop.  I also typically use [Gimp][] on my
+laptop as well and [SCP][WinSCP] the images over to the Pi when they are ready.
 
+[Gimp]: http://www.gimp.us.com
+[Mysql Workbench]: https://www.mysql.com/products/workbench/
+[Putty]: http://www.putty.org
+[phpMyAdmin]: https://www.phpmyadmin.net/
+[WinSCP]: https://winscp.net/
+
+For a pawnGrid map I use [Gimp][] to cut an image in to tiles (each on a
+separate layer); see [Dangerous
+Dungeon.xcf][app/public/images/Dangerous%20Dungeon.xcf] for an example.  Then I
+use the plugin [Export Layers][] to save each one as an image.  I transfer
+these images (and any others which I want to use as illustrations) to the
+``app/public/images`` sub-directories.  
+
+The first record in the Location table defines where this images directory
+exists on the Raspberry Pi's file system.  The second record typically will be
+``/images``, defining where the images are relative to the application's root
+public directory.  Any images and sub-directories created are up to you, they
+can all be added to the table with the [addImageFiles][] script.  This will
+create both Image records and Location records, however it does need
+``imagemagick`` to be installed to determine the image size.  Only images which
+do not already have a record will be added (no duplicates).  Running
+[addImageFiles][] a second time will give the idImage for each record for use
+in the other scripts.
+
+Next for pawnGrid Maps, and assuming the tile layers are all the same size as
+the original map image and the pieces have not been used, my plugin
+[json_export][] will create a JSON file which can be used as an import for
+[addTiles][].  For pawnGrids, a Map record should already exist, and then can
+be references by [addTiles].  Other Tiles can be added with
+[addIllustrations][], this script can also add its own Map record.  The
+[addPawns][] record can be used to add Pawns to a Map with or without images
+for the Pawn.  All of the scripts take options including `-h` to get help on
+usage.
+
+[Export Layers]: http://registry.gimp.org/node/28268
+[addIllustrations]: share/python/addIllustrations.py
+[addImageFiles]: share/python/addImageFiles.py
+[addPawns]: share/python/addPawns.py
+[addTiles]: share/python/addTiles.py
+[json_export]: share/python/json_export.py
