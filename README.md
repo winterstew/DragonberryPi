@@ -167,6 +167,39 @@ players hand around the table to control their PCs.
 
 [database]: share/mysql/DragonberryPi.png "DragonberryPi Database Diagram"
 
+The center of the design is the Map table.  Basically anything on the display
+is a Map.   The MapType defines whether it is a grid for the Pawns, an overview
+map, or and illustration.  The Display table defines divisions of the browser
+within which the Maps are displayed.  The Adventure and AdventureMap tables
+define which Maps will be available from which the DM can select.  
+
+Each Map is made up of Tiles which can be individually scaled and positioned
+and selectively revealed.  Also on  the Map are Pawns which can be members of a
+group as defined by their Role.  The Pawns also have Modifiers which define
+their state.  The SVG images which make up these modifiers are stored directly
+in the Modifier table.  
+
+Both Tiles and Pawns get their images from the Image table which used the self
+referential Location table to define their location on disk.  There is also a
+Source table to record who generated the images.
+
+### Display table
+
+Each of the Display records layout a portion of the browser via CSS div
+entries.  Additionally some records have special names which define how they
+are used.  The pawnGridList, illustrationList, and overviewMapList displays
+provide a location for the DM lists of each type of Map to turn on and off.
+The modifierSelectors display provides a location for the list of modifiers for
+the DM to turn on and off for a selected Pawn.  The pawnStats, pawnStatsUp, and
+pawnStatsDown provide a location for the display of a selected Pawns stats for
+the players.
+
+### Map table
+
+### Tile table
+
+### Pawn table
+
 ## Adventure Prep
 
 
