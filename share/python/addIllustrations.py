@@ -49,7 +49,7 @@ type maps can be linked to multiple adventures via AdventureMap entries.
         help='Tile translateY  (default is 0)')
     parser.add_argument('--tLink','-l',action='store',
         help='Tile ruleLink  (default is null)')
-    parser.add_argument('idImage', type=str, nargs="+",
+    parser.add_argument('idImage', type=int, nargs="+",
         help='Image idImage numbers to be Tiles')
     # parse the command line arguments and options
     args = parser.parse_args()

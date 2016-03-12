@@ -83,7 +83,7 @@ browser-apps for that.  I use Gimp for slicing up the map into tiles, but
 typically I do it on the PC anyway.
     
     sudo apt-get install iceweasel
-    sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy imagemagick
+    sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy python-mysqldb imagemagick
     # enter a root password for mariadb
     # point phpmyadmin to use apache
     
