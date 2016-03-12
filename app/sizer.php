@@ -135,6 +135,14 @@ function reScale() {
 <div id="main">
 <div id="displayIntro">
 <h2>DragonberryPi</h2>
+<p>This is an example of <a
+href="https://github.com/winterstew/DragonberryPi">DragonberryPi</a> in use.
+It is running on a standard linux-based hosting server, rather than a <a
+href="https://www.raspberrypi.org/">Raspberry Pi</a> However, it runs very well
+on a Raspberry Pi.  I prefer using two, one as the server and one running the
+browser for the players.  Figure out the controls and take a look at an
+example below.  Open a window on each side of you display one as a pc and one
+as a dm and see how they interact.  Enjoy!<p>
 <h3>pawn grid sizer</h3>
 <p id="globalScaleP">
 The box below should be 10 inches x 10 inches with 1 inch squares.<br>
