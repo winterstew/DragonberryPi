@@ -853,7 +853,7 @@ function interpretKeyDown(event) {
     var table = selectedTileOrPawn.getAttribute("class");
     var id = selectedTileOrPawn.id.slice(table.length);
     toggleVisibility(table,id);
-  } else if (((key == 65)||(key == 72)||(key == 74)||(key == 75)||(key == 76)||(key == 190)||(key == 187)||(key == 188)) && selectedTileOrPawn.id && (! keyHold)) {
+  } else if (((key == 65)||(key == 72)||(key == 74)||(key == 75)||(key == 76)||(key == 190)||(key == 187)||(key == 61)||(key == 188)) && selectedTileOrPawn.id && (! keyHold)) {
     // setting leader, ranges, height, etc with no repeat
     var table = selectedTileOrPawn.getAttribute("class");
     if (table == "Pawn") {
@@ -916,15 +916,15 @@ function interpretKeyDown(event) {
           updatePawnAttackType(selectedTileOrPawn.id.slice(4),"None");
         }
         adjustPawnIndicator(selectedTileOrPawn.id.slice(4),"attackRange",1,0)
-      } else if ((key == 190)||(key == 109)||(key == 187)||(key == 188)) {
+      } else if ((key == 190)||(key == 187)||(key == 61)||(key == 188)) {
         var adjust = 0;
         var multi = 1;
         // 190 is "." to increase heightIndicator by 5
         // 188 is "," to decrease heightIndicator by 5
-        // 187 is "=" to set heightIndicator to 0
+        // 187 is "=" (187 in Chrome; 61 in Firefox) to set heightIndicator to 0
         if (key == 190) { adjust = 5; }
         if (key == 188) { adjust = -5; }
-        if (key == 187) { multi = 0; }
+        if ((key == 61) || (key == 187)) { multi = 0; }
         if ((selectedTileOrPawn.getAttribute("attacktype") != "None")&&(selectedTileOrPawn.getAttribute("attacktype") != "Height")) {
           adjustPawnIndicator(selectedTileOrPawn.id.slice(4),"attackRange",multi,adjust)
         } else {
