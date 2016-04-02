@@ -327,6 +327,7 @@ function updateDisplayVisibility(){
       isVisible = (maps.length > 0) ? false : true;
       for (j = 0; j < maps.length; j++) {
           if (maps[j].getAttribute("visibility") != "hidden") {isVisible = true}
+          if (maps[j].getAttribute("display") != "none") {isVisible = true}
       }
       if (isVisible) {
           divs[i].setAttribute("class",divs[i].getAttribute("id") + "Visible")
@@ -432,6 +433,7 @@ function updateVisibility(table,id,attribute) {
     updateListHTML += "visible ";
     if (table == "Map") {
       myE.setAttribute("visibility","visible");
+      myE.setAttribute("display","inline");
       myE.setAttribute("width",myE.getAttribute("widthvisible"));
       myE.setAttribute("height",myE.getAttribute("heightvisible"));
     } else {
@@ -442,6 +444,7 @@ function updateVisibility(table,id,attribute) {
     if (but) {but.setAttribute("class","toggleListOpaque");}
     if (table == "Map") {
       myE.setAttribute("visibility","hidden");
+      myE.setAttribute("display","none");
       myE.setAttribute("width","0");
       myE.setAttribute("height","0");
       updateListHTML += "hidden ";
@@ -454,6 +457,7 @@ function updateVisibility(table,id,attribute) {
     if (but) {but.setAttribute("class","toggleListOpaque");}
     myE.setAttribute("visibility","hidden");
     if (table == "Map") {
+      myE.setAttribute("display","none");
       myE.setAttribute("width","0");
       myE.setAttribute("height","0");
     }
@@ -1099,6 +1103,7 @@ if ($displays->num_rows > 0) {
     if ($d['name'] == "pawnStatsDown") { echo "  padding: 0px;\n  margin: 0px;\n";}
     if ($d['name'] == "pawnStatsUp") { echo "  -ms-transform: rotate(180deg);\n  -webkit-transform: rotate(180deg);\n transform: rotate(180deg);\n   padding: 0px;\n  margin: 0px;\n";}
     echo "  visibility: inherit;\n";
+    echo "  display: inherit;\n";
     #echo "  border:1px solid #A0A0A0;\n";
     echo "}\n";
    echo "div.display".$d["idDisplay"]."Hidden {\n";
@@ -1113,6 +1118,7 @@ if ($displays->num_rows > 0) {
     if ($d["backgroundColor"] != NULL) {echo "  background-color: ".$d["backgroundColor"].";\n";}
     if (strpos($d['name'],"List") or strpos($d['name'],"Selectors")) { echo "  overflow-x: auto;\n  overflow-y: auto;\n";}
     echo "  visibility: inherit;\n";
+    echo "  display: inherit;\n";
     #echo "  border:1px solid #000000;\n";
     echo "}\n";
   }
@@ -1163,7 +1169,7 @@ p.pawnStats {
 table.pawnStats {
   table-layout: auto;
   text-align: center;
-  font-size: 0.5em;
+  font-size: 0.7em;
   border: 0px;
   padding: 0px 0px 0px 0px;
   width: 100%;
@@ -1228,7 +1234,7 @@ if ($displays->num_rows > 0) {
 
     // select maps
     // if a map is associated with a display it is assumed to be active (not necessarily visible)
-    $maps = $conn->query("SELECT * FROM MapMapType WHERE idDisplay = ".$d["idDisplay"]." AND idAdventure=".$aId." ORDER BY depth DESC");
+    $maps = $conn->query("SELECT * FROM MapMapType WHERE idDisplay = ".$d["idDisplay"]." AND idAdventure=".$aId." ORDER BY depth DESC, idMap ASC");
     //loop through maps for each display
     if ($maps->num_rows > 0) {
       while($m = $maps->fetch_assoc()) {
@@ -1240,16 +1246,22 @@ if ($displays->num_rows > 0) {
         // Map visibility, only if visible for PC
         if (isVisible($m,"pc")) {
           echo 'visibility="visible" ';
+          echo 'display="inline" ';
         } elseif (isVisible($m,$mapMode)) {
           echo 'visibility="hidden" ' ;
+          echo 'display="none" ' ;
         }
         // Map element id 
         echo 'id="map'.$m["idMap"].'" ';
         //echo 'updated="'.$m["updated"].'" ';
         echo 'updated="2000-01-01 01:00:00" ';
-        // scaling for Maps which need to have a real word scale for physical pawns
+        // scaling for Maps which do not need to have a real word scale
+        // is set based on the display size
         $dWidth = str_replace("px","",$d["width"]);
         $dHeight = str_replace("px","",$d["height"]);
+        if (strpos($dWidth,'%')) {  $dWidth = '100%'; }
+        if (strpos($dHeight,'%')) {  $dHeight = '100%'; }
+        // scaling for Maps which need to have a real word scale for physical pawns
         $bx = 0; $by = 0;
         if (($m["pixelsPerFoot"] != NULL) && ($m["feetPerInch"] != NULL)) {
           $vbx = NULL; $vby = NULL;
@@ -1282,7 +1294,10 @@ if ($displays->num_rows > 0) {
           if (isVisible($m,"pc")) { echo 'width="'.$dWidth.'" height= "'.$dHeight.'" ';
           } else { echo 'width="0" height= "0" ';}
           echo 'widthvisible="'.$dWidth.'" heightvisible= "'.$dHeight.'" ';
-          echo 'viewBox="0 0 '.$dWidth.' '.$dHeight.'" '; 
+          // no view box if display size is defined with a %
+          if (! (strpos($dWidth,'%') or strpos($dHeight,'%'))) {  
+           echo 'viewBox="0 0 '.$dWidth.' '.$dHeight.'" '; 
+          }
         }
         if ($m["mapType"] == "pawnGrid") {
           // pawnGrids need to not change aspect 
@@ -1309,7 +1324,14 @@ if ($displays->num_rows > 0) {
          echo 'scale('. $m["scale"] .') ';
         // non pawnGrid map types use a straigt scale factor
         } else {
-         echo 'rotate('. $m["rotate"] .' '. $m["scale"]*$dWidth/2 .' '. $m["scale"]*$dHeight/2 .') ';
+         $rotCentX =0;
+         $rotCentY = 0;
+         # This code was commented out because it will
+         # behave differently for dosplays dwith size defined by pixels versus percentages
+         #if (! strpos($dWidth,'%')) {  $rotCentX =  $m["scale"]*$dWidth/2; }
+         #if (! strpos($dHeight,'%')) {  $rotCentY = $m["scale"]*$dHeight/2; }
+         #echo 'rotate('. $m["rotate"] .' '. $rotCentX .' '. $rotCentX .') ';
+         echo 'rotate('. $m["rotate"] .' '. $rotCentX .' '. $rotCentX .') ';
          echo 'translate('. $m["translateX"] .' '. $m["translateY"] .') ';
          echo 'scale('. $m["scale"] .') ';
         }
