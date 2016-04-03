@@ -1,0 +1,49 @@
+     width="100%" 
+     height="100%" 
+     version="1.1"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g
+       id="target"
+       transform="translate(0,-1052.36216)">
+       <animate id="fullFade" begin="accessKey(b)" dur="3.0s" />
+       <g 
+         id="outer-ring">
+         <path
+            transform="translate(0,552.36216)"
+            d="M 0,250 A 250,250 0 0 0 -250,500 250,250 0 0 0 0,750 250,250 0 0 0 250,500 250,250 0 0 0 0,250 Z m 0,50 A 200,200 0 0 1 200,500 200,200 0 0 1 0,700 200,200 0 0 1 -200,500 200,200 0 0 1 0,300 Z"
+            style="opacity:1;fill:#ff41ff;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="0" begin="fullFade.begin+0.0s" dur="0.25s" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="1" begin="fullFade.begin+0.25s" dur="0.25s" />
+         <animate attributeType="CSS" attributeName="opacity" from="1" to="1" begin="fullFade.begin+0.5s" dur="0.75s" />
+         <animate attributeType="CSS" attributeName="opacity" from="1" to="0" begin="fullFade.begin+1.25s" dur="0.25s" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="0" begin="fullFade.begin+1.5s" dur="0.75s" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="1" begin="fullFade.begin+2.25s" dur="0.25s" />
+         <animate attributeType="CSS" attributeName="opacity" from="1" to="1" begin="fullFade.begin+2.5s" dur="0.5s" />
+       </g>
+       <g 
+         id="middle-ring">
+         <path
+            d="M 0,878.1236 A 174.23857,174.23857 0 0 0 -174.23857,1052.3622 174.23857,174.23857 0 0 0 0,1226.6008 174.23857,174.23857 0 0 0 174.23857,1052.3622 174.23857,174.23857 0 0 0 0,878.1236 Z m 0,34.84771 A 139.39085,139.39085 0 0 1 139.39085,1052.3622 139.39085,139.39085 0 0 1 0,1191.753 139.39085,139.39085 0 0 1 -139.39085,1052.3622 139.39085,139.39085 0 0 1 0,912.97131 Z"
+            style="opacity:1;fill:#ff73ff;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="0" begin="fullFade.begin+0.0s" dur="0.5s" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="1" begin="fullFade.begin+0.5s" dur="0.25s" />
+         <animate attributeType="CSS" attributeName="opacity" from="1" to="1" begin="fullFade.begin+0.75s" dur="0.75s" />
+         <animate attributeType="CSS" attributeName="opacity" from="1" to="0" begin="fullFade.begin+1.5s" dur="0.25s" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="0" begin="fullFade.begin+1.75s" dur="0.75s" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="1" begin="fullFade.begin+2.5s" dur="0.25s" />
+         <animate attributeType="CSS" attributeName="opacity" from="1" to="1" begin="fullFade.begin+2.75s" dur="0.25s" />
+       </g>
+       <g 
+         id="inner-ring">
+         <path
+            d="M 0,937.7226 A 114.63958,114.63958 0 0 0 -114.63958,1052.3622 114.63958,114.63958 0 0 0 0,1167.0018 114.63958,114.63958 0 0 0 114.63958,1052.3622 114.63958,114.63958 0 0 0 0,937.7226 Z m 0,22.92791 A 91.71166,91.71166 0 0 1 91.71166,1052.3622 91.71166,91.71166 0 0 1 0,1144.0738 91.71166,91.71166 0 0 1 -91.71166,1052.3622 91.71166,91.71166 0 0 1 0,960.65051 Z"
+            style="opacity:1;fill:#ffc3ff;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="0" begin="fullFade.begin+0.0s" dur="0.75s" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="1" begin="fullFade.begin+0.75s" dur="0.25s" />
+         <animate attributeType="CSS" attributeName="opacity" from="1" to="1" begin="fullFade.begin+1.0s" dur="0.75s" />
+         <animate attributeType="CSS" attributeName="opacity" from="1" to="0" begin="fullFade.begin+1.75s" dur="0.25s" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="0" begin="fullFade.begin+2.0s" dur="0.75s" />
+         <animate attributeType="CSS" attributeName="opacity" from="0" to="1" begin="fullFade.begin+2.75s" dur="0.25s" />
+       </g>
+    </g>
