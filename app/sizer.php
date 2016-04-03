@@ -71,7 +71,8 @@ var controlsHTML = "<tr><td style=\"text-align:right; font-weight:bold;\">mouse 
 "<tr><td style=\"text-align:right; font-weight:bold;\">j</td><td>toggle indicator of spherical based attack ranges</td></tr>" +
 "<tr><td style=\"text-align:right; font-weight:bold;\">h</td><td>toggle selection of height adjustment</td></tr>" +
 "<tr><td style=\"text-align:right; font-weight:bold;\">,</td><td>decrease attack range or height (as selected above) by five feet</td</tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">.</td><td>increase attack range or height (as selected above) by five feet</td></tr>" 
+"<tr><td style=\"text-align:right; font-weight:bold;\">.</td><td>increase attack range or height (as selected above) by five feet</td></tr>" +
+"<tr><td style=\"text-align:right; font-weight:bold;\">b</td><td>toggle display of a map pointer</td></tr>" 
 function useScale() {
   var inpObj = document.getElementById("globalScaleInp");
   if(inpObj.checkValidity() == false) {
