@@ -25,6 +25,15 @@ while (count($saveList) > 1) {
   if ($table == "Pawn") { $sql .= ", `sizeFeet`=" . $transform['scale']/$attributes['pawnscale']; }
   if ($table == "Tile") { $sql .= ", `scale`=" . $transform['scale']; }
   if ($table == "Map") { $sql .= ", `scale`=" . $transform['scale']; }
+  if ($table == "Pointer") { 
+    $sql .= ", `scale`=" . $transform['scale'];
+    $sql .= ", `visible`=";
+    if ($attributes['visibility']=="visible") {
+      $sql .= "1";
+    } else {
+      $sql .= "0";
+    }
+  }
   $sql .= ", `translateX`=" . $transform['translateX'];
   $sql .= ", `translateY`=" . $transform['translateY'];
   $sql .= " WHERE `id". $table ."`='".$id."'";

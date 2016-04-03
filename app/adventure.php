@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="width:100%;height:100%;">
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 <?php 
@@ -108,6 +108,8 @@ var scaleRes = 0.1;
 var selectedTileOrPawn = {};
 var needsSave = false;
 var keyHold = null;
+var mouseX=0;
+var mouseY=0;
 
 function fillOutPawns() {
   var callback = {
@@ -207,7 +209,7 @@ function updateAll() {
     doToggleModifier(pawnId,modifierId);
   }
   // Now lets check the update status
-  var myT= ["Map","Tile","Pawn"];
+  var myT= ["Map","Tile","Pawn","Pointer"];
   var x,i;
   for (x in myT) {
     // build up a list as [tablename,id1,updated1,id2,updated2,...]
@@ -436,6 +438,9 @@ function updateVisibility(table,id,attribute) {
       myE.setAttribute("display","inline");
       myE.setAttribute("width",myE.getAttribute("widthvisible"));
       myE.setAttribute("height",myE.getAttribute("heightvisible"));
+    } else if (table == "Pointer") {
+      myE.setAttribute("visibility","visible");
+      myE.setAttribute("display","inline");
     } else {
       myE.setAttribute("visibility","visible");
       myE.setAttribute("opacity",1.0);
@@ -448,6 +453,9 @@ function updateVisibility(table,id,attribute) {
       myE.setAttribute("width","0");
       myE.setAttribute("height","0");
       updateListHTML += "hidden ";
+    } else if (table == "Pointer") {
+      myE.setAttribute("visibility","hidden");
+      myE.setAttribute("display","none");
     } else {
       myE.setAttribute("visibility","visible");
       myE.setAttribute("opacity",0.5);
@@ -460,6 +468,8 @@ function updateVisibility(table,id,attribute) {
       myE.setAttribute("display","none");
       myE.setAttribute("width","0");
       myE.setAttribute("height","0");
+    } else if (table == "Pointer") {
+      myE.setAttribute("display","none");
     }
     updateListHTML += "hidden ";
   } 
@@ -620,11 +630,11 @@ function startMapMove(event,id) {
   startY = ev.clientY;
   startR = ev.clientX;
   startS = ev.clientY;
-  var map = document.getElementById(id);
-  oldTransform = unpackTransform(map.getAttribute("transform"),"map");
+  movingMap = document.getElementById(id);
+  oldTransform = unpackTransform(movingMap.getAttribute("transform"),"map");
 }
 
-function endMapMove(event,id) {
+function endMapMove(event) {
   // ends a Map move by
   // resetting the start positions back to 0
   ev = event || window.event;
@@ -633,25 +643,39 @@ function endMapMove(event,id) {
   startY = 0;
   startR = 0;
   startS = 0;
+  movingMap = undefined;
   mode = "t";
   moveRes = globalScale;
   rotRes = 22.5;
   scaleRes = 0.1;
 }
 
-function doingMapMove(event,id) {
+function multiMouseMove(event) {
+  ev = event || window.event;
+  ev.preventDefault();
+  if (ev.currentTarget.getAttribute("class") == "Map") {
+    mouseX = ev.pageX - ev.currentTarget.parentElement.offsetLeft;
+    mouseY = ev.pageY - ev.currentTarget.parentElement.offsetTop;
+    var vb = ev.currentTarget.getAttribute("viewBox").split(" ");
+    var ws = vb[2]/ev.currentTarget.getAttribute("width")
+    var hs = vb[3]/ev.currentTarget.getAttribute("height")
+    mouseX = mouseX*ws
+    mouseY = mouseY*ws
+  }
+}
+
+function doingMapMove(event) {
+  ev = event || window.event;
+  ev.preventDefault();
   // do a Map move by transforming the element
   // based on the mouse movement
-  if ((startX != 0) && (startY != 0)) {
-    ev = event || window.event;
-    ev.preventDefault();
+  if ((startX != 0) && (startY != 0) && movingMap) {
     if (ev.altKey) { mode = "s"; }
     if (ev.ctrlKey) { mode = "r"; }
     if (ev.shiftKey) { moveRes = 1.0; rotRes = 1.0; scaleRes = 0.001; }
-    var map = document.getElementById(id);
-    var newTransform = unpackTransform(map.getAttribute("transform"),"map");
+    var newTransform = unpackTransform(movingMap.getAttribute("transform"),"map");
     var mapPixelsPerInch = 1.0*standardMapPixelsPerInch;
-    if (map.getAttribute("pixelsperinch") > 0) {mapPixelsPerInch = 1.0*map.getAttribute("pixelsperinch")}
+    if (movingMap.getAttribute("pixelsperinch") > 0) {mapPixelsPerInch = 1.0*movingMap.getAttribute("pixelsperinch")}
     if (mode == "r") {
       newTransform[0] = 1*oldTransform[0]+Math.floor((ev.clientX-startR)/2.0/rotRes)*rotRes;
       newTransform[0] = newTransform[0] % 360;
@@ -685,13 +709,13 @@ function doingMapMove(event,id) {
       myHTML += "dX:"+dX+"<br>"+oldTransform[3]+"<br>"+newTransform[3]+"<br>" ;
       myHTML += "dY:"+dY+"<br>"+oldTransform[4]+"<br>"+newTransform[4]+"<br>" ;
     }
-    map.setAttribute("transform",packTransform(newTransform),"map");
+    movingMap.setAttribute("transform",packTransform(newTransform),"map");
   }
 }
 
 function unpackTransform(trs,type) {
   // unpack the transform string into and 7 member array
-  // of rotate,rotate_center_x,rotate_center_y,scale_x,scale_y,translate_x,translate_y
+  // of rotate, rotate_center_x, rotate_center_y, translate_x, translate_y, scale_x, scale_y
   var r = trs.match(/rotate\s*\((\s*[^)]+\s*)\)/i)[1].split(" ");
   if (r.length < 3) {r[1]=0;r[2]=0;}
   var t = trs.match(/translate\s*\((\s*[^)]+\s*)\)/i)[1].split(" ");
@@ -755,6 +779,25 @@ function moveTileOrPawn(elem,type,mode,dir,res) {
   elem.setAttribute("transform",packTransform(newTransform,type));
   if (type == "pawn") {saveOne("Pawn",elem);}
   needsSave = true;
+}
+
+function placePointer(elem,myX,myY) {
+  var type = "pointer"
+  var vis = elem.getAttribute("visibility")
+  if (vis == "visible")  {
+    elem.setAttribute("visibility","hidden");
+    elem.setAttribute("display","none");
+  }
+  var newTransform = unpackTransform(elem.getAttribute("transform"),type);
+  newTransform[3] = myX;
+  newTransform[4] = myY;
+  elem.setAttribute("transform",packTransform(newTransform,type));
+  if (vis == "hidden")  {
+    elem.setAttribute("visibility","visible");
+    elem.setAttribute("display","inline");
+  }
+  // in the case of pointers this also saves the visibility
+  saveOne("Pointer",elem);
 }
 
 function interpretKeyUp(event) {
@@ -938,6 +981,17 @@ function interpretKeyDown(event) {
     }
   } else if (! keyHold) {
     // all other key presses, but only once, not if held
+    // turn on pointers
+    var pointers = document.getElementsByClassName("Pointer");
+    for(index = 0; index < pointers.length; index++) {
+      if ((pointers[index].hasAttribute("selectkey")) &&  
+          ((pointers[index].getAttribute("selectkey") == String.fromCharCode(key).toUpperCase()) ||
+           (pointers[index].getAttribute("selectkey") == String.fromCharCode(key).toLowerCase()))) {
+          keyHTML += "toggle Pointer:"+pointers[index].id+" at "+mouseX+","+mouseY+"<br>";
+          placePointer(pointers[index],mouseX,mouseY)
+      }
+    }
+    // select/deselect pawns
     var pawns = document.getElementsByClassName("Pawn");
     for(index = 0; index < pawns.length; index++) {
       // check that the pawn is on a currently visible map
@@ -1009,7 +1063,8 @@ function selectTileOrPawn(id) {
 
 function saveOne(table,myElement) {
   var saveHTML = "saveOne<br>";
-  var saveList = [table,myElement.id.slice(4)]
+  var saveList = [table,myElement.id.slice(table.length)]
+  // in the case of pointers this also toggles the visibility
   var attribute = {};
   for (ai = 0; ai < myElement.attributes.length; ai++) {
     attribute[myElement.attributes.item(ai).name] = myElement.attributes.item(ai).value;
@@ -1126,6 +1181,14 @@ if ($displays->num_rows > 0) {
 // reset the select table back to the start
 $displays->data_seek(0);
 ?>
+o
+object.Pointer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
 button.toggleListVisible {
   margin: 0px;
   border: 0px;
@@ -1184,11 +1247,17 @@ td.modifiersListCell { width: 40%; word-wrap:break-word;}
 
 </style>
 </head>
-<body onkeydown="interpretKeyDown(event)" onkeyup="interpretKeyUp(event)">
+<body onkeydown="interpretKeyDown(event)" onkeyup="interpretKeyUp(event)" 
+      onmouseup="endMapMove(event)" onmousemove="doingMapMove(event)"
+      style="width:100%;height:100%;margin:0;">
 <?php 
+// do the pointers query here so I do not get multiple display areas
+// with the same pointer
+//$pointers = $conn->query("SELECT * FROM Pointer");
 // loop through displays again
 if ($displays->num_rows > 0) {
   while($d = $displays->fetch_assoc()) {
+    $displayHasPawnGrid = 0;
     // Check if this a List display (i.e. likely no map)
     // List displays and modifierSelectors only exist for the DM
     if (strpos($d['name'],"List") && $mapMode == "dm") {
@@ -1229,7 +1298,7 @@ if ($displays->num_rows > 0) {
       //echo '<button id="saveButton" onclick="fillOutPawns()">Pawn&nbsp;Redraw</button>';
     } elseif ((! strpos($d['name'],"List")) && ($d['name'] != "modifierSelectors")) {
       // output div element for each display
-      echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
+      echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible" >'."\n";
     } 
 
     // select maps
@@ -1238,6 +1307,7 @@ if ($displays->num_rows > 0) {
     //loop through maps for each display
     if ($maps->num_rows > 0) {
       while($m = $maps->fetch_assoc()) {
+        if ($m["mapType"] == "pawnGrid") { $displayHasPawnGrid = 1; }
         // Outer most svg element
         //  this contains the visibility information as well as the scale and size
         //  for the overal mapping area
@@ -1303,9 +1373,11 @@ if ($displays->num_rows > 0) {
           // pawnGrids need to not change aspect 
           echo 'preserveAspectRatio="xMinYMin slice" ';
           // put map move controls here so that the mouse active area does not change when the map's transformation does
-          echo 'onmousedown="startMapMove(evt,\'map'.$m["idMap"].'g\')" onmouseup="endMapMove(evt,\'map'.$m["idMap"].'g\')" onmousemove="doingMapMove(evt,\'map'.$m["idMap"].'g\')" ';
+          //echo 'onmousedown="startMapMove(evt,\'map'.$m["idMap"].'g\')" onmouseup="endMapMove(evt,\'map'.$m["idMap"].'g\')" onmousemove="doingMapMove(evt,\'map'.$m["idMap"].'g\')" ';
+          echo 'onmousedown="startMapMove(evt,\'map'.$m["idMap"].'g\')" ';
           echo 'style="border:1px solid #EEEEEE" '; // red for testing
         }
+        echo 'onmousemove="multiMouseMove(evt)" ';
         //echo 'style="border:1px solid #FF0000" '; // red for testing
         echo 'xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ';
         echo ">\n";
@@ -1447,21 +1519,87 @@ if ($displays->num_rows > 0) {
           }
         }
         echo "</g> <!--close mapg-->\n";
+        // lets point a pointer on every pawnGrid
+        $pointers = $conn->query("SELECT * FROM Pointer WHERE idMap = ".$m["idMap"]);
+        if ($pointers->num_rows > 0) {
+          while($p = $pointers->fetch_assoc()){
+            echo "<!-- open Pointer-->\n";
+            echo '<g id="pointer'.$p["idPointer"].'" ' . "\n";
+            echo '   class="Pointer" ' . "\n";
+            echo '   type="image/svg+xml"' ."\n";
+            echo '   selectkey="' . $p["selectKey"] . '" ' . "\n";
+            if (isVisible($p,"")) { 
+              echo '   visibility="visible" '."\n" ; 
+              echo '   display="inline" '."\n" ; 
+            } else {
+              echo '   visibility="hidden" '."\n" ; 
+              echo '   display="none" '."\n" ; 
+            }
+            echo '   transform="rotate('.$p['rotate'].') translate('.$p['translateX'].','.$p['translateY'].') scale('.$p['scale'].')" '."\n";
+            echo '   updated="2000-01-01 01:00:00" '."\n";
+            echo $p["shapeSvg"];
+            echo "</g> <!--close Pointer-->";
+          }
+        }
         echo "</svg> <!--close Map-->\n";
       }
+      //// pointers are on top of the pawnGrid map only
+      //// select all dmVisible pointers
+      //if ( $displayHasPawnGrid == 1) {
+      //  if ($pointers->num_rows > 0) {
+      //    while($p = $pointers->fetch_assoc()){
+      //      echo "<!-- open Pointer-->\n";
+      //      echo '<object id="pointer'.$p["idPointer"].'" ' . "\n";
+      //      echo '     class="Pointer" ' . "\n";
+      //      echo '     type="image/svg+xml"' ."\n";
+      //      echo '     selectkey="' . $p["selectKey"] . '" ' . "\n";
+      //      if (isVisible($p,"")) { 
+      //        echo '     visibility="visible" '."\n" ; 
+      //        echo '     display="inline" '."\n" ; 
+      //      } else {
+      //        echo '     visibility="hidden" '."\n" ; 
+      //        echo '     display="none" '."\n" ; 
+      //      }
+      //      echo '     transform="rotate('.$p['rotate'].') translate('.$p['translateX'].','.$p['translateY'].') scale('.$p['scale'].')" '."\n";
+      //      echo $p["shapeSvg"];
+      //      echo "</svg> <!--close Pointer-->";
+      //    }
+      //  }
+      //}
     }
     //echo "div test -&gt; scale:".$globalScale." mode ".$mapMode."<br>\n";
     // close div element for display
     // List displays only exist for the DM
     if (strpos($d['name'],"List") && $mapMode == "dm") {
       echo "</div>\n";
-    } elseif (($d['name'] == "modifierSelectors") && $mapMode == "dm") {
+    } elseif ($d['name'] == "modifierSelectors") {
       echo "</div>\n";
     } elseif ((! strpos($d['name'],"List")) && ($d['name'] != "modifierSelectors")) {
       echo "</div>\n";
     }
   }
 }
+//// pointers are on top of everything
+//// select all dmVisible pointers
+//$pointers = $conn->query("SELECT * FROM Pointer");
+//if ($pointers->num_rows > 0) {
+//  while($p = $pointers->fetch_assoc()){
+//    echo "<!-- open Pointer-->\n";
+//    echo '<svg id="pointer'.$p["idPointer"].'" ' . "\n";
+//    echo '     class="Pointer" ' . "\n";
+//    echo '     selectkey="' . $p["selectKey"] . '" ' . "\n";
+//    if (isVisible($p,"")) { 
+//      echo '     visibility="visible" '."\n" ; 
+//      echo '     display="inline" '."\n" ; 
+//    } else {
+//      echo '     visibility="hidden" '."\n" ; 
+//      echo '     display="none" '."\n" ; 
+//    }
+//    echo '     transform="rotate('.$p['rotate'].') translate('.$p['translateX'].','.$p['translateY'].') scale('.$p['scale'].')" '."\n";
+//    echo $p["shapeSvg"];
+//    echo "</svg> <!--close Pointer-->";
+//  }
+//}
 ?>
 <?php $conn->close(); 
 if (array_key_exists("test",$_GET) && ($appMode == 'development')) {

@@ -218,3 +218,5 @@ pip-log.txt
 #Dragonberry Pi additions
 RPG/
 *rpg_schema*
+share/mysql/dump-dragonberry.sh
+share/mysql/rebuild-dragonberry.sh

@@ -50,6 +50,8 @@ while (count($checkList) > 1) {
           $sql2 .= "`TileImageSourceLocation`";
         } elseif ($table == "Pawn") {
           $sql2 .= "`PawnRoleImageSourceLocation`";
+        } elseif ($table == "Pointer") {
+          $sql2 .= "`Pointer`";
         }
         $sql2 .= " WHERE `id". $table ."` = ". $id ." ";
         if ($table == "Map") {
