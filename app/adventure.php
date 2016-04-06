@@ -89,6 +89,7 @@ var standardPawnPixelsPerFoot = "<?php echo $standardPawnPixelsPerFoot?>";
 var standardPawnSizeFeet = "<?php echo $standardPawnSizeFeet?>";
 var globalScale = "<?php echo $globalScale?>";
 var testDebug = "<?php echo $testDebug?>";
+var pawnGridReduce = "<?php echo $pawnGridReduce?>";
 var pawnProperties = {};
 var modifierListHTML = "updateModifierSelectors<br>";
 var pawnListHTML = "fillOutPawns<br>";
@@ -657,10 +658,10 @@ function multiMouseMove(event) {
     mouseX = ev.pageX - ev.currentTarget.parentElement.offsetLeft;
     mouseY = ev.pageY - ev.currentTarget.parentElement.offsetTop;
     var vb = ev.currentTarget.getAttribute("viewBox").split(" ");
-    var ws = vb[2]/ev.currentTarget.getAttribute("width")
+    var ws = vb[2]/ev.currentTarget.getAttribute("width") 
     var hs = vb[3]/ev.currentTarget.getAttribute("height")
-    mouseX = mouseX*ws
-    mouseY = mouseY*ws
+    mouseX = mouseX*ws + 1.0*vb[0]
+    mouseY = mouseY*hs + 1.0*vb[1]
   }
 }
 
