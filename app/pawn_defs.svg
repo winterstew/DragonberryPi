@@ -1159,19 +1159,6 @@
        y1="409.99973"
        x2="285.10162"
        y2="289.99973" />
-    <filter
-       inkscape:collect="always"
-       style="color-interpolation-filters:sRGB"
-       id="filter4692"
-       x="-0.0099845759"
-       width="1.0199692"
-       y="-0.015034838"
-       height="1.0300697">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.52004466"
-         id="feGaussianBlur4694" />
-    </filter>
     <pattern
        inkscape:stockid="Sand (bitmap)"
        id="sand_bitmap-3"
