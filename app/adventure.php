@@ -654,14 +654,16 @@ function endMapMove(event) {
 function multiMouseMove(event) {
   ev = event || window.event;
   ev.preventDefault();
-  if (ev.currentTarget.getAttribute("class") == "Map") {
+  if (ev.currentTarget.getAttribute("class") == "Map" && (ev.currentTarget.getAttribute("visibility") == "visible")) {
     mouseX = ev.pageX - ev.currentTarget.parentElement.offsetLeft;
     mouseY = ev.pageY - ev.currentTarget.parentElement.offsetTop;
-    var vb = ev.currentTarget.getAttribute("viewBox").split(" ");
-    var ws = vb[2]/ev.currentTarget.getAttribute("width") 
-    var hs = vb[3]/ev.currentTarget.getAttribute("height")
-    mouseX = mouseX*ws + 1.0*vb[0]
-    mouseY = mouseY*hs + 1.0*vb[1]
+    if (ev.currentTarget.getAttribute("maptype") == "pawnGrid") {
+      var vb = ev.currentTarget.getAttribute("viewBox").split(" ");
+      var ws = vb[2]/ev.currentTarget.getAttribute("width") 
+      var hs = vb[3]/ev.currentTarget.getAttribute("height")
+      mouseX = mouseX*ws + 1.0*vb[0]
+      mouseY = mouseY*hs + 1.0*vb[1]
+    }
   }
 }
 
@@ -988,8 +990,11 @@ function interpretKeyDown(event) {
       if ((pointers[index].hasAttribute("selectkey")) &&  
           ((pointers[index].getAttribute("selectkey") == String.fromCharCode(key).toUpperCase()) ||
            (pointers[index].getAttribute("selectkey") == String.fromCharCode(key).toLowerCase()))) {
-          keyHTML += "toggle Pointer:"+pointers[index].id+" at "+mouseX+","+mouseY+"<br>";
-          placePointer(pointers[index],mouseX,mouseY)
+          var onMap = document.getElementById(pointers[index].getAttribute("onmap"));
+          if (onMap.getAttribute("visibility") == "visible") {
+            keyHTML += "toggle Pointer:"+pointers[index].id+" at "+mouseX+","+mouseY+"<br>";
+            placePointer(pointers[index],mouseX,mouseY)
+          }
       }
     }
     // select/deselect pawns
@@ -1269,7 +1274,7 @@ if ($displays->num_rows > 0) {
       // Lets put buttons to toggle the PC visibility for each DM visible map of this type
       if ($maps->num_rows > 0) {
         while($m = $maps->fetch_assoc()) {
-          echo '<button id="mapButton'.$m["idMap"].'" class="';
+          echo '<button title="map'.$m["idMap"].'" id="mapButton'.$m["idMap"].'" class="';
           if ($m['mVis']==1) {echo 'toggleListVisible';} else {echo 'toggleListOpaque';}
           echo '" onclick="toggleVisibility(\'Map\','.$m["idMap"].')">'.$m["mName"]."</button><br>\n";
         }
@@ -1323,7 +1328,7 @@ if ($displays->num_rows > 0) {
           echo 'display="none" ' ;
         }
         // Map element id 
-        echo 'id="map'.$m["idMap"].'" ';
+        echo 'id="map'.$m["idMap"].'" maptype="'.$m["mapType"].'" ';
         //echo 'updated="'.$m["updated"].'" ';
         echo 'updated="2000-01-01 01:00:00" ';
         // scaling for Maps which do not need to have a real word scale
@@ -1527,6 +1532,7 @@ if ($displays->num_rows > 0) {
             echo "<!-- open Pointer-->\n";
             echo '<g id="pointer'.$p["idPointer"].'" ' . "\n";
             echo '   class="Pointer" ' . "\n";
+            echo '   onmap="map'.$p["idMap"].'" '."\n";
             echo '   type="image/svg+xml"' ."\n";
             echo '   selectkey="' . $p["selectKey"] . '" ' . "\n";
             if (isVisible($p,"")) { 
