@@ -724,12 +724,13 @@ function unpackTransform(trs,type) {
   var t = trs.match(/translate\s*\((\s*[^)]+\s*)\)/i)[1].split(" ");
   if (t.length < 2) {t[1]=0;}
   var s = trs.match(/scale\s*\((\s*[^)]+\s*)\)/i)[1].split(" ");
-  if (s.length < 2) {s[1]=s[0];}
+  if (s.length < 2) {s[1]=Math.abs(s[0]);}
   return r.concat(t).concat(s);
 }
 
 function packTransform(tra,type) {
-  return "rotate("+tra[0]+" "+tra[1]+" "+tra[2]+") translate("+tra[3]+" "+tra[4]+") scale("+tra[5]+")";
+  if (tra[6] != Math.abs(tra[5])) {tra[6] = Math.abs(tra[5])};
+  return "rotate("+tra[0]+" "+tra[1]+" "+tra[2]+") translate("+tra[3]+" "+tra[4]+") scale("+tra[5]+" "+tra[6]+")";
 }
 
 function moveTileOrPawn(elem,type,mode,dir,res) {
@@ -745,13 +746,17 @@ function moveTileOrPawn(elem,type,mode,dir,res) {
     myHTML += oldTransform[0]+"<br>"+newTransform[0]+"<br>" ;
   } else if ((mode == "s")&&(mapMode != 'pc')) {
     newTransform[5] = 1*oldTransform[5]+step
-    newTransform[6] = newTransform[5];
+    // if scale is less than one step from zero, apply another step to avoid screwing things up
+    while (Math.abs(newTransform[5]) < Math.abs(step)) {
+      newTransform[5] = 1*newTransform[5]+step
+    }
+    newTransform[6] = Math.abs(newTransform[5]);
     // since the scale is applied first, if I want it to scale about the center of the object
     // I have to adjust the translation as well
     // Since I want to scale about the same center as the rotation, I will use it 
     // as the standard point
     newTransform[3] = 1*oldTransform[1] - (1*oldTransform[1] - 1*oldTransform[3])*(1*newTransform[5] / (1*oldTransform[5]));
-    newTransform[4] = 1*oldTransform[2] - (1*oldTransform[2] - 1*oldTransform[4])*(1*newTransform[5] / (1*oldTransform[5]));
+    newTransform[4] = 1*oldTransform[2] - (1*oldTransform[2] - 1*oldTransform[4])*(1*newTransform[6] / (1*oldTransform[6]));
     myHTML += oldTransform[5]+"<br>"+newTransform[5] ;
   } else {
     // since Tiles and Pawns are inside maps they already
