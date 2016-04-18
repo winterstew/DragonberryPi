@@ -249,9 +249,9 @@ function updatePawnStatsDisplay(p) {
   var attackRangeCellColor = "black";
   if ((selectedTileOrPawn.getAttribute("attacktype")=="Height") || 
       (selectedTileOrPawn.getAttribute("attacktype")=="None")) {
-    heightCellColor = "orange";
+    heightCellColor = "#CC3300";
   } else {
-    attackRangeCellColor = "orange";
+    attackRangeCellColor = "#CC3300";
   }
   var bS = ""; var bE = "";
   if (p.getAttribute("leader") == 1) {bS = '<b style="color:red">';bE = "</b>";}
