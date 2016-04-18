@@ -1045,8 +1045,14 @@ function selectTileOrPawn(id) {
       if ((newType == "Pawn") && (mapMode != 'pc')) {updateModifierSelectors(selectedTileOrPawn.id.slice(4));}
       if (selectedTileOrPawn.getAttribute("rulelink") && document.getElementById("ruleLink")) {
         selectHTML += selectedTileOrPawn.getAttribute("rulelink");
-        document.getElementById("ruleLink").setAttribute("href",selectedTileOrPawn.getAttribute("rulelink"));
-        document.getElementById("ruleLink").innerHTML = selectedTileOrPawn.getAttribute("name");
+        if (selectedTileOrPawn.getAttribute("rulelink") != 'null') { 
+          document.getElementById("ruleLink").setAttribute("href",selectedTileOrPawn.getAttribute("rulelink")); 
+          document.getElementById("ruleLink").innerHTML = selectedTileOrPawn.getAttribute("name");
+        }
+        else { 
+          document.getElementById("ruleLink").setAttribute("href","http://paizo.com/prd/"); 
+          document.getElementById("ruleLink").innerHTML = "PRD";
+        }
       }
     } else {
       // deselect Tile or Pawn
