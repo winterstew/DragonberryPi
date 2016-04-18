@@ -1187,7 +1187,6 @@ if ($displays->num_rows > 0) {
 // reset the select table back to the start
 $displays->data_seek(0);
 ?>
-o
 object.Pointer {
   position: absolute;
   width: 100%;
@@ -1257,6 +1256,15 @@ td.modifiersListCell { width: 40%; word-wrap:break-word;}
       onmouseup="endMapMove(event)" onmousemove="doingMapMove(event)"
       style="width:100%;height:100%;margin:0;">
 <?php 
+// throw in the SVG definitions for pawns and the like.
+// this needsto not by in an element that will be set to 
+// display="none", because if the first def is set to display none
+// the gradients do not work.  These only needto be defined once anyway
+// and if I keep it ouside of the dispalay it will not offset anything
+// (even with size 0x0 is still offsets stuff )
+echo '<svg class="MapDefs" visibility="hidden" width=0 height=0>';
+include 'pawn_global_defs.svg';
+echo '</svg>';
 // do the pointers query here so I do not get multiple display areas
 // with the same pointer
 //$pointers = $conn->query("SELECT * FROM Pointer");
@@ -1313,7 +1321,7 @@ if ($displays->num_rows > 0) {
     //loop through maps for each display
     if ($maps->num_rows > 0) {
       while($m = $maps->fetch_assoc()) {
-        if ($m["mapType"] == "pawnGrid") { $displayHasPawnGrid = 1; }
+        if (($m["mapType"] == "pawnGrid") && (! $displayHasPawnGrid)) { $displayHasPawnGrid = 1; }
         // Outer most svg element
         //  this contains the visibility information as well as the scale and size
         //  for the overal mapping area
@@ -1518,7 +1526,6 @@ if ($displays->num_rows > 0) {
             echo '<g id="attackRange" visibility="inherit" transform="translate('. (285 - ($attackScale*502.5)) .' '. (45 - ($attackScale*502.5)) .') scale('. $attackScale .')">' ."\n";
             include "pawn_attackRange.svg";
             echo "</g>\n";
-            include 'pawn_defs.svg';
             include "pawn_" . $p["roleName"] . ".svg";
             echo '<rect class="highlight" id="highlightpawn'.$p["idPawn"].'" width=570px height=700px style="fill:none;stroke-width:50;stroke:orange" visibility="hidden"/>';
             echo "</g> <!-- close Pawn-->\n";

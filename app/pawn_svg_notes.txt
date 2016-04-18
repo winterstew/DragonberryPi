@@ -1,0 +1,19 @@
+I used inkscape to draw the pawns.svg; then I cut it apart for use in various
+ways.  Depending on how I did it and how I used it in adventure.php changed how
+each browser treated it. 
+
+When I added the display="none" to control visibility of the maps (which
+prevented hidden maps from offsetting visible ones), it broke my pawn display.
+Anything in the <defs> dsection was lost.  It appears that the svg use the defs
+from the first time they apear in the html.  So when they are not displayed
+they are treated as is they do not exist.  I made a zero size svg right at the
+begining of the <body> which contained only the <def>.  This allowed the
+various gradients to be defined globaly, and prevents them from offsetting any
+elements in a display divition.
+
+Clippath definitions could not be references globally in Chrome however.  So I
+put the clipath definition in each pawn.
+
+The pattern definition for the "petrified" indicator could not be references
+neither globally nor individually.  The stone always appears grey with no
+bitmap
