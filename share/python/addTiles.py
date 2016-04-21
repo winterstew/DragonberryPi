@@ -43,7 +43,7 @@ associated with multiple Map entries or multiple places in the same Map.
         help='Tile idMap  (default is null)')
     parser.add_argument('--json','-j',type=str,action='store',
         help='JSON file to assign depth and offset based on match with name and size')
-    parser.add_argument('idImage', type=int, nargs="+",
+    parser.add_argument('idImage', type=str, nargs="+",
         help='Image idImage numbers to be Tiles')
     # parse the command line arguments and options
     args = parser.parse_args()

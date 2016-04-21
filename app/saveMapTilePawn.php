@@ -20,6 +20,7 @@ while (count($saveList) > 1) {
   $id =  array_shift($saveList);
   $attributes =  array_shift($saveList);
   $transform = unpack_transform($attributes['transform']);
+  $conn->query("LOCK TABLES `". $table ."` WRITE;");
   $sql = "UPDATE `". $table ."` SET ";
   $sql .= "`rotate`=" . $transform['rotate']; 
   if ($table == "Pawn") { $sql .= ", `sizeFeet`=" . $transform['scale']/$attributes['pawnscale']; }
@@ -36,7 +37,9 @@ while (count($saveList) > 1) {
   }
   $sql .= ", `translateX`=" . $transform['translateX'];
   $sql .= ", `translateY`=" . $transform['translateY'];
+  $sql .= ", `updatedBy`='" . $attributes['updatedby'] . "'";
   $sql .= " WHERE `id". $table ."`='".$id."'";
+  $conn->query("UNLOCK TABLES;");
   $result = $conn->query($sql);
   if ($result == 1) {echo $sql . "<br>";}
 }

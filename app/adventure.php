@@ -37,6 +37,7 @@ if ($mapMode == 'pc') {
     $browserAlert = "Does not work well in Explorer";
   }
 }
+$updater = rawurlencode($_SERVER["REMOTE_ADDR"] ."_". $mapMode ."_". $_SERVER["HTTP_USER_AGENT"]);
 // isVisible() checks if a particular map or tile has its visible flag
 // checked for the current mapMode
 function isVisible($row,$mode) {
@@ -79,6 +80,7 @@ function getDirName($c,$idLoc,$depthLoc) {
 <script>
 var toggleList = [];
 var modifiersList = [];
+var toSaveList = [];
 var myHTML = "";
 var selectHTML = "";
 var aId = "<?php echo $aId?>";
@@ -90,6 +92,7 @@ var standardPawnSizeFeet = "<?php echo $standardPawnSizeFeet?>";
 var globalScale = "<?php echo $globalScale?>";
 var testDebug = "<?php echo $testDebug?>";
 var pawnGridReduce = "<?php echo $pawnGridReduce?>";
+var updater = "<?php echo $updater?>";
 var pawnProperties = {};
 var modifierListHTML = "updateModifierSelectors<br>";
 var pawnListHTML = "fillOutPawns<br>";
@@ -192,6 +195,29 @@ function updateAll() {
   myHTML = "Selected<br>\n" + selectHTML;
   myHTML += "Toggle List<br>\n";
   updateListHTML = "Update List<br>\n";
+  // save from mySaveList
+  var mySaveList = []
+  // pull list of save elements into local array
+  while (toSaveList.length > 0) {
+    mySaveList.push(toSaveList.shift())
+  }
+  // sort based on their element id
+  if (mySaveList.length > 0) {
+    mySaveList.sort(function(a, b){return a[0]>b[0]})
+  }
+  while (mySaveList.length > 0) {
+    var oneSaveList = []
+    var myLast = mySaveList[0]
+    // create smaller array of save requests to same element
+    while ((mySaveList.length > 0) && (mySaveList[0][0] == myLast[0])) {
+      myLast = mySaveList.shift()
+      oneSaveList.push(myLast)
+    }
+    // sort based on time request most recent first
+    oneSaveList.sort(function(a, b){return a[1]<b[1]})
+    // save only the most recent request
+    saveOne(oneSaveList[0][2],oneSaveList[0][3])
+  }
   while (toggleList.length > 0) {
     // shift off the table name and the id from the list
     var table = toggleList.shift();
@@ -257,10 +283,12 @@ function updatePawnStatsDisplay(p) {
   if (p.getAttribute("leader") == 1) {bS = '<b style="color:red">';bE = "</b>";}
   myHTML = '<table class="pawnStats"><tr>'+"\n";
   myHTML += '<td class="selectKeyCell">'+ bS + p.getAttribute("selectkey") + bE + "</td>\n";
+  var pName =  p.getAttribute("name");
+  if (mapMode == "dm") { pName += " (" + p.id.slice(4) + ")"; }
   if (p.getAttribute("rulelink") != 'null') {
-    myHTML += '<td class="nameCell"><a href="'+ p.getAttribute("rulelink") +'">'+ p.getAttribute("name") +"</a></td>\n";
+    myHTML += '<td class="nameCell"><a href="'+ p.getAttribute("rulelink") +'">'+ pName +"</a></td>\n";
   } else {
-    myHTML += '<td class="nameCell">' + p.getAttribute("name") +"</td>\n";
+    myHTML += '<td class="nameCell">' + pName +"</td>\n";
   }
   myHTML += '<td class="roleCell">'+ p.getAttribute("role") +":"+ p.getAttribute("rolename") +"</td>\n";
   myHTML += '<td class="heightCell" style="color:'+ heightCellColor +'">'+ p.getAttribute("height") +"</td>\n";
@@ -402,29 +430,34 @@ function updateHeightAndAttackRange(table,id,attribute) {
 }
 
 function updateTransform(table,id,attribute) {
-  updateListHTML += table+" transform: ";
   var myE = document.getElementById(id);
   if (table == "Map") {myE = document.getElementById(id+"g");}
-  var myTransform = unpackTransform(myE.getAttribute("transform"),table.toLowerCase());
-  myTransform[0] = attribute["rotate"];
-  myTransform[3] = attribute["translateX"];
-  myTransform[4] = attribute["translateY"];
-  if (table == "Pawn") {
-    myTransform[1] = 1*attribute["translateX"] + (285.0 * attribute['sizeFeet']*myE.getAttribute("pawnscale"))
-    myTransform[2] = 1*attribute["translateY"] + (350.0 * attribute['sizeFeet']*myE.getAttribute("pawnscale"))
-    myTransform[5] = attribute['sizeFeet']*myE.getAttribute("pawnscale");
-  } else if (table == "Tile") {
-    myTransform[1] = 1*attribute["translateX"] + (attribute["imageWidth"] * attribute["scale"] / 2.0);
-    myTransform[2] = 1*attribute["translateY"] + (attribute["imageHeight"] * attribute["scale"] / 2.0);
-    myTransform[5] = attribute['scale'];
-  } else {
-    // this does not currently do the full rotation center calculate for Maps
-    myTransform[1] = attribute["scale"]*myTransform[1]/myTransform[6]
-    myTransform[2] = attribute["scale"]*myTransform[2]/myTransform[6]
-    myTransform[5] = attribute['scale'];
+  // only update Transform if it was not changed by user
+  if (attribute["updatedBy"] != myE.getAttribute("updatedby")) {
+    updateListHTML += table+" updated:<br>"+myE.getAttribute("updatedby")+"<br>";
+    updateListHTML += attribute["updatedBy"]+"<br>";
+    updateListHTML += table+" transform: ";
+    var myTransform = unpackTransform(myE.getAttribute("transform"),table.toLowerCase());
+    myTransform[0] = attribute["rotate"];
+    myTransform[3] = attribute["translateX"];
+    myTransform[4] = attribute["translateY"];
+    if (table == "Pawn") {
+      myTransform[1] = 1*attribute["translateX"] + (285.0 * attribute['sizeFeet']*myE.getAttribute("pawnscale"))
+      myTransform[2] = 1*attribute["translateY"] + (350.0 * attribute['sizeFeet']*myE.getAttribute("pawnscale"))
+      myTransform[5] = attribute['sizeFeet']*myE.getAttribute("pawnscale");
+    } else if (table == "Tile") {
+      myTransform[1] = 1*attribute["translateX"] + (attribute["imageWidth"] * attribute["scale"] / 2.0);
+      myTransform[2] = 1*attribute["translateY"] + (attribute["imageHeight"] * attribute["scale"] / 2.0);
+      myTransform[5] = attribute['scale'];
+    } else {
+      // this does not currently do the full rotation center calculate for Maps
+      myTransform[1] = attribute["scale"]*myTransform[1]/myTransform[6]
+      myTransform[2] = attribute["scale"]*myTransform[2]/myTransform[6]
+      myTransform[5] = attribute['scale'];
+    }
+    updateListHTML += packTransform(myTransform,table.toLowerCase()) + "<br>";
+    myE.setAttribute("transform",packTransform(myTransform,table.toLowerCase()));
   }
-  updateListHTML += packTransform(myTransform,table.toLowerCase()) + "<br>";
-  myE.setAttribute("transform",packTransform(myTransform,table.toLowerCase()));
 }
 
 function updateVisibility(table,id,attribute) {
@@ -785,7 +818,8 @@ function moveTileOrPawn(elem,type,mode,dir,res) {
     myHTML += "dY:"+dY+","+oldTransform[4]+"to"+newTransform[4]+"<br>" ;
   }
   elem.setAttribute("transform",packTransform(newTransform,type));
-  if (type == "pawn") {saveOne("Pawn",elem);}
+  //if (type == "pawn") {saveOne("Pawn",elem);}
+  if (type == "pawn") {toSaveList.push([elem.id,new Date(),"Pawn",elem]);}
   needsSave = true;
 }
 
@@ -817,9 +851,19 @@ function interpretKeyDown(event) {
   ev = event || window.event;
   var key = ev.which || ev.keyCode;
   var keyHTML = "pressed: "+key+" = " + String.fromCharCode(key).toLowerCase() + "<br>";
+  var flip = 1;
+  if (selectedTileOrPawn.id && selectedTileOrPawn.getAttribute("class").toLowerCase() == "pawn") {
+    flip = Number(selectedTileOrPawn.getAttribute("flip"));
+    if ((key == 70) && (! keyHold)) {
+      selectedTileOrPawn.setAttribute("flip",-1.0*flip);
+    }
+  }
   if ((key == 83) && (! keyHold)) { 
     // save on an "s" but do not repeat if held
     forceSave() 
+  } else if ((key == 68) && (! keyHold)) { 
+    // reload on "d"
+    location.reload()
   } else if ((key >= 37) && (key <= 40) && selectedTileOrPawn.id) {
     var type = selectedTileOrPawn.getAttribute("class").toLowerCase();
     // 37 -> left arrow
@@ -842,6 +886,7 @@ function interpretKeyDown(event) {
         if (type == "pawn") {res = 1.0*selectedTileOrPawn.getAttribute("pawnscale");}
       }
     } else if (mode == "r") { res = 15.0;if (ev.shiftKey) {res = 0.15;}}
+    res *= flip;
     switch(key) {
       case 37:
         if (selectedTileOrPawn.getAttribute("leader")=="1") {
@@ -912,7 +957,7 @@ function interpretKeyDown(event) {
     // setting leader, ranges, height, etc with no repeat
     var table = selectedTileOrPawn.getAttribute("class");
     if (table == "Pawn") {
-      if (key == 65) {
+        if (key == 65) {
         // toggle leadership of selected Pawn if "a" is pressed
         var pawns = document.getElementsByClassName("Pawn");
         var alreadyLeader = false;
@@ -977,12 +1022,16 @@ function interpretKeyDown(event) {
         // 190 is "." to increase heightIndicator by 5
         // 188 is "," to decrease heightIndicator by 5
         // 187 is "=" (187 in Chrome; 61 in Firefox) to set heightIndicator to 0
-        if (key == 190) { adjust = 5; }
-        if (key == 188) { adjust = -5; }
+        if (key == 190) { adjust = 10; }
+        if (key == 188) { adjust = -10; }
+        if (ev.shiftKey) {adjust *= 0.5;
+        } else if (ev.ctrlKey) {adjust *= 2.5}
         if ((key == 61) || (key == 187)) { multi = 0; }
         if ((selectedTileOrPawn.getAttribute("attacktype") != "None")&&(selectedTileOrPawn.getAttribute("attacktype") != "Height")) {
+          selectedTileOrPawn.setAttribute("attackrange",multi * (1.0*selectedTileOrPawn.getAttribute("attackrange") + adjust));
           adjustPawnIndicator(selectedTileOrPawn.id.slice(4),"attackRange",multi,adjust)
         } else {
+          selectedTileOrPawn.setAttribute("height",multi * (1.0*selectedTileOrPawn.getAttribute("height") + adjust));
           adjustPawnIndicator(selectedTileOrPawn.id.slice(4),"height",multi,adjust)
         }
       }
@@ -1023,7 +1072,9 @@ function interpretKeyDown(event) {
     var test = document.getElementById("keyPress");
     if (test) { test.innerHTML = keyHTML; }
   }
-  keyHold = key;
+  if ((key < 16) || (key > 18)) {
+    keyHold = key;
+  }
 }
 
 function selectTileOrPawn(id) {
@@ -1116,6 +1167,10 @@ function saveStuff(myT) {
         var attribute = {};
         var myElement = elements[index]
         if (myT[x] == "Map") {
+          // some attributes are part of the outer svg for Maps
+          attribute["updated"] = myElement.getAttribute("updated");
+          attribute["updatedby"] = myElement.getAttribute("updatedby");
+          // the rest are part of the inner g
           myElement = document.getElementById("map"+elements[index].id.slice(myT[x].length)+"g");
         }
         for (ai = 0; ai < myElement.attributes.length; ai++) {
@@ -1350,6 +1405,7 @@ if ($displays->num_rows > 0) {
         echo 'id="map'.$m["idMap"].'" maptype="'.$m["mapType"].'" ';
         //echo 'updated="'.$m["updated"].'" ';
         echo 'updated="2000-01-01 01:00:00" ';
+        echo 'updatedby="'.$updater.'" ';
         // scaling for Maps which do not need to have a real word scale
         // is set based on the display size
         $dWidth = str_replace("px","",$d["width"]);
@@ -1400,10 +1456,14 @@ if ($displays->num_rows > 0) {
           // put map move controls here so that the mouse active area does not change when the map's transformation does
           //echo 'onmousedown="startMapMove(evt,\'map'.$m["idMap"].'g\')" onmouseup="endMapMove(evt,\'map'.$m["idMap"].'g\')" onmousemove="doingMapMove(evt,\'map'.$m["idMap"].'g\')" ';
           echo 'onmousedown="startMapMove(evt,\'map'.$m["idMap"].'g\')" ';
-          echo 'style="border:1px solid #EEEEEE" '; // red for testing
         }
         echo 'onmousemove="multiMouseMove(evt)" ';
-        //echo 'style="border:1px solid #FF0000" '; // red for testing
+        echo 'style="';
+        if ($m["mapType"] == "pawnGrid") {
+            echo 'border:1px solid #EEEEEE; ';
+        }
+        echo 'background:'.$m["backgroundColor"].'; ';
+        echo '" ';
         echo 'xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ';
         echo ">\n";
         // Outer most g element for map transformation
@@ -1457,6 +1517,7 @@ if ($displays->num_rows > 0) {
             echo 'name="'.$t["name"].'" ';
             //echo 'updated="'. $t["updated"] .'" ';
             echo 'updated="2000-01-01 01:00:00" ';
+            echo 'updatedby="'.$updater.'" ';
             if ($mapMode == "dm") { 
               // add the dbl click event in DM mode
               echo 'ondblclick="toggleVisibility(\'Tile\','.$t["idTile"].')" '; 
@@ -1501,7 +1562,9 @@ if ($displays->num_rows > 0) {
             echo 'name="'.$p["name"].'" ';
             //echo 'updated="'. $p["updated"]. '" ';
             echo 'updated="2000-01-01 01:00:00" ';
+            echo 'updatedby="'.$updater.'" ';
             echo 'leader="0" ';
+            echo 'flip="1" ';
             echo 'role="'. $p["idRole"]. '" ';
             echo 'rolename="'. $p["roleName"]. '" ';
             echo 'height="'. $p["height"] .'" ';
@@ -1562,35 +1625,13 @@ if ($displays->num_rows > 0) {
             }
             echo '   transform="rotate('.$p['rotate'].') translate('.$p['translateX'].','.$p['translateY'].') scale('.$p['scale'].')" '."\n";
             echo '   updated="2000-01-01 01:00:00" '."\n";
+            echo '   updatedby="'.$updater.'" '."\n";
             echo $p["shapeSvg"];
             echo "</g> <!--close Pointer-->";
           }
         }
         echo "</svg> <!--close Map-->\n";
       }
-      //// pointers are on top of the pawnGrid map only
-      //// select all dmVisible pointers
-      //if ( $displayHasPawnGrid == 1) {
-      //  if ($pointers->num_rows > 0) {
-      //    while($p = $pointers->fetch_assoc()){
-      //      echo "<!-- open Pointer-->\n";
-      //      echo '<object id="pointer'.$p["idPointer"].'" ' . "\n";
-      //      echo '     class="Pointer" ' . "\n";
-      //      echo '     type="image/svg+xml"' ."\n";
-      //      echo '     selectkey="' . $p["selectKey"] . '" ' . "\n";
-      //      if (isVisible($p,"")) { 
-      //        echo '     visibility="visible" '."\n" ; 
-      //        echo '     display="inline" '."\n" ; 
-      //      } else {
-      //        echo '     visibility="hidden" '."\n" ; 
-      //        echo '     display="none" '."\n" ; 
-      //      }
-      //      echo '     transform="rotate('.$p['rotate'].') translate('.$p['translateX'].','.$p['translateY'].') scale('.$p['scale'].')" '."\n";
-      //      echo $p["shapeSvg"];
-      //      echo "</svg> <!--close Pointer-->";
-      //    }
-      //  }
-      //}
     }
     //echo "div test -&gt; scale:".$globalScale." mode ".$mapMode."<br>\n";
     // close div element for display
@@ -1604,27 +1645,6 @@ if ($displays->num_rows > 0) {
     }
   }
 }
-//// pointers are on top of everything
-//// select all dmVisible pointers
-//$pointers = $conn->query("SELECT * FROM Pointer");
-//if ($pointers->num_rows > 0) {
-//  while($p = $pointers->fetch_assoc()){
-//    echo "<!-- open Pointer-->\n";
-//    echo '<svg id="pointer'.$p["idPointer"].'" ' . "\n";
-//    echo '     class="Pointer" ' . "\n";
-//    echo '     selectkey="' . $p["selectKey"] . '" ' . "\n";
-//    if (isVisible($p,"")) { 
-//      echo '     visibility="visible" '."\n" ; 
-//      echo '     display="inline" '."\n" ; 
-//    } else {
-//      echo '     visibility="hidden" '."\n" ; 
-//      echo '     display="none" '."\n" ; 
-//    }
-//    echo '     transform="rotate('.$p['rotate'].') translate('.$p['translateX'].','.$p['translateY'].') scale('.$p['scale'].')" '."\n";
-//    echo $p["shapeSvg"];
-//    echo "</svg> <!--close Pointer-->";
-//  }
-//}
 ?>
 <?php $conn->close(); 
 if (array_key_exists("test",$_GET) && ($appMode == 'development')) {

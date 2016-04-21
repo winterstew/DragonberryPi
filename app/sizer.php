@@ -73,6 +73,8 @@ var controlsHTML = "<tr><td style=\"text-align:right; font-weight:bold;\">mouse 
 "<tr><td style=\"text-align:right; font-weight:bold;\">,</td><td>decrease attack range or height (as selected above) by five feet</td</tr>" +
 "<tr><td style=\"text-align:right; font-weight:bold;\">.</td><td>increase attack range or height (as selected above) by five feet</td></tr>" +
 "<tr><td style=\"text-align:right; font-weight:bold;\">b</td><td>toggle display of a map pointer</td></tr>" 
+"<tr><td style=\"text-align:right; font-weight:bold;\">d</td><td>force reload of browser</td></tr>" 
+"<tr><td style=\"text-align:right; font-weight:bold;\">f</td><td>flip keyboard controls upside-down</td></tr>" 
 function useScale() {
   var inpObj = document.getElementById("globalScaleInp");
   if(inpObj.checkValidity() == false) {
