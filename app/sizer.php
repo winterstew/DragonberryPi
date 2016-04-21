@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 <?php
 // Create connection
 $conn = db_connect($app->config('db'));
+include 'controls.php';
 ?>
 <style type="text/css">
 div#main {
@@ -51,30 +53,7 @@ div#theGrid {
 </style>
 <script>
 var globalScale = 0.348;
-var controlsHTML = "<tr><td style=\"text-align:right; font-weight:bold;\">mouse click</td><td>select/deselect a pawn or tile</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">1, 2, or 3</td><td>select/deselect a specific PC pawn</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">q, w, e, r, t, or y</td><td>select/deselect a specific monster pawn</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">mouse dbl-click</td><td>toggle visibility of a pawn or tile</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">v</td><td>toggle visibility of the selected pawn or tile</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">arrow keys</td><td>coarse translate selected pawn or tile</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">Ctrl-left arrow, Ctrl-right arrow</td><td>coarse rotate selected pawn or tile</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">Ctrl-up arrow, Ctrl-right arrow</td><td>coarse scale selected pawn or tile</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">Shift ...</td><td>enable fine control of movement and scale of arrow key based commands</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">mouse click-and-drag</td><td>translate whole pawn grid</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">Ctrl mouse click-and-drag left&amp;right</td><td>rotate whole pawn grid</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">Alt mouse click-and-drag up&amp;down</td><td>scale whole pawn grid</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">Shift ...</td><td>enable fine control of click-and-drag based commands</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">s</td><td>save new position of pawn grid or tile movements to database.  Pawn movements and visibility changes are auto-saved</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">a</td><td>turn selected pawn into a leader of its group such that its movements apply to all in the group</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">l</td><td>toggle indicator of line based attack ranges</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">k</td><td>toggle indicator of conical based attack ranges</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">j</td><td>toggle indicator of spherical based attack ranges</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">h</td><td>toggle selection of height adjustment</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">,</td><td>decrease attack range or height (as selected above) by five feet</td</tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">.</td><td>increase attack range or height (as selected above) by five feet</td></tr>" +
-"<tr><td style=\"text-align:right; font-weight:bold;\">b</td><td>toggle display of a map pointer</td></tr>" 
-"<tr><td style=\"text-align:right; font-weight:bold;\">d</td><td>force reload of browser</td></tr>" 
-"<tr><td style=\"text-align:right; font-weight:bold;\">f</td><td>flip keyboard controls upside-down</td></tr>" 
+var controlsHTML = '<?php echo $controlsHTML ?>';
 function useScale() {
   var inpObj = document.getElementById("globalScaleInp");
   if(inpObj.checkValidity() == false) {
@@ -207,5 +186,5 @@ for ($x = 0;$x < 500; $x+=50){
 reScale()
 </script>
 </table>
-</body>
+</body>.
 </html>

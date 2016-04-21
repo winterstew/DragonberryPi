@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 <?php 
+include 'controls.php';
 // Create connection
 $conn = db_connect($app->config('db'));
 // What is the root directory for this app
@@ -858,7 +859,9 @@ function interpretKeyDown(event) {
       selectedTileOrPawn.setAttribute("flip",-1.0*flip);
     }
   }
-  if ((key == 83) && (! keyHold)) { 
+  if (((key == 71) || (key == 191)) && (! keyHold)) { 
+    alert('<?php echo $controlsText?>');
+  } else if ((key == 83) && (! keyHold)) { 
     // save on an "s" but do not repeat if held
     forceSave() 
   } else if ((key == 68) && (! keyHold)) { 
