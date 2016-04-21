@@ -18,7 +18,7 @@ but I wanted to use a newer rule system with lots of published content
 available (I do not have as much time to create worlds nowadays).  I decided on
 [Pathfinder][] and we started with the beginner box (along with a geeky friend
 of mine and his wife who were both willing to join me on this little
-midlife-geek-crisis).  As we moved on to the full rule system, I found that
+mid-geek-life crisis).  As we moved on to the full rule system, I found that
 every book was $50 for print, but like $10 for PDF.  As I like the idea of a
 table top map and pawns, but not the idea of paying a lot of money for them I
 wrote DragonberryPi.
@@ -242,6 +242,13 @@ and imageScale columns.  A Pawn is identified as being part of a group based on
 its like to the Role table.  The Modifiers table links a Pawn to a list of SVG
 tokens from the Modifier table which mark the status of a Mondifiersparticular
 Pawn.
+
+### Pointer table
+
+The Pointer table is similar to the Pawn table.  Again the Pointer can only be
+associated with one map.  The SVG for the pointer is stored in a blob and its
+visibility on a map is toggled with its select key.  Its positions controlled
+as whereever the mouse is when the select key is pressed.
 
 ## Adventure Prep
 
