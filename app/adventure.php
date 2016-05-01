@@ -1347,7 +1347,7 @@ if ($displays->num_rows > 0) {
       // output div element for display
       echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
       // select all the DM visible Maps for this list
-      $maps = $conn->query("SELECT * FROM MapDmVisibleOnDisplay WHERE mtName=\"".str_replace("List","",$d['name'])."\" AND idAdventure=".$aId." ORDER BY mName ASC");
+      $maps = $conn->query("SELECT * FROM MapDmVisibleOnDisplay WHERE mtName=\"".str_replace("List","",$d['name'])."\" AND idAdventure=".$aId." ORDER BY BINARY(mName) ASC");
       // Lets put buttons to toggle the PC visibility for each DM visible map of this type
       if ($maps->num_rows > 0) {
         while($m = $maps->fetch_assoc()) {
@@ -1530,9 +1530,9 @@ if ($displays->num_rows > 0) {
             // transformation for the tile within the map
             echo 'transform="' ;
             echo 'rotate(' . $t["rotate"] .' '. ($t["translateX"] + ($t["scale"] * $t["imageWidth"] / 2.0)) ;
-            echo ' '. ($t["translateY"] + ($t["scale"] * $t["imageHeight"] / 2.0)) .') ';
+            echo ' '. ($t["translateY"] + (abs($t["scale"]) * $t["imageHeight"] / 2.0)) .') ';
             echo 'translate('. $t["translateX"] .' '. $t["translateY"] .') ';
-            echo 'scale('. $t["scale"] .') ';
+            echo 'scale('. $t["scale"] .' '.abs($t["scale"]).') ';
             echo '">'." \n";
             // image associated with this Tile
             echo "<image width=".$t["imageWidth"]." height=".$t["imageHeight"];
@@ -1590,9 +1590,9 @@ if ($displays->num_rows > 0) {
             $pawnScale = $m["pixelsPerFoot"]/$standardPawnPixelsPerFoot/$standardPawnSizeFeet;
             // The pawn size before scaling is 570pix x 700pix
             echo 'rotate('. $p["rotate"] .' '. ($p["translateX"] + (285.0 * $p["sizeFeet"] * $pawnScale));
-            echo ' '. ($p["translateY"] + (350.0 * $p["sizeFeet"] * $pawnScale)) .') ';
+            echo ' '. ($p["translateY"] + (350.0 * abs($p["sizeFeet"]) * $pawnScale)) .') ';
             echo 'translate('. $p["translateX"] .' '. $p["translateY"] .') ';
-            echo 'scale('. ($p["sizeFeet"] * $pawnScale) .') ';
+            echo 'scale('. ($p["sizeFeet"] * $pawnScale) .' '.abs($p["sizeFeet"] * $pawnScale).') ';
             echo '" ';
             echo 'pawnscale="'. $pawnScale .'" ';
             echo '>'." \n";
