@@ -493,7 +493,7 @@ function updateVisibility(table,id,attribute) {
       myE.setAttribute("display","none");
     } else {
       myE.setAttribute("visibility","visible");
-      myE.setAttribute("opacity",0.5);
+      myE.setAttribute("opacity",0.3);
       updateListHTML += "dim ";
     }
   } else {
@@ -1368,7 +1368,7 @@ if ($displays->num_rows > 0) {
       // Lets put buttons to toggle the toggle modfiers for selected Pawns
       if ($modifiers->num_rows > 0) {
         while($m = $modifiers->fetch_assoc()) {
-          echo '<button id="modifier'.$m["idModifier"].'" name="modifierSelector" class="modifierSelectorInactive" onclick="toggleModifier('.$m["idModifier"].')">'.$m["name"]."</button><br>\n";
+          echo '<button id="modifier'.$m["idModifier"].'" title="'. $m["name"] .'" name="modifierSelector" class="modifierSelectorInactive" onclick="toggleModifier('.$m["idModifier"].')">'.$m["name"]."</button><br>\n";
         }
       }
       echo '<a id="ruleLink" href="http://paizo.com/prd/" target="_blank">PRD</a><br>';
@@ -1509,7 +1509,7 @@ if ($displays->num_rows > 0) {
             //  double clickable to toggle their PC visibiliy
             if (isVisible($t,$mapMode)) {
               echo 'visibility="visible" ';
-              if (($mapMode == "dm") && (! isVisible($t,"pc")))  { echo 'opacity=0.5 ' ; }
+              if (($mapMode == "dm") && (! isVisible($t,"pc")))  { echo 'opacity=0.3 ' ; }
             } else {
               echo 'visibility="hidden" ' ;
             }
@@ -1530,9 +1530,9 @@ if ($displays->num_rows > 0) {
             // transformation for the tile within the map
             echo 'transform="' ;
             echo 'rotate(' . $t["rotate"] .' '. ($t["translateX"] + ($t["scale"] * $t["imageWidth"] / 2.0)) ;
-            echo ' '. ($t["translateY"] + (abs($t["scale"]) * $t["imageHeight"] / 2.0)) .') ';
+            echo ' '. ($t["translateY"] + abs($t["scale"] * $t["imageHeight"] / 2.0)) .') ';
             echo 'translate('. $t["translateX"] .' '. $t["translateY"] .') ';
-            echo 'scale('. $t["scale"] .' '.abs($t["scale"]).') ';
+            echo 'scale('. $t["scale"] .' '. abs($t["scale"]) .') ';
             echo '">'." \n";
             // image associated with this Tile
             echo "<image width=".$t["imageWidth"]." height=".$t["imageHeight"];
@@ -1554,7 +1554,7 @@ if ($displays->num_rows > 0) {
             //  double clickable to toggle their PC visibiliy
             if (isVisible($p,$mapMode)) {
               echo 'visibility="visible" ';
-              if (($mapMode == "dm") && (! isVisible($p,"pc")))  { echo 'opacity=0.5 ' ; }
+              if (($mapMode == "dm") && (! isVisible($p,"pc")))  { echo 'opacity=0.3 ' ; }
             } else {
               echo 'visibility="hidden" ' ;
             }
@@ -1590,9 +1590,9 @@ if ($displays->num_rows > 0) {
             $pawnScale = $m["pixelsPerFoot"]/$standardPawnPixelsPerFoot/$standardPawnSizeFeet;
             // The pawn size before scaling is 570pix x 700pix
             echo 'rotate('. $p["rotate"] .' '. ($p["translateX"] + (285.0 * $p["sizeFeet"] * $pawnScale));
-            echo ' '. ($p["translateY"] + (350.0 * abs($p["sizeFeet"]) * $pawnScale)) .') ';
+            echo ' '. ($p["translateY"] + (350.0 * abs($p["sizeFeet"] * $pawnScale))) .') ';
             echo 'translate('. $p["translateX"] .' '. $p["translateY"] .') ';
-            echo 'scale('. ($p["sizeFeet"] * $pawnScale) .' '.abs($p["sizeFeet"] * $pawnScale).') ';
+            echo 'scale('. ($p["sizeFeet"] * $pawnScale) .' '. abs($p["sizeFeet"] * $pawnScale) .') ';
             echo '" ';
             echo 'pawnscale="'. $pawnScale .'" ';
             echo '>'." \n";
@@ -1603,7 +1603,11 @@ if ($displays->num_rows > 0) {
             echo '<g id="attackRange" visibility="inherit" transform="translate('. (285 - ($attackScale*502.5)) .' '. (45 - ($attackScale*502.5)) .') scale('. $attackScale .')">' ."\n";
             include "pawn_attackRange.svg";
             echo "</g>\n";
-            include "pawn_" . $p["roleName"] . ".svg";
+            if ( strpos($p["roleName"]," ") ) {
+              include "pawn_" . substr($p["roleName"],0,strpos($p["roleName"]," ")) . ".svg";
+            } else {
+              include "pawn_" . $p["roleName"] . ".svg";
+            }
             echo '<rect class="highlight" id="highlightpawn'.$p["idPawn"].'" width=570px height=700px style="fill:none;stroke-width:50;stroke:orange" visibility="hidden"/>';
             echo "</g> <!-- close Pawn-->\n";
           }
