@@ -52,7 +52,8 @@ div#theGrid {
 }
 </style>
 <script>
-var globalScale = 0.348;
+//var globalScale = 0.347;
+var globalScale = 0.52;
 var controlsHTML = '<?php echo $controlsHTML ?>';
 function useScale() {
   var inpObj = document.getElementById("globalScaleInp");
