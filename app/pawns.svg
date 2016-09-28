@@ -1223,7 +1223,7 @@
   </metadata>
   <g
      inkscape:groupmode="layer"
-     id="layer1"
+     id="squareBackground"
      inkscape:label="squareBackground"
      style="display:inline;opacity:1"
      sodipodi:insensitive="true">
@@ -1239,7 +1239,7 @@
   <g
      style="display:inline"
      transform="translate(35.101634,-452.36219)"
-     id="g5428"
+     id="squareImage"
      inkscape:groupmode="layer"
      inkscape:label="squareImage"
      sodipodi:insensitive="true">

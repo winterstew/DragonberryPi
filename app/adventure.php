@@ -158,7 +158,7 @@ function fillOutPawns() {
           }
           pawnListHTML += pawnProperty["height"]+ "<br>";
         }
-        if (groups[gIndex].id == "roundImage") {
+        if ((groups[gIndex].id == "roundImage") || (groups[gIndex].id == "squareImage")) {
           var myImage = groups[gIndex].getElementsByTagName("image");
           // have to use setAttributeNS for attributes with a prefix
           myImage[0].setAttributeNS('http://www.w3.org/1999/xlink',"xlink:href",pawn.getAttribute("pawnimagehref"));
@@ -260,7 +260,8 @@ function updateAll() {
     if ((selectedTileOrPawn.id.slice(0,4) == "pawn") && 
         ((mapMode != 'pc') || 
          ((mapMode == 'pc') && 
-          (selectedTileOrPawn.getAttribute("rolename").substr(0,2) == 'pc')))) {
+          ((selectedTileOrPawn.getAttribute("rolename").substr(0,6) == 'marker') || 
+           (selectedTileOrPawn.getAttribute("rolename").substr(0,2) == 'pc'))))) {
       updatePawnStatsDisplay(selectedTileOrPawn);
     }
   }
@@ -1575,13 +1576,16 @@ if ($displays->num_rows > 0) {
             echo 'attacktype="'. $p["attackType"] .'" ';
             echo 'modifierlist=" " ';
             echo 'pawnimagehref="'. $appRoot . getDirName($conn,$p["idLocation"],$p["treeDepth"])."/".rawurlencode($p["filename"]) .'" ';
-            if ($p["selectKey"] && (($p["roleName"] == "pc")||($mapMode == "dm"))) {echo 'selectkey="'.$p["selectKey"].'" ';}
+            if ($p["selectKey"] && 
+                ( ($p["roleName"] == "pc") || 
+                  (substr($p["roleName"],0,6) == "marker") || 
+                  ($mapMode == "dm"))) {echo 'selectkey="'.$p["selectKey"].'" ';}
             //echo 'selectkey="'.$p["selectKey"].'" ';
             if ($mapMode == "dm") { 
               // add the dbl click event in DM mode
               echo 'ondblclick="toggleVisibility(\'Pawn\','.$p["idPawn"].')" '; 
             }
-            if (($p["roleName"] == "pc")||($mapMode == "dm")) {
+            if (($p["roleName"] == "pc")||(substr($p["roleName"],0,6) == "marker")||($mapMode == "dm")) {
               // add a click event for selecting to move
               echo 'onclick="selectTileOrPawn(\'pawn'.$p["idPawn"].'\')" ';
             }
