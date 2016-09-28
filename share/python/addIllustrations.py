@@ -31,8 +31,8 @@ type maps can be linked to multiple adventures via AdventureMap entries.
     parser.add_argument('--mName','-m',action='store',
         help='Map name  (default is to take if from the image name)')
     parser.add_argument('--mRotate','-r',type=float,action='store',
-        default=-90,
-        help='Map rotate  (default is -90)')
+        default=0,
+        help='Map rotate  (default is 0)')
     parser.add_argument('--mDepth','-d',type=float,action='store',
         default=1,
         help='Map depth  (default is 1)')
