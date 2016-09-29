@@ -81,6 +81,7 @@ function getDirName($c,$idLoc,$depthLoc) {
 <script>
 var toggleList = [];
 var modifiersList = [];
+var pullList = [];
 var toSaveList = [];
 var myHTML = "";
 var selectHTML = "";
@@ -98,6 +99,7 @@ var pawnProperties = {};
 var modifierListHTML = "updateModifierSelectors<br>";
 var pawnListHTML = "fillOutPawns<br>";
 var updateListHTML = "Update List<br>";
+var pullListHTML = "Pull List<br>";
 
 // global variables for transforming elements
 var startX=0;
@@ -196,6 +198,7 @@ function updateAll() {
   myHTML = "Selected<br>\n" + selectHTML;
   myHTML += "Toggle List<br>\n";
   updateListHTML = "Update List<br>\n";
+  pullListHTML = "Pull List<br>\n";
   // save from mySaveList
   var mySaveList = []
   // pull list of save elements into local array
@@ -236,6 +239,17 @@ function updateAll() {
     // toggle modifier
     doToggleModifier(pawnId,modifierId);
   }
+  if (pullList.length > 0) myHTML += "Pull List<br>\n";
+  while (pullList.length > 0) {
+    // shift off the idPawn name and idModifier from the list
+    var pawnId = pullList.shift();
+    var mapId = pullList.shift();
+    var roleId = pullList.shift();
+    myHTML += "Pawn " + pawnId + "  Map " + mapId + "  Role " + roleId + "<br>\n";
+    // pull all pawns in the role
+    doPullRole(pawnId,mapId,roleId);
+    setTimeout(reloadAll,500);
+  }
   // Now lets check the update status
   var myT= ["Map","Tile","Pawn","Pointer"];
   var x,i;
@@ -272,6 +286,10 @@ function updateAll() {
   }
 }
 
+function reloadAll() {
+  location.reload()
+}
+
 function updatePawnStatsDisplay(p) {
   var heightCellColor = "black";
   var attackRangeCellColor = "black";
@@ -283,24 +301,24 @@ function updatePawnStatsDisplay(p) {
   }
   var bS = ""; var bE = "";
   if (p.getAttribute("leader") == 1) {bS = '<b style="color:red">';bE = "</b>";}
-  myHTML = '<table class="pawnStats"><tr>'+"\n";
-  myHTML += '<td class="selectKeyCell">'+ bS + p.getAttribute("selectkey") + bE + "</td>\n";
+  psHTML = '<table class="pawnStats"><tr>'+"\n";
+  psHTML += '<td class="selectKeyCell">'+ bS + p.getAttribute("selectkey") + bE + "</td>\n";
   var pName =  p.getAttribute("name");
   if (mapMode == "dm") { pName += " (" + p.id.slice(4) + ")"; }
   if (p.getAttribute("rulelink") != 'null') {
-    myHTML += '<td class="nameCell"><a href="'+ p.getAttribute("rulelink") +'">'+ pName +"</a></td>\n";
+    psHTML += '<td class="nameCell"><a href="'+ p.getAttribute("rulelink") +'">'+ pName +"</a></td>\n";
   } else {
-    myHTML += '<td class="nameCell">' + pName +"</td>\n";
+    psHTML += '<td class="nameCell">' + pName +"</td>\n";
   }
-  myHTML += '<td class="roleCell">'+ p.getAttribute("role") +":"+ p.getAttribute("rolename") +"</td>\n";
-  myHTML += '<td class="heightCell" style="color:'+ heightCellColor +'">'+ p.getAttribute("height") +"</td>\n";
-  myHTML += '<td class="attackRangeCell" style="color:'+ attackRangeCellColor +'">'+ p.getAttribute("attackrange") +"</td>\n";
-  myHTML += '<td class="modifiersListCell">'+ p.getAttribute("modifierlist") +"</td>\n";
-  myHTML += '</tr><tr><th>key</th><th>name</th><th>role</th><th>height</th><th>atck rng</th><th>modifiers</th></tr>';
-  myHTML += "</table>\n";
+  psHTML += '<td class="roleCell">'+ p.getAttribute("role") +":"+ p.getAttribute("rolename") +"</td>\n";
+  psHTML += '<td class="heightCell" style="color:'+ heightCellColor +'">'+ p.getAttribute("height") +"</td>\n";
+  psHTML += '<td class="attackRangeCell" style="color:'+ attackRangeCellColor +'">'+ p.getAttribute("attackrange") +"</td>\n";
+  psHTML += '<td class="modifiersListCell">'+ p.getAttribute("modifierlist") +"</td>\n";
+  psHTML += '</tr><tr><th>key</th><th>name</th><th>role</th><th>height</th><th>atck rng</th><th>modifiers</th></tr>';
+  psHTML += "</table>\n";
   var stats = document.getElementsByClassName("pawnStats")
   for (j = 0; j < stats.length; j++) {
-    stats[j].innerHTML = myHTML;
+    stats[j].innerHTML = psHTML;
   }
 }
 
@@ -586,6 +604,17 @@ function toggleModifier(id) {
   }
 }
 
+function pullRole(id) {
+  if (selectedTileOrPawn.id) {
+    if (selectedTileOrPawn.getAttribute("class") == "Pawn") {
+      document.getElementById("puller"+id).setAttribute("class","rolePullerOn");
+      pullList.push(selectedTileOrPawn.id.slice(4));
+      pullList.push(selectedTileOrPawn.getAttribute("idmap").slice(3));
+      pullList.push(id);
+    }
+  }
+}
+
 function doToggleVisibility(table,id) {
   var xhttp = new XMLHttpRequest();
   xhttp.open("POST", "toggleVisibility", true);
@@ -598,6 +627,14 @@ function doToggleModifier(pawnId,modifierId) {
   xhttp.open("POST", "toggleModifier", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.send("pawnId=" + pawnId + "&modifierId=" + modifierId);
+}
+
+function doPullRole(pawnId,mapId,roleId) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("POST", "pullRole", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("roleId=" + roleId + "&mapId=" + mapId + "&pawnId=" + pawnId);
+  document.getElementById("puller"+roleId).setAttribute("class","rolePullerOff");
 }
 
 function updateModifierSelectors(pawnId) {
@@ -652,6 +689,20 @@ function inactivateModifierSelectors() {
   var selectors = document.getElementsByName("modifierSelector");
   for(index = 0; index < selectors.length; index++) {
     selectors[index].setAttribute("class","modifierSelectorInactive")
+  }
+}
+
+function inactivatePullers() {
+  var pullers = document.getElementsByName("rolePuller");
+  for(index = 0; index < pullers.length; index++) {
+    pullers[index].setAttribute("class","rolePullerInactive")
+  }
+}
+
+function activatePullers() {
+  var pullers = document.getElementsByName("rolePuller");
+  for(index = 0; index < pullers.length; index++) {
+    pullers[index].setAttribute("class","rolePullerActive")
   }
 }
 
@@ -1097,7 +1148,11 @@ function selectTileOrPawn(id) {
       selectedTileOrPawn = newSelectedTileOrPawn;
       //selectedTileOrPawn.setAttribute("style",highlightOn);
       document.getElementById("highlight"+selectedTileOrPawn.id).setAttribute("visibility","visible")
-      if ((newType == "Pawn") && (mapMode != 'pc')) {updateModifierSelectors(selectedTileOrPawn.id.slice(4));}
+      if (newType == "Pawn") {
+        if (selectedTileOrPawn.getAttribute("rolename").substr(0,6) != 'marker') { activatePullers();
+        } else { inactivatePullers(); }
+        if (mapMode != 'pc') {updateModifierSelectors(selectedTileOrPawn.id.slice(4));}
+      }
       if (selectedTileOrPawn.getAttribute("rulelink") && document.getElementById("ruleLink")) {
         selectHTML += selectedTileOrPawn.getAttribute("rulelink");
         if (selectedTileOrPawn.getAttribute("rulelink") != 'null') { 
@@ -1112,6 +1167,7 @@ function selectTileOrPawn(id) {
     } else {
       // deselect Tile or Pawn
       selectedTileOrPawn = {};
+      inactivatePullers();
       inactivateModifierSelectors();
       if (document.getElementById("ruleLink")) {
         document.getElementById("ruleLink").setAttribute("href","http://paizo.com/prd/");
@@ -1123,7 +1179,10 @@ function selectTileOrPawn(id) {
     selectedTileOrPawn = newSelectedTileOrPawn;
     //selectedTileOrPawn.setAttribute("style",highlightOn);
     document.getElementById("highlight"+selectedTileOrPawn.id).setAttribute("visibility","visible")
-    if ((newType == "Pawn") && (mapMode != 'pc')) {updateModifierSelectors(selectedTileOrPawn.id.slice(4))}
+    if (newType == "Pawn") {
+      if (selectedTileOrPawn.getAttribute("rolename").substr(0,6) != 'marker') { activatePullers();}
+      if (mapMode != 'pc') {updateModifierSelectors(selectedTileOrPawn.id.slice(4));}
+    }
     if (selectedTileOrPawn.getAttribute("rulelink") && document.getElementById("ruleLink")) {
       selectHTML += selectedTileOrPawn.getAttribute("rulelink");
       document.getElementById("ruleLink").setAttribute("href",selectedTileOrPawn.getAttribute("rulelink"));
@@ -1233,6 +1292,7 @@ if ($displays->num_rows > 0) {
     if ($d['name'] == "pawnStats") { echo "  padding: 0px;\n  margin: 0px;\n";}
     if ($d['name'] == "pawnStatsDown") { echo "  padding: 0px;\n  margin: 0px;\n";}
     if ($d['name'] == "pawnStatsUp") { echo "  -ms-transform: rotate(180deg);\n  -webkit-transform: rotate(180deg);\n transform: rotate(180deg);\n   padding: 0px;\n  margin: 0px;\n";}
+    if ($d['name'] == "pawnPuller") { echo "  padding: 0px;\n  margin: 0px;\n";}
     echo "  visibility: inherit;\n";
     echo "  display: inherit;\n";
     #echo "  border:1px solid #A0A0A0;\n";
@@ -1313,6 +1373,39 @@ table.pawnStats {
   width: 100%;
   height: 100%;
 }
+button.rolePullerInactive {
+  margin: 0px;
+  border: 0px;
+  padding: 3px;
+  background-color: transparent;
+  color: transparent;
+}
+button.rolePullerActive {
+  margin: 0px;
+  border: 0px;
+  padding: 3px;
+  background-color: transparent;
+  color: Black;
+}
+button.rolePullerOn {
+  margin: 0px;
+  border: 0px;
+  padding: 3px;
+  background-color: Yellow;
+  color: Black;
+}
+button.rolePullerOff {
+  margin: 0px;
+  border: 0px;
+  padding: 3px;
+  background-color: transparent;
+  color: Black;
+}
+p.pawnPuller {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+  border: 0px;
+}
 td.selectKeyCell { width: 10%; }
 td.nameCell { width: 15%; }
 td.roleCell {width: 15%; }
@@ -1361,6 +1454,21 @@ if ($displays->num_rows > 0) {
       // output div element for each display
       echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
       echo '<p id="'. $d['name'] .'" class="pawnStats"></p>'. "\n";
+    } elseif (substr($d['name'],0,10) == "pawnPuller") {
+      // output div element for each display
+      echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
+      // select all the Marker roles
+      $roles = $conn->query("SELECT * FROM Role ORDER BY name");
+      // Lets put buttons to toggle the toggle modfiers for selected Pawns
+      echo '<button id="puller1" name="rolePuller" class="rolePullerInactive" onclick="">pc'."</button>\n";
+      if ($roles->num_rows > 0) {
+        while($r = $roles->fetch_assoc()) {
+          if (substr($r["name"],0,6) == "marker") { 
+            $thisName = substr($r["name"],strpos($r["name"]," "));
+            echo '<button id="puller'. $r["idRole"] .'" name="rolePuller" class="rolePullerInactive" onclick="pullRole('. $r["idRole"] .')">'. $thisName ."</button>\n";
+          }
+        }
+      }
     } elseif (($d['name'] == "modifierSelectors") && $mapMode == "dm") {
       // output div element for display
       echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";

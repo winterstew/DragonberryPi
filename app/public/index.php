@@ -77,6 +77,10 @@ $app->post('/map/:mapMode/:aId/updatePawnAttackType', function ($mapMode, $aId) 
     require dirname(__FILE__) . '/../updatePawnAttackType.php';
 });
 
+$app->post('/map/:mapMode/:aId/pullRole', function ($mapMode, $aId) use ($app, $log) {
+    require dirname(__FILE__) . '/../pullRole.php';
+});
+
 
 // Important: run the app ;)
 $app->run();
