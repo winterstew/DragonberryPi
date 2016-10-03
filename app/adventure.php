@@ -117,6 +117,7 @@ var needsSave = false;
 var keyHold = null;
 var mouseX=0;
 var mouseY=0;
+var needsReload=0;
 
 function fillOutPawns() {
   var callback = {
@@ -248,7 +249,7 @@ function updateAll() {
     myHTML += "Pawn " + pawnId + "  Map " + mapId + "  Role " + roleId + "<br>\n";
     // pull all pawns in the role
     doPullRole(pawnId,mapId,roleId);
-    setTimeout(reloadAll,500);
+    if (needsReload == 1) {setTimeout(reloadAll,500);}
   }
   // Now lets check the update status
   var myT= ["Map","Tile","Pawn","Pointer"];
@@ -611,6 +612,13 @@ function pullRole(id) {
       pullList.push(selectedTileOrPawn.id.slice(4));
       pullList.push(selectedTileOrPawn.getAttribute("idmap").slice(3));
       pullList.push(id);
+      var pawns = document.getElementsByClassName("Pawn");
+      needsReload = 1;
+      for(index = 0; index < pawns.length; index++) {
+        if ((pawns[index].getAttribute("role") == id ) && ( pawns[index].getAttribute("idmap") == selectedTileOrPawn.getAttribute("idmap") )) {
+          needsReload = 0;
+        }
+      }
     }
   }
 }
@@ -830,7 +838,7 @@ function moveTileOrPawn(elem,type,mode,dir,res) {
     newTransform[0] = 1*oldTransform[0]+step;
     newTransform[0] = newTransform[0] % 360;
     myHTML += oldTransform[0]+"<br>"+newTransform[0]+"<br>" ;
-  } else if ((mode == "s")&&(mapMode != 'pc')) {
+  } else if ((mode == "s")&&((mapMode != 'pc')||(elem.getAttribute("rolename").substr(0,6) == 'marker'))) {
     newTransform[5] = 1*oldTransform[5]+step
     // if scale is less than one step from zero, apply another step to avoid screwing things up
     while (Math.abs(newTransform[5]) < Math.abs(step)) {
@@ -1460,7 +1468,7 @@ if ($displays->num_rows > 0) {
       // select all the Marker roles
       $roles = $conn->query("SELECT * FROM Role ORDER BY name");
       // Lets put buttons to toggle the toggle modfiers for selected Pawns
-      echo '<button id="puller1" name="rolePuller" class="rolePullerInactive" onclick="">pc'."</button>\n";
+      echo '<button id="puller1" name="rolePuller" class="rolePullerInactive" onclick="pullRole(1)">pc'."</button>\n";
       if ($roles->num_rows > 0) {
         while($r = $roles->fetch_assoc()) {
           if (substr($r["name"],0,6) == "marker") { 
