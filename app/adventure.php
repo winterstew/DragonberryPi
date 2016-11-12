@@ -134,8 +134,15 @@ function fillOutPawns() {
           var nodes = groups[gIndex].children;
           if (nodes) {
             for(nIndex = 0; nIndex <  nodes.length; nIndex++) {
-              var style = nodes[nIndex].getAttribute("style").replace(/#[Ff][Ff]00[Ff][Ff]/,
-                                                                      pawnProperty["backgroundColor"]);
+              var fillColor = pawnProperty["backgroundColor"];
+              var hexColor = fillColor.match(/^(#[A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])/);
+              var fillOpacity = 1.0;
+              if (hexColor != null) {
+                  fillColor = hexColor[1];
+                  fillOpacity = (( "0x" + hexColor[2] ) / 0xFF);
+              }
+              var style = nodes[nIndex].getAttribute("style").replace(/#[Ff][Ff]00[Ff][Ff]/,fillColor);
+              style = style.replace(/fill-opacity: *[^;]+ *;/,( "fill-opacity:" + fillOpacity + ";" ));
               nodes[nIndex].setAttribute("style",style);
               pawnListHTML += nodes[nIndex].getAttribute("style") + "<br>";
             }
