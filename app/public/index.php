@@ -45,6 +45,12 @@ $app->get('/map/:mapMode/:aId/', function ($mapMode, $aId) use ($app, $log) {
     require dirname(__FILE__) . '/../adventure.php';
 })->conditions(array('mapMode' => '(pc||dm)','aId' => '\d\d*'));
 
+//$app->get('/herolab/:mapId/:pawnName/:modifierName/toggleNamedPawnModifier', function ($mapId, $pawnName, $modifierName) use ($app, $log) {
+//    $greeter = new SampleApp\Helpers\Hello("Toggle $pawnName's $modifierName status on map $mapId");
+//    echo $greeter->greet();
+//    $log->info("Just logging $pawnName visit...");
+//});
+
 $app->post('/map/:mapMode/:aId/adjustPawnIndicator', function ($mapMode, $aId) use ($app, $log) {
     require dirname(__FILE__) . '/../adjustPawnIndicator.php';
 });
@@ -79,6 +85,10 @@ $app->post('/map/:mapMode/:aId/updatePawnAttackType', function ($mapMode, $aId) 
 
 $app->post('/map/:mapMode/:aId/pullRole', function ($mapMode, $aId) use ($app, $log) {
     require dirname(__FILE__) . '/../pullRole.php';
+});
+
+$app->get('/herolab/:mapId/:pawnName/:modifierName/toggle', function ($mapId, $pawnName, $modifierName) use ($app, $log) {
+    require dirname(__FILE__) . '/../toggleNamedPawnModifier.php';
 });
 
 
