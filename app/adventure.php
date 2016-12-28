@@ -3,9 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 <?php 
-include 'controls.php';
 // Create connection
 $conn = db_connect($app->config('db'));
+include 'controls.php';
 // What is the root directory for this app
 $appRoot = $app->config('root');
 // What is the run mmode
