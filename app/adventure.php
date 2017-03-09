@@ -1127,8 +1127,8 @@ function interpretKeyDown(event) {
       // check that the pawn is on a currently visible map
       if (document.getElementById("map"+pawns[index].getAttribute("idmap").slice(3)).getAttribute("visibility") == "visible") {
         if ((pawns[index].hasAttribute("selectkey")) &&  
-            ((pawns[index].getAttribute("selectkey") == String.fromCharCode(key).toUpperCase()) ||
-             (pawns[index].getAttribute("selectkey") == String.fromCharCode(key).toLowerCase()))) {
+            (((ev.shiftKey) && (pawns[index].getAttribute("selectkey") == String.fromCharCode(key).toUpperCase())) ||
+             ((! ev.shiftKey) && (pawns[index].getAttribute("selectkey") == String.fromCharCode(key).toLowerCase())))) {
           keyHTML += "keySelect "+pawns[index].id+"<br>";
           selectTileOrPawn(pawns[index].id);
           break;
@@ -1343,15 +1343,15 @@ button.toggleListVisible {
   margin: 0px;
   border: 0px;
   padding: 1px;
-  background-color: LightGreen;
-  color: Red;
+  color: LightGreen;
+  background-color: DarkBlue;
 }
 button.toggleListOpaque {
   margin: 0px;
   border: 0px;
   padding: 1px;
   background-color: LightGreen;
-  color: Yellow;
+  color: DarkBlue;
 }
 button.modifierSelectorInactive {
   margin: 0px;
@@ -1475,12 +1475,14 @@ if ($displays->num_rows > 0) {
       // select all the Marker roles
       $roles = $conn->query("SELECT * FROM Role ORDER BY name");
       // Lets put buttons to toggle the toggle modfiers for selected Pawns
-      echo '<button id="puller1" name="rolePuller" class="rolePullerInactive" onclick="pullRole(1)">pc'."</button>\n";
+      //echo '<button id="puller1" name="rolePuller" class="rolePullerInactive" onclick="pullRole(1)">pc'."</button>\n";
       if ($roles->num_rows > 0) {
         while($r = $roles->fetch_assoc()) {
-          if (substr($r["name"],0,6) == "marker") { 
+          if ((substr($r["name"],0,6) == "marker") || (substr($r["name"],0,2) == "pc")) { 
             $thisName = substr($r["name"],strpos($r["name"]," "));
-            echo '<button id="puller'. $r["idRole"] .'" name="rolePuller" class="rolePullerInactive" onclick="pullRole('. $r["idRole"] .')">'. $thisName ."</button>\n";
+            if (($mapMode == "dm") || (substr($r["name"],0,6) == "marker")) {
+              echo '<button id="puller'. $r["idRole"] .'" name="rolePuller" class="rolePullerInactive" onclick="pullRole('. $r["idRole"] .')">'. $thisName ."</button>\n";
+            }
           }
         }
       }
@@ -1700,7 +1702,7 @@ if ($displays->num_rows > 0) {
             echo 'modifierlist=" " ';
             echo 'pawnimagehref="'. $appRoot . getDirName($conn,$p["idLocation"],$p["treeDepth"])."/".rawurlencode($p["filename"]) .'" ';
             if ($p["selectKey"] && 
-                ( ($p["roleName"] == "pc") || 
+                ( (substr($p["roleName"],0,2) == "pc") || 
                   (substr($p["roleName"],0,6) == "marker") || 
                   ($mapMode == "dm"))) {echo 'selectkey="'.$p["selectKey"].'" ';}
             //echo 'selectkey="'.$p["selectKey"].'" ';
@@ -1708,7 +1710,7 @@ if ($displays->num_rows > 0) {
               // add the dbl click event in DM mode
               echo 'ondblclick="toggleVisibility(\'Pawn\','.$p["idPawn"].')" '; 
             }
-            if (($p["roleName"] == "pc")||(substr($p["roleName"],0,6) == "marker")||($mapMode == "dm")) {
+            if ((substr($p["roleName"],0,2) == "pc")||(substr($p["roleName"],0,6) == "marker")||($mapMode == "dm")) {
               // add a click event for selecting to move
               echo 'onclick="selectTileOrPawn(\'pawn'.$p["idPawn"].'\')" ';
             }
