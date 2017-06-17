@@ -259,7 +259,7 @@ function updateAll() {
     if (needsReload == 1) {setTimeout(reloadAll,500);}
   }
   // Now lets check the update status
-  var myT= ["Map","Tile","Pawn","Pointer"];
+  var myT= ["Map","Tile","Pawn","Pointers"];
   var x,i;
   for (x in myT) {
     // build up a list as [tablename,id1,updated1,id2,updated2,...]
@@ -500,7 +500,7 @@ function updateVisibility(table,id,attribute) {
       myE.setAttribute("display","inline");
       myE.setAttribute("width",myE.getAttribute("widthvisible"));
       myE.setAttribute("height",myE.getAttribute("heightvisible"));
-    } else if (table == "Pointer") {
+    } else if (table == "Pointers") {
       myE.setAttribute("visibility","visible");
       myE.setAttribute("display","inline");
     } else {
@@ -515,7 +515,7 @@ function updateVisibility(table,id,attribute) {
       myE.setAttribute("width","0");
       myE.setAttribute("height","0");
       updateListHTML += "hidden ";
-    } else if (table == "Pointer") {
+    } else if (table == "Pointers") {
       myE.setAttribute("visibility","hidden");
       myE.setAttribute("display","none");
     } else {
@@ -530,7 +530,7 @@ function updateVisibility(table,id,attribute) {
       myE.setAttribute("display","none");
       myE.setAttribute("width","0");
       myE.setAttribute("height","0");
-    } else if (table == "Pointer") {
+    } else if (table == "Pointers") {
       myE.setAttribute("display","none");
     }
     updateListHTML += "hidden ";
@@ -907,7 +907,7 @@ function placePointer(elem,myX,myY) {
     elem.setAttribute("display","inline");
   }
   // in the case of pointers this also saves the visibility
-  saveOne("Pointer",elem);
+  saveOne("Pointers",elem);
 }
 
 function interpretKeyUp(event) {
@@ -1109,14 +1109,14 @@ function interpretKeyDown(event) {
   } else if (! keyHold) {
     // all other key presses, but only once, not if held
     // turn on pointers
-    var pointers = document.getElementsByClassName("Pointer");
+    var pointers = document.getElementsByClassName("Pointers");
     for(index = 0; index < pointers.length; index++) {
       if ((pointers[index].hasAttribute("selectkey")) &&  
           ((pointers[index].getAttribute("selectkey") == String.fromCharCode(key).toUpperCase()) ||
            (pointers[index].getAttribute("selectkey") == String.fromCharCode(key).toLowerCase()))) {
           var onMap = document.getElementById(pointers[index].getAttribute("onmap"));
           if (onMap.getAttribute("visibility") == "visible") {
-            keyHTML += "toggle Pointer:"+pointers[index].id+" at "+mouseX+","+mouseY+"<br>";
+            keyHTML += "toggle Pointers:"+pointers[index].id+" at "+mouseX+","+mouseY+"<br>";
             placePointer(pointers[index],mouseX,mouseY)
           }
       }
@@ -1332,7 +1332,7 @@ if ($displays->num_rows > 0) {
 // reset the select table back to the start
 $displays->data_seek(0);
 ?>
-object.Pointer {
+object.Pointers {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -1382,7 +1382,7 @@ p.pawnStats {
 table.pawnStats {
   table-layout: auto;
   text-align: center;
-  font-size: 0.7em;
+  font-size: 1.0em;
   border: 0px;
   padding: 0px 0px 0px 0px;
   width: 100%;
@@ -1445,7 +1445,7 @@ include 'pawn_global_defs.svg';
 echo '</svg>';
 // do the pointers query here so I do not get multiple display areas
 // with the same pointer
-//$pointers = $conn->query("SELECT * FROM Pointer");
+//$pointers = $conn->query("SELECT * FROM MapPointers");
 // loop through displays again
 if ($displays->num_rows > 0) {
   while($d = $displays->fetch_assoc()) {
@@ -1743,12 +1743,12 @@ if ($displays->num_rows > 0) {
         }
         echo "</g> <!--close mapg-->\n";
         // lets point a pointer on every pawnGrid
-        $pointers = $conn->query("SELECT * FROM Pointer WHERE idMap = ".$m["idMap"]);
+        $pointers = $conn->query("SELECT * FROM MapPointer WHERE idMap = ".$m["idMap"]);
         if ($pointers->num_rows > 0) {
           while($p = $pointers->fetch_assoc()){
             echo "<!-- open Pointer-->\n";
-            echo '<g id="pointer'.$p["idPointer"].'" ' . "\n";
-            echo '   class="Pointer" ' . "\n";
+            echo '<g id="pointer'.$p["idPointers"].'" ' . "\n";
+            echo '   class="Pointers" ' . "\n";
             echo '   onmap="map'.$p["idMap"].'" '."\n";
             echo '   type="image/svg+xml"' ."\n";
             echo '   selectkey="' . $p["selectKey"] . '" ' . "\n";

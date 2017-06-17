@@ -149,8 +149,8 @@ if ($adventures->num_rows > 0) {
     echo "<tr>\n";
     echo '<td>'.$a["idAdventure"].'</td>';
     echo '<td><a id="pclink'.$a["idAdventure"].'" class="adventureLink">'.$a["name"].'</a></td>';
-    //echo '<td><a id="dmlink'.$a["idAdventure"].'" class="adventureLink" target="_blank">'.$a["name"].'</a></td>';
-    echo '<td>'.$a["name"].'</td>';
+    echo '<td><a id="dmlink'.$a["idAdventure"].'" class="adventureLink" target="_blank">'.$a["name"].'</a></td>';
+    //echo '<td>'.$a["name"].'</td>';
     echo "</tr>\n";
   }
   echo "</table>\n";
