@@ -26,6 +26,7 @@ $controlsText = '' .
 '.   ---> increase attack range or height (as selected above) by 10 feet\n' .
 'Ctrl-.   ---> increase attack range or height (as selected above) by 25 feet\n' .
 'b   ---> toggle display of a map pointer\n' .
+'n   ---> toggle display of a map square pointer\n' .
 'd   ---> force reload of browser\n' .
 'f   ---> flip keyboard controls upside-down\n' ;
 $controlsHTML = "<tr><td style=\"text-align:right; font-weight:bold;\">mouse click</td><td>select/deselect a pawn or tile</td></tr>" .
@@ -50,6 +51,7 @@ $controlsHTML = "<tr><td style=\"text-align:right; font-weight:bold;\">mouse cli
 "<tr><td style=\"text-align:right; font-weight:bold;\">,</td><td>decrease attack range or height (as selected above) by five feet</td</tr>" .
 "<tr><td style=\"text-align:right; font-weight:bold;\">.</td><td>increase attack range or height (as selected above) by five feet</td></tr>" .
 "<tr><td style=\"text-align:right; font-weight:bold;\">b</td><td>toggle display of a map pointer</td></tr>" .
+"<tr><td style=\"text-align:right; font-weight:bold;\">n</td><td>toggle display of a map square pointer</td></tr>" .
 "<tr><td style=\"text-align:right; font-weight:bold;\">d</td><td>force reload of browser</td></tr>" .
 "<tr><td style=\"text-align:right; font-weight:bold;\">f</td><td>flip keyboard controls upside-down</td></tr>" ;
 ?>

@@ -892,7 +892,7 @@ function moveTileOrPawn(elem,type,mode,dir,res) {
 }
 
 function placePointer(elem,myX,myY) {
-  var type = "pointer"
+  var type = "pointers"
   var vis = elem.getAttribute("visibility")
   if (vis == "visible")  {
     elem.setAttribute("visibility","hidden");
@@ -1746,8 +1746,8 @@ if ($displays->num_rows > 0) {
         $pointers = $conn->query("SELECT * FROM MapPointer WHERE idMap = ".$m["idMap"]);
         if ($pointers->num_rows > 0) {
           while($p = $pointers->fetch_assoc()){
-            echo "<!-- open Pointer-->\n";
-            echo '<g id="pointer'.$p["idPointers"].'" ' . "\n";
+            echo "<!-- open Pointers-->\n";
+            echo '<g id="pointers'.$p["idPointers"].'" ' . "\n";
             echo '   class="Pointers" ' . "\n";
             echo '   onmap="map'.$p["idMap"].'" '."\n";
             echo '   type="image/svg+xml"' ."\n";
@@ -1763,7 +1763,7 @@ if ($displays->num_rows > 0) {
             echo '   updated="2000-01-01 01:00:00" '."\n";
             echo '   updatedby="'.$updater.'" '."\n";
             echo $p["shapeSvg"];
-            echo "</g> <!--close Pointer-->";
+            echo "</g> <!--close Pointers-->";
           }
         }
         echo "</svg> <!--close Map-->\n";
