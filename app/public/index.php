@@ -79,6 +79,10 @@ $app->post('/map/:mapMode/:aId/toggleVisibility', function ($mapMode, $aId) use 
     require dirname(__FILE__) . '/../toggleVisibility.php';
 });
 
+$app->post('/map/:mapMode/:aId/toggleShowName', function ($mapMode, $aId) use ($app, $log) {
+    require dirname(__FILE__) . '/../toggleShowName.php';
+});
+
 $app->post('/map/:mapMode/:aId/updatePawnAttackType', function ($mapMode, $aId) use ($app, $log) {
     require dirname(__FILE__) . '/../updatePawnAttackType.php';
 });

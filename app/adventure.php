@@ -80,6 +80,7 @@ function getDirName($c,$idLoc,$depthLoc) {
 ?>
 <script>
 var toggleList = [];
+var toggleShowNameList = [];
 var modifiersList = [];
 var pullList = [];
 var toSaveList = [];
@@ -238,6 +239,14 @@ function updateAll() {
     // toggle visibility
     doToggleVisibility(table,id);
   }
+  while (toggleShowNameList.length > 0) {
+    // shift off the table name and the id from the list
+    var table = toggleShowNameList.shift();
+    var id = toggleShowNameList.shift();
+    myHTML += "ShowName Map " + id + "<br>\n";
+    // toggle visibility
+    doToggleShowName(table,id);
+  }
   if (modifiersList.length > 0) myHTML += "Modifier List<br>\n";
   while (modifiersList.length > 0) {
     // shift off the idPawn name and idModifier from the list
@@ -382,16 +391,39 @@ function updateFromDatabase( table ) {
 function updateDisplayVisibility(){
   var divs = document.getElementsByTagName("div")
   for (i = 0; i < divs.length; i++) {
-      var maps = divs[i].getElementsByClassName("Map")
+      var maps = divs[i].getElementsByClassName("Map");
+      var nameButton = document.getElementById("mapNameButton" + divs[i].id.slice(7));
       isVisible = (maps.length > 0) ? false : true;
+      nameVisible = false;
+      dmNameVisible = false;
       for (j = 0; j < maps.length; j++) {
           if (maps[j].getAttribute("visibility") != "hidden") {isVisible = true}
           if (maps[j].getAttribute("display") != "none") {isVisible = true}
+          if (isVisible && ((maps[j].getAttribute("showname") == 1) || ((maps[j].getAttribute("dmshowname") == 1) && (mapMode == "dm")))) {
+              if (nameButton) { 
+                nameButton.setAttribute("mapname",maps[j].getAttribute("title"));
+                nameButton.setAttribute("ondblclick","toggleShowName('Map'," + maps[j].getAttribute("id").slice(3) + ")");
+                nameButton.innerHTML=maps[j].getAttribute("title"); 
+              }
+              nameVisible = true;
+              if ((maps[j].getAttribute("dmshowname") == 1) && (mapMode == "dm")) {
+                dmNameVisible = true;
+                if (maps[j].getAttribute("showname") == 1) {nameVisible = true;}
+                else { nameVisible = false; }
+              }
+          }
+          if (isVisible) { break }
       }
       if (isVisible) {
           divs[i].setAttribute("class",divs[i].getAttribute("id") + "Visible")
+          if (nameVisible && nameButton) { nameButton.setAttribute("class",'mapNameOn') }
+          else { 
+            if (nameButton) { nameButton.setAttribute("class",'mapNameOff') ;}
+            if (dmNameVisible && nameButton) { nameButton.setAttribute("class",'mapNameDM') }
+          }
       } else {
           divs[i].setAttribute("class",divs[i].getAttribute("id") + "Hidden")
+          if (nameButton) { nameButton.setAttribute("class",'mapNameOff') ;}
       }
   }
 }
@@ -497,6 +529,8 @@ function updateVisibility(table,id,attribute) {
     updateListHTML += "visible ";
     if (table == "Map") {
       myE.setAttribute("visibility","visible");
+      myE.setAttribute("showname",attribute["showName"]);
+      myE.setAttribute("dmshowname",attribute["dmShowName"]);
       myE.setAttribute("display","inline");
       myE.setAttribute("width",myE.getAttribute("widthvisible"));
       myE.setAttribute("height",myE.getAttribute("heightvisible"));
@@ -603,6 +637,11 @@ function toggleVisibility(table,id) {
   toggleList.push(id);
 }
 
+function toggleShowName(table,id) {
+  toggleShowNameList.push(table);
+  toggleShowNameList.push(id);
+}
+
 function toggleModifier(id) {
   if (selectedTileOrPawn.id) {
     if (selectedTileOrPawn.getAttribute("class") == "Pawn") {
@@ -633,6 +672,13 @@ function pullRole(id) {
 function doToggleVisibility(table,id) {
   var xhttp = new XMLHttpRequest();
   xhttp.open("POST", "toggleVisibility", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("table=" + table + "&id=" + id);
+}
+
+function doToggleShowName(table,id) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("POST", "toggleShowName", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.send("table=" + table + "&id=" + id);
 }
@@ -1439,14 +1485,30 @@ td.roleCell {width: 15%; }
 td.heightCell {width: 10%; }
 td.attackRangeCell {width: 10%; }
 td.modifiersListCell { width: 40%; word-wrap:break-word;}
+button.mapNameDM {
+  position:absolute;
+  margin: 0px auto;
+  width:100%;
+  border: 0px;
+  padding: 3px;
+  background-color: transparent;
+  font-weight:bold;
+  font-size:70%;
+  color: magenta;
+  bottom: 0px;
+  text-align:center;
+  visibility: visible;
+}
 button.mapNameOn {
   position:absolute;
   margin: 0px auto;
   width:100%;
   border: 0px;
   padding: 3px;
-  background-color: light-gray;
-  color: Black;
+  background-color: transparent;
+  font-weight:bold;
+  font-size:120%;
+  color: magenta;
   bottom: 0px;
   text-align:center;
   visibility: visible;
@@ -1458,7 +1520,9 @@ button.mapNameOff {
   border: 0px;
   padding: 3px;
   background-color: transparent;
-  color: Black;
+  font-weight:bold;
+  font-size:100%;
+  color: transparent;
   bottom: 0px;
   text-align:center;
   visibility: hidden;
@@ -1544,7 +1608,7 @@ if ($displays->num_rows > 0) {
     } elseif ((! strpos($d['name'],"List")) && ($d['name'] != "modifierSelectors")) {
       // output div element for each display
       echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible" >'."\n";
-      echo '<button id="mapNameButton'.$d["idDisplay"].'" class="mapNameOff">Display&nbsp;'.$d["idDisplay"].'&nbsp;Map</button>';
+      echo '<button id="mapNameButton'.$d["idDisplay"].'" class="mapNameOff" ondblclick="toggleShowName()">Display&nbsp;'.$d["idDisplay"].'&nbsp;Map</button>';
     } 
 
     // select maps
@@ -1568,7 +1632,7 @@ if ($displays->num_rows > 0) {
           echo 'display="none" ' ;
         }
         // Map element id 
-        echo 'id="map'.$m["idMap"].'" maptype="'.$m["mapType"].'" ';
+        echo 'id="map'.$m["idMap"].'" maptype="'.$m["mapType"].'" title="'.$m["mapName"].'" showName="'.$m["showName"].'" dmShowName="'.$m["dmShowName"].'"';
         //echo 'updated="'.$m["updated"].'" ';
         echo 'updated="2000-01-01 01:00:00" ';
         echo 'updatedby="'.$updater.'" ';
