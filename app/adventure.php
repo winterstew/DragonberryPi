@@ -1439,6 +1439,30 @@ td.roleCell {width: 15%; }
 td.heightCell {width: 10%; }
 td.attackRangeCell {width: 10%; }
 td.modifiersListCell { width: 40%; word-wrap:break-word;}
+button.mapNameOn {
+  position:absolute;
+  margin: 0px auto;
+  width:100%;
+  border: 0px;
+  padding: 3px;
+  background-color: light-gray;
+  color: Black;
+  bottom: 0px;
+  text-align:center;
+  visibility: visible;
+}
+button.mapNameOff {
+  position:absolute;
+  margin: 0px auto;
+  width:100%;
+  border: 0px;
+  padding: 3px;
+  background-color: transparent;
+  color: Black;
+  bottom: 0px;
+  text-align:center;
+  visibility: hidden;
+}
 
 </style>
 </head>
@@ -1520,6 +1544,7 @@ if ($displays->num_rows > 0) {
     } elseif ((! strpos($d['name'],"List")) && ($d['name'] != "modifierSelectors")) {
       // output div element for each display
       echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible" >'."\n";
+      echo '<button id="mapNameButton'.$d["idDisplay"].'" class="mapNameOff">Display&nbsp;'.$d["idDisplay"].'&nbsp;Map</button>';
     } 
 
     // select maps
