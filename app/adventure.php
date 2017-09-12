@@ -758,7 +758,7 @@ function multiMouseMove(event) {
   if (ev.currentTarget.getAttribute("class") == "Map" && (ev.currentTarget.getAttribute("visibility") == "visible")) {
     mouseX = ev.pageX - ev.currentTarget.parentElement.offsetLeft;
     mouseY = ev.pageY - ev.currentTarget.parentElement.offsetTop;
-    if (ev.currentTarget.getAttribute("maptype") == "pawnGrid") {
+    if (ev.currentTarget.getAttribute("maptype").substr(0,4) == "pawn") {
       var vb = ev.currentTarget.getAttribute("viewBox").split(" ");
       var ws = vb[2]/ev.currentTarget.getAttribute("width") 
       var hs = vb[3]/ev.currentTarget.getAttribute("height")
@@ -840,6 +840,7 @@ function moveTileOrPawn(elem,type,mode,dir,res) {
   var oldTransform = unpackTransform(elem.getAttribute("transform"),type);
   var newTransform = unpackTransform(elem.getAttribute("transform"),type);
   var mapPixelsPerInch = document.getElementById(elem.getAttribute("idmap")).getAttribute("pixelsperinch");
+  var mapType = document.getElementById(elem.getAttribute("idmap")).getAttribute("maptype");
   if (mapPixelsPerInch <= 0) {mapPixelsPerInch = standardMapPixelsPerInch;};
   if (mode == "r") {
     newTransform[0] = 1*oldTransform[0]+step;
@@ -874,9 +875,20 @@ function moveTileOrPawn(elem,type,mode,dir,res) {
     var sr = Math.sin((-1*mapTransform[0])*Math.PI/180);
     //var dX = step*standardMapPixelsPerInch/globalScale;
     //var dY = -1*step*standardMapPixelsPerInch/globalScale;
+    // So on a hex map with flat sides parallel to the top and bottom
+    // the dX should be along the 30deg.  
+    // dY = 0.5 * step; dX = sqrt(3)*0.5*step
     var dX = step*mapPixelsPerInch/globalScale;
     var dY = -1*step*mapPixelsPerInch/globalScale;
-    if (mode == "x") { dY = 0.0; } else { dX = 0.0; }
+    if (mode == "x") { 
+      if (mapType == "pawnHex" && type == "pawn") {
+        thisStep = dX;
+        dX = thisStep * Math.sqrt(3.0) * 0.5;
+        dY = thisStep * 0.5;
+      } else {
+        dY = 0.0; 
+      }
+    } else { dX = 0.0; }
     newTransform[3] = 1*oldTransform[3]+dX*cr-dY*sr;
     newTransform[4] = 1*oldTransform[4]+dX*sr+dY*cr;
     // Keep the center of rotation on the tile or pawn center
@@ -1456,7 +1468,7 @@ if ($displays->num_rows > 0) {
       // output div element for display
       echo '<div id="display'.$d["idDisplay"].'" class="display'.$d["idDisplay"].'Visible">'."\n";
       // select all the DM visible Maps for this list
-      $maps = $conn->query("SELECT * FROM MapDmVisibleOnDisplay WHERE mtName=\"".str_replace("List","",$d['name'])."\" AND idAdventure=".$aId." ORDER BY BINARY(mName) ASC");
+      $maps = $conn->query("SELECT * FROM MapDmVisibleOnDisplay WHERE ( mtName=\"".str_replace("List","",$d['name'])."\" OR mtName=\"".str_replace("List","",str_replace("Grid","Hex",$d['name']))."\") AND idAdventure=".$aId." ORDER BY BINARY(mName) ASC");
       // Lets put buttons to toggle the PC visibility for each DM visible map of this type
       if ($maps->num_rows > 0) {
         while($m = $maps->fetch_assoc()) {
@@ -1516,7 +1528,7 @@ if ($displays->num_rows > 0) {
     //loop through maps for each display
     if ($maps->num_rows > 0) {
       while($m = $maps->fetch_assoc()) {
-        if (($m["mapType"] == "pawnGrid") && (! $displayHasPawnGrid)) { $displayHasPawnGrid = 1; }
+        if ((substr($m["mapType"],0,4) == "pawn") && (! $displayHasPawnGrid)) { $displayHasPawnGrid = 1; }
         // Outer most svg element
         //  this contains the visibility information as well as the scale and size
         //  for the overal mapping area
@@ -1579,7 +1591,7 @@ if ($displays->num_rows > 0) {
            echo 'viewBox="0 0 '.$dWidth.' '.$dHeight.'" '; 
           }
         }
-        if ($m["mapType"] == "pawnGrid") {
+        if (substr($m["mapType"],0,4) == "pawn") {
           // pawnGrids need to not change aspect 
           echo 'preserveAspectRatio="xMinYMin slice" ';
           // put map move controls here so that the mouse active area does not change when the map's transformation does
@@ -1588,7 +1600,7 @@ if ($displays->num_rows > 0) {
         }
         echo 'onmousemove="multiMouseMove(evt)" ';
         echo 'style="';
-        if ($m["mapType"] == "pawnGrid") {
+        if (substr($m["mapType"],0,4) == "pawn") {
             echo 'border:1px solid #EEEEEE; ';
         }
         echo 'background:'.$m["backgroundColor"].'; ';
@@ -1599,12 +1611,12 @@ if ($displays->num_rows > 0) {
         //  this positions the map within its window.
         //  can be used to scroll map.  Perhaps add a drag event?
         echo '<g id="map'.$m["idMap"].'g" ';
-        if ($m["mapType"] == "pawnGrid") {
+        if (substr($m["mapType"],0,4) == "pawn") {
           echo 'pixelsperinch="'. ($m["pixelsPerFoot"] * $m["feetPerInch"]) .'" ';
         }
         echo 'transform="';
         // pawnGrid map types use pixelsPerFoot and feetPerInch to determine scale
-        if ($m["mapType"] == "pawnGrid") {
+        if (substr($m["mapType"],0,4) == "pawn") {
          echo 'rotate('. $m["rotate"] .' '. $m["scale"]*$bx/2 .' '. $m["scale"]*$by/2 .') ';
          echo 'translate('. $m["translateX"] .' '. $m["translateY"] .') ';
          echo 'scale('. $m["scale"] .') ';

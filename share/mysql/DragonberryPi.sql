@@ -792,6 +792,7 @@ USE `DragonberryPi`;
 INSERT INTO `DragonberryPi`.`MapType` (`idMapType`, `name`, `description`, `updated`, `updatedBy`) VALUES (1, 'pawnGrid', 'Grid for pawn movement encounters', DEFAULT, NULL);
 INSERT INTO `DragonberryPi`.`MapType` (`idMapType`, `name`, `description`, `updated`, `updatedBy`) VALUES (2, 'overviewMap', 'Overview map of region', DEFAULT, NULL);
 INSERT INTO `DragonberryPi`.`MapType` (`idMapType`, `name`, `description`, `updated`, `updatedBy`) VALUES (3, 'illustration', 'NPC or monster head shot or picture', DEFAULT, NULL);
+INSERT INTO `DragonberryPi`.`MapType` (`idMapType`, `name`, `description`, `updated`, `updatedBy`) VALUES (4, 'pawnHex', 'Hex Grid for pawn movement encounters', DEFAULT, NULL);
 
 COMMIT;
 
