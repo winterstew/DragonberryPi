@@ -75,6 +75,16 @@ function mouseOver() {
 function mouseOut() {
   document.getElementById('controlsTable').innerHTML = "";
 }
+function toggleDmCol() {
+  var elems = document.getElementsByClassName('dmcol');
+  for(index = 0; index < elems.length; index++) {
+    if (elems[index].getAttribute("style") == "visibility:visible;") {;
+      elems[index].setAttribute("style","visibility:hidden;")
+    } else {
+      elems[index].setAttribute("style","visibility:visible;")
+    }
+  }
+}
 function reScale() {
   // even with the capability of specifiying units in inches, being able 
   // to get the window size and the pixel ratio.  It is still
@@ -143,14 +153,13 @@ if ($adventures->num_rows > 0) {
   echo "<tr>\n";
   echo '<th>id</th>';
   echo '<th>PC mode</th>';
-  echo '<th>DM mode</th>';
+  echo '<th><button style="background:none;color:inherit;border:none;padding:0;font:inherit;" onclick="toggleDmCol()">DM mode</button></th>';
   echo "</tr>\n";
   while($a = $adventures->fetch_assoc()) {
     echo "<tr>\n";
     echo '<td>'.$a["idAdventure"].'</td>';
     echo '<td><a id="pclink'.$a["idAdventure"].'" class="adventureLink">'.$a["name"].'</a></td>';
-    echo '<td><a id="dmlink'.$a["idAdventure"].'" class="adventureLink" target="_blank">'.$a["name"].'</a></td>';
-    //echo '<td>'.$a["name"].'</td>';
+    echo '<td class="dmcol" style="visibility:hidden;"><a id="dmlink'.$a["idAdventure"].'" class="adventureLink" target="_blank">'.$a["name"].'</a></td>';
     echo "</tr>\n";
   }
   echo "</table>\n";
