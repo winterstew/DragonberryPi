@@ -45,6 +45,18 @@ $app->get('/map/:mapMode/:aId/', function ($mapMode, $aId) use ($app, $log) {
     require dirname(__FILE__) . '/../adventure.php';
 })->conditions(array('mapMode' => '(pc||dm)','aId' => '\d\d*'));
 
+$app->get('/design/', function () use ($app, $log) {
+    require dirname(__FILE__) . '/../design.php';
+});
+
+$app->post('/design/select', function () use ($app, $log) {
+    require dirname(__FILE__) . '/../select.php';
+});
+
+$app->post('/select', function () use ($app, $log) {
+    require dirname(__FILE__) . '/../select.php';
+});
+
 //$app->get('/herolab/:mapId/:pawnName/:modifierName/toggleNamedPawnModifier', function ($mapId, $pawnName, $modifierName) use ($app, $log) {
 //    $greeter = new SampleApp\Helpers\Hello("Toggle $pawnName's $modifierName status on map $mapId");
 //    echo $greeter->greet();
