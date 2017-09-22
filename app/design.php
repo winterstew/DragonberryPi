@@ -25,9 +25,12 @@ body {
 /* Create three equal columns that floats next to each other */
 .column {
     float: left;
-    width: 20%;
+    width: 16%;
     display: table-cell;
     padding: 10px;
+}
+.entryColumn {
+    width: 20%;
 }
 .collapse {
     width: 0px;
@@ -43,6 +46,13 @@ body {
 }
 
 
+.recordInputs {
+    white-space: nowrap; 
+    height: 100%;
+    max-height: 400px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
 .recordList {
     white-space: nowrap; 
     height: 100%;
@@ -138,7 +148,7 @@ tr:hover {
 .previews {
     position: absolute;
     bottom: 30px;
-    left: 30px;
+    right: 30px;
     height: 30%;
     max-width: 50%;
     overflow-y: auto;
@@ -146,7 +156,7 @@ tr:hover {
 }
 
 .gallery {
-    float: left;
+    float: right;
     display: table-cell;
 }
 
@@ -167,6 +177,9 @@ tr:hover {
 .color4 {
     color: hsl(180, 100%, 30%);
 }
+.colorEntry {
+    color: hsl(0, 50%, 50%);
+}
 
 /* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
 @media (max-width: 600px) {
@@ -180,7 +193,8 @@ tr:hover {
 var appRoot = "<?php echo $app->config('root') ?>"
 var columnsToShow = ["name","filename"];
 $(document).ready(function(){
-    $(".tableHead").click(onClickTableHead);
+    $(".tableHead").on("click",onClickTableHead);
+    $("button.entryButton").on("click",onClickEntry);
     $("input").keyup(onClickTableHead);
     $(".tableHead").click();
     //$(".tableHeadSort").addClass("material-icons");
@@ -296,11 +310,44 @@ function getOrder(el) {
     //$(".footer").find("p").text(order)
     return order;
 }
-function onClickTableHead(){
+function onClickEntry(event){
+    var url = $(event.target).attr("name") + 'Record';
+    var table = $(".entryHead").text();
+    var id = 0;
+    var setList = '';
+    $(".recordInputs").children().each(function() {
+        if ($(this).is("input")) {
+            if ($(this).attr("name") == "id"+table) {
+                id = $(this).val();
+            } else {
+                if ($(this).val()) {
+                    setList += $(this).attr("name") + '="' + $(this).val() + '", ';
+                }
+            }
+        }
+    });
+    setList = setList.slice(0,setList.length-2)
+    $.post(url,
+    JSON.stringify({
+        table: table,
+        id: id,
+        setList: setList
+    }),entryCallback,"json");
+    $(".footer").find("p").html("<b>" + url + " <i>" + table+"</i></b> SET <b>"+setList+"</b>");
+}
+
+function onClickTableHead(event){
     var table = $(this).closest("div").attr("id").slice(3);
     if (table == "Null") { return; };
     var where = getWhere(this);
     var order = getOrder(this);
+    if (event.ctrlKey) { 
+        $.post("showColumns",
+        JSON.stringify({
+            table: table
+        }),createInputFormColumnCallback,"json");
+        return;
+    };
     $.post("select",
     JSON.stringify({
         table: table,
@@ -336,6 +383,12 @@ function onDblClickRecordRow(el){
             whereList = ["Tile.idMap = " + id,"Pawn.idMap = " + id];
             orderList = [getOrder("#divTile .tableHead"),
                          getOrder("#divPawn .tableHead")];
+            break;
+        case "Display":
+            selectList = ["Map.*"];
+            tableList = ["Map"];
+            whereList = ["Map.idDisplay = " + id];
+            orderList = [getOrder("#divMap .tableHead")];
             break;
         case "MapType":
             selectList = ["Map.*"];
@@ -405,9 +458,25 @@ function onHoverRecordRow(el){
     }
 }
 function onClickRecordRow(el){
+    var table = $(el).closest("div").attr("id").slice(3); 
+    var id = $(el).attr("id").slice(table.length); 
     // deselect all other recordRows and select the current one
+    if (event.altKey) {
+        $("input[name='id"+table+"']").val(id);
+        $(el).addClass('active');
+        return;
+    }
     $(".recordRow").removeClass('active');
     $(".recordRow").removeClass('selected');
+    if (event.ctrlKey) { 
+        $.post("select",
+        JSON.stringify({
+            table: table,
+            where: 'id'+table+' = '+id,
+            order: "true LIMIT 1"
+        }),createInputFormModifyCallback,"json");
+        $(el).addClass('active');
+    };
     //$(el).closest(".recordRow").addClass('active');
     $(el).addClass('active');
     selectRelatedRows(-1,el);
@@ -420,6 +489,7 @@ function selectRelatedRows(idx,el){
     var idadventuremap = $(el).attr("idadventuremap");
     var idmap = $(el).attr("idmap");
     var idmaptype = $(el).attr("idmaptype");
+    var iddisplay = $(el).attr("iddisplay");
     var idrole = $(el).attr("idrole");
     var idtile = $(el).attr("idtile");
     var idpawn = $(el).attr("idpawn");
@@ -443,6 +513,7 @@ function selectRelatedRows(idx,el){
         case "Map":
             $(".recordRow[idmap='"+id+"']").addClass('selected');
             $(".recordRow[id='MapType"+idmaptype+"']").addClass('selected');
+            $(".recordRow[id='Display"+iddisplay+"']").addClass('selected');
             if ( idx < 0 ) { $(".recordRow[idmap='"+id+"']").each(selectRelatedRows); };
             break;
         case "Tile":
@@ -455,6 +526,9 @@ function selectRelatedRows(idx,el){
             $(".recordRow[id='Image"+idimage+"']").addClass('selected');
             $(".recordRow[id='Map"+idmap+"']").addClass('selected');
             $(".recordRow[id='Role"+idrole+"']").addClass('selected');
+            break;
+        case "Display":
+            $(".recordRow[iddisplay='"+id+"']").addClass('selected');
             break;
         case "MapType":
             $(".recordRow[idmaptype='"+id+"']").addClass('selected');
@@ -473,6 +547,32 @@ function selectRelatedRows(idx,el){
             break;
     }
 }
+function entryCallback(rtnData,rtnStatus,xhr) {
+    $(".footer").find("p").text(rtnStatus);
+    if (rtnStatus == "success") {
+    }
+}
+function createInputFormModifyCallback(rtnData,rtnStatus,xhr){
+    createInputFormCallback(rtnData,rtnStatus,xhr,true);
+}
+function createInputFormCallback(rtnData,rtnStatus,xhr,modify){
+    if (rtnStatus == "success") {
+        var table = rtnData.shift();
+        var row = rtnData.shift();
+        $("p.recordInputs").empty();
+        $("p.recordInputs").append();
+        $("p.recordInputs").append(createInputForm(table,row,modify));
+    } 
+}
+function createInputFormColumnCallback(rtnData,rtnStatus,xhr){
+    if (rtnStatus == "success") {
+        var table = rtnData.shift();
+        $("p.recordInputs").empty();
+        $("p.recordInputs").append();
+        $("p.recordInputs").append(createDefaultInputForm(table,rtnData));
+    } 
+}
+
 function selectRowListCallback(rtnData,rtnStatus,xhr){
     if (rtnStatus == "success") {
         var table = rtnData.shift();
@@ -492,6 +592,48 @@ function selectRowListCallbackSelected(rtnData,rtnStatus,xhr){
         $(selector).empty();
         $(selector).append(getRowList(table,rtnData,columnsToShow,"selected"));
     } 
+}
+function createDefaultInputForm(table,rows) {
+    var rtn = '';
+    $(".entryHead").text(table);
+    $(".entryButton").attr("name","insert");
+    $(".entryButton").text("new");
+    for (i in rows) {
+        var ro = '';
+        var type = '';
+        var name = rows[i]["Field"];
+        var val = 'value = "' +rows[i]["Default"]+'" ';
+        if (! rows[i]["Default"]) { val = ''; };
+        if ((name.indexOf("color") >= 0) || (name.indexOf("Color") >= 0)) { type = 'type = "color" '; };
+        if (name.slice(0,2) == "id") { ro = "readonly"; };
+        if (name.slice(0,6) != "update") { 
+            rtn += '<input size=15 name="'+name+'" '+ val + type + ro +'><span class="colorEntry"> ' + name +'</span><br>';
+        }
+    }
+    return rtn;
+}
+function createInputForm(table,row,modify) {
+    var rtn = '';
+    $(".entryHead").text(table);
+    if (modify) {
+        $(".entryButton").attr("name","update");
+        $(".entryButton").text("update");
+    } else {
+        $(".entryButton").attr("name","insert");
+        $(".entryButton").text("new");
+    }
+    for (i in row) {
+        var ro = '';
+        var val = '';
+        var type = '';
+        if (i.slice(0,6) != "update") {
+            if (i.slice(0,2) == "id") { ro = "readonly"; };
+            if (modify) { val = 'value="' + row[i] + '" '; };
+            if ((i.indexOf("color") >= 0) || (i.indexOf("Color") >= 0)) { type = 'type = "color" '; };
+            rtn += '<input size=15 name="'+i+'" ' + type + val + ro + '><span class="colorEntry"> ' + i +'</span><br>';
+        }
+    }
+    return rtn;
 }
 function getRowList(table,rows,cols,extrarowclass,hasHeader) {
     var rtn = "<table class=\"recordListTable\">";
@@ -561,10 +703,11 @@ function getRowList(table,rows,cols,extrarowclass,hasHeader) {
 <div id="divTile" class="column"><h3 class="tableHead"><span class="tableHeadName">Tile</span><span class="tableHeadSort">#^A^T^</span><span style="clear: both;"><br></span></h3><input class="filter" value=""><p class="recordList"></p></div>
 <div id="divPawn" class="column"><h3 class="tableHead"><span class="tableHeadName">Pawn</span><span class="tableHeadSort">#^A^T^</span><span style="clear: both;"><br></span></h3><input class="filter" value=""><p class="recordList"></p></div>
 <div id="divImage" class="column"><h3 class="tableHead"><span class="tableHeadName">Image</span><span class="tableHeadSort">#^A^T^</span><span style="clear: both;"><br></span></h3><input class="filter" value=""><p class="recordList"></p></div>
+<div id="divEntry" class="column entryColumn"><h3 class="entryHead colorEntry">entry</h3><button type="button" name="Null" class="entryButton"></button><p class="recordInputs"><p></div>
 </div>
 <div class="row row2">
 <div id="divAdventureMap" class="column"><h3 class="tableHead"><span class="tableHeadName">AdventureMap</span><span class="tableHeadSort">#^A^T^</span><span style="clear: both;"><br></span></h3><p class="recordList"></p> </div>
-<div id="divNull" class="column"></div>
+<div id="divDisplay" class="column"><h3 class="tableHead"><span class="tableHeadName">Display</span><span class="tableHeadSort">#^A^T^</span><span style="clear: both;"><br></span></h3><p class="recordList"></p></div>
 <div id="divMapType" class="column"><h3 class="tableHead"><span class="tableHeadName">MapType</span><span class="tableHeadSort">#^A^T^</span><span style="clear: both;"><br></span></h3><p class="recordList"></p></div>
 <div id="divNull" class="column"></div>
 <div id="divRole" class="column"><h3 class="tableHead"><span class="tableHeadName">Role</span><span class="tableHeadSort">#^A^T^</span><span style="clear: both;"><br></span></h3><p class="recordList"></p></div>

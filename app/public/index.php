@@ -53,8 +53,24 @@ $app->post('/design/select', function () use ($app, $log) {
     require dirname(__FILE__) . '/../select.php';
 });
 
-$app->post('/select', function () use ($app, $log) {
-    require dirname(__FILE__) . '/../select.php';
+//$app->post('/select', function () use ($app, $log) {
+//    require dirname(__FILE__) . '/../select.php';
+//});
+
+$app->post('/design/showColumns', function () use ($app, $log) {
+    require dirname(__FILE__) . '/../showColumns.php';
+});
+
+//$app->post('/showColumns', function () use ($app, $log) {
+//    require dirname(__FILE__) . '/../showColumns.php';
+//});
+
+$app->post('/design/updateRecord', function () use ($app, $log) {
+    require dirname(__FILE__) . '/../updateRecord.php';
+});
+
+$app->post('/design/insertRecord', function () use ($app, $log) {
+    require dirname(__FILE__) . '/../insertRecord.php';
 });
 
 //$app->get('/herolab/:mapId/:pawnName/:modifierName/toggleNamedPawnModifier', function ($mapId, $pawnName, $modifierName) use ($app, $log) {
