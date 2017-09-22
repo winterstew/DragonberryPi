@@ -39,8 +39,8 @@ while (count($saveList) > 1) {
   $sql .= ", `translateY`=" . $transform['translateY'];
   $sql .= ", `updatedBy`='" . $attributes['updatedby'] . "'";
   $sql .= " WHERE `id". $table ."`='".$id."'";
-  $conn->query("UNLOCK TABLES;");
   $result = $conn->query($sql);
+  $conn->query("UNLOCK TABLES;");
   if ($result == 1) {echo $sql . "<br>";}
 }
 

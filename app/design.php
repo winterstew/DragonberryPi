@@ -323,8 +323,10 @@ function onClickEntry(event){
             } else if (( $(this).attr("name") == "idList" ) && ( $(this).val() )) {
                 idList = "UPDATE " + $(this).val() + ";";
             } else {
-                if ($(this).val()) {
+                if (($(this).val()) && ($(this).val() != "#000000")) {
                     setList += $(this).attr("name") + '="' + $(this).val() + '", ';
+                } else {
+                    setList += $(this).attr("name") + '=NULL, ';
                 }
             }
         }
