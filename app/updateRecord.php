@@ -9,6 +9,7 @@ $request = json_decode( $jsondata, false );
 // select_expr 
 $table = isset($request->table) ? $request->table : 'None';
 $id = isset($request->id) ? $request->id : '';
+$idList = isset($request->idList) ? $request->idList : '';
 $setList = isset($request->setList) ? $request->setList : '';
 $conn->query(sprintf("LOCK TABLES %s WRITE;",$table));
 if (($table != 'None') && ($setList != '') && ($id > 0)) {
@@ -16,6 +17,9 @@ if (($table != 'None') && ($setList != '') && ($id > 0)) {
 }
 $result = $conn->query(sprintf("SELECT * FROM %s WHERE id%s = %d;",$table,$table,$id));
 $conn->query(sprintf("UNLOCK TABLES;"));
+if ($idList) {
+  $conn->query(sprintf($idList,$table,$id));
+}
 $rows = array($table);
 if ($result->num_rows > 0) {
   while($row = $result->fetch_assoc()) {

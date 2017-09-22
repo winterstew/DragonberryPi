@@ -314,11 +314,14 @@ function onClickEntry(event){
     var url = $(event.target).attr("name") + 'Record';
     var table = $(".entryHead").text();
     var id = 0;
+    var idList = '';
     var setList = '';
     $(".recordInputs").children().each(function() {
         if ($(this).is("input")) {
             if ($(this).attr("name") == "id"+table) {
                 id = $(this).val();
+            } else if (( $(this).attr("name") == "idList" ) && ( $(this).val() )) {
+                idList = "UPDATE " + $(this).val() + ";";
             } else {
                 if ($(this).val()) {
                     setList += $(this).attr("name") + '="' + $(this).val() + '", ';
@@ -331,6 +334,7 @@ function onClickEntry(event){
     JSON.stringify({
         table: table,
         id: id,
+        idList: idList,
         setList: setList
     }),entryCallback,"json");
     $(".footer").find("p").html("<b>" + url + " <i>" + table+"</i></b> SET <b>"+setList+"</b>");
@@ -463,6 +467,14 @@ function onClickRecordRow(el){
     // deselect all other recordRows and select the current one
     if (event.altKey) {
         $("input[name='id"+table+"']").val(id);
+        var v = $("input[name='idList']").val();
+        if (v && (v.slice(0,table.length) == table)) {
+          $("input[name='idList']").val( v + " OR " + "id" + table + "=" + id );
+          //$("input[name='idList']").val( v + "," + "id" + table + "=" + id );
+        } else {
+          $("input[name='idList']").val( table + " SET id%s=%s WHERE id" + table + "=" + id  );
+          //$("input[name='idList']").val( table + "," + "id" + table + "=" + id  );
+        }
         $(el).addClass('active');
         return;
     }
@@ -610,6 +622,8 @@ function createDefaultInputForm(table,rows) {
             rtn += '<input size=15 name="'+name+'" '+ val + type + ro +'><span class="colorEntry"> ' + name +'</span><br>';
         }
     }
+    //rtn += '<input size=15 name="idList" style="display: none;" readonly>';
+    rtn += '<input size=15 name="idList" readonly>';
     return rtn;
 }
 function createInputForm(table,row,modify) {
@@ -633,6 +647,8 @@ function createInputForm(table,row,modify) {
             rtn += '<input size=15 name="'+i+'" ' + type + val + ro + '><span class="colorEntry"> ' + i +'</span><br>';
         }
     }
+    //rtn += '<input size=15 name="idList" style="display: none;" readonly>';
+    rtn += '<input size=15 name="idList" readonly>';
     return rtn;
 }
 function getRowList(table,rows,cols,extrarowclass,hasHeader) {
