@@ -842,7 +842,7 @@ CREATE TABLE `Tile` (
   `idTile` smallint(6) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL COMMENT 'tile name',
   `rotate` double NOT NULL DEFAULT '0' COMMENT 'rotate',
-  `scale` double NOT NULL COMMENT 'scale',
+  `scale` double NOT NULL DEFAULT '1' COMMENT 'scale',
   `translateX` double NOT NULL DEFAULT '0' COMMENT 'translate x',
   `translateY` double NOT NULL DEFAULT '0' COMMENT 'translate y',
   `visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'visibile',
@@ -1255,4 +1255,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-12  4:39:09
+-- Dump completed on 2017-09-26  4:29:10

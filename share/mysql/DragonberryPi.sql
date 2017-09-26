@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Tile` (
   `idTile` SMALLINT(6) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL COMMENT 'tile name',
   `rotate` DOUBLE NOT NULL DEFAULT 0 COMMENT 'rotate',
-  `scale` DOUBLE NOT NULL COMMENT 'scale',
+  `scale` DOUBLE NOT NULL DEFAULT 1 COMMENT 'scale',
   `translateX` DOUBLE NOT NULL DEFAULT 0 COMMENT 'translate x',
   `translateY` DOUBLE NOT NULL DEFAULT 0 COMMENT 'translate y',
   `visible` TINYINT(1) NOT NULL DEFAULT TRUE COMMENT 'visibile',
