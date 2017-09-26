@@ -11,13 +11,20 @@ $table = isset($request->table) ? $request->table : 'None';
 $id = isset($request->id) ? $request->id : '';
 $idList = isset($request->idList) ? $request->idList : '';
 $setList = isset($request->setList) ? $request->setList : '';
+$log->info("insertRecord.php");
+$log->info(sprintf("LOCK TABLES %s WRITE;",$table));
 $conn->query(sprintf("LOCK TABLES %s WRITE;",$table));
-if (($table != 'None') && ($setList != '') && ($id > 0)) {
+if (($table != 'None') && ($setList != '') && (! $id)) {
+  $log->info(sprintf("INSERT INTO %s SET %s;",$table,$setList));
   $conn->query(sprintf("INSERT INTO %s SET %s;",$table,$setList));
 }
+$log->info(sprintf("SELECT * FROM %s WHERE id%s = LAST_INSERT_ID();",$table,$table));
 $result = $conn->query(sprintf("SELECT * FROM %s WHERE id%s = LAST_INSERT_ID();",$table,$table));
+$log->info($result->num_rows);
+$log->info(sprintf("UNLOCK TABLES;"));
 $conn->query(sprintf("UNLOCK TABLES;"));
 if ($idList) {
+  $log->info(sprintf($idList,$table,"LAST_INSERT_ID()"));
   $conn->query(sprintf($idList,$table,"LAST_INSERT_ID()"));
 }
 $rows = array($table);

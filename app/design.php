@@ -316,14 +316,19 @@ function onClickEntry(event){
     var id = 0;
     var idList = '';
     var setList = '';
+    var val = "NULL"
     $(".recordInputs").children().each(function() {
         if ($(this).is("input")) {
             if ($(this).attr("name") == "id"+table) {
                 id = $(this).val();
-            } else if (( $(this).attr("name") == "idList" ) && ( $(this).val() )) {
-                idList = "UPDATE " + $(this).val() + ";";
+            } else if ( $(this).attr("name") == "idList" ) {
+                if ( $(this).val() ) {
+                    idList = "UPDATE " + $(this).val() + ";";
+                }
             } else {
-                if (($(this).val()) && ($(this).val() != "#000000")) {
+                if (($(this).val()) && 
+                    ($(this).val() != "#000000") && 
+                    ( $(this).val() != "null")) {
                     setList += $(this).attr("name") + '="' + $(this).val() + '", ';
                 } else {
                     setList += $(this).attr("name") + '=NULL, ';
@@ -468,14 +473,17 @@ function onClickRecordRow(el){
     var id = $(el).attr("id").slice(table.length); 
     // deselect all other recordRows and select the current one
     if (event.altKey) {
-        $("input[name='id"+table+"']").val(id);
-        var v = $("input[name='idList']").val();
-        if (v && (v.slice(0,table.length) == table)) {
-          $("input[name='idList']").val( v + " OR " + "id" + table + "=" + id );
-          //$("input[name='idList']").val( v + "," + "id" + table + "=" + id );
+        if ($("input[name='id"+table+"']")) {
+            $("input[name='id"+table+"']").val(id);
         } else {
-          $("input[name='idList']").val( table + " SET id%s=%s WHERE id" + table + "=" + id  );
-          //$("input[name='idList']").val( table + "," + "id" + table + "=" + id  );
+            var v = $("input[name='idList']").val();
+            if (v && (v.slice(0,table.length) == table)) {
+              $("input[name='idList']").val( v + " OR " + "id" + table + "=" + id );
+              //$("input[name='idList']").val( v + "," + "id" + table + "=" + id );
+            } else {
+              $("input[name='idList']").val( table + " SET id%s=%s WHERE id" + table + "=" + id  );
+              //$("input[name='idList']").val( table + "," + "id" + table + "=" + id  );
+            }
         }
         $(el).addClass('active');
         return;
