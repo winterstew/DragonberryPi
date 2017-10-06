@@ -53,6 +53,11 @@ body {
     overflow-x: auto;
     overflow-y: auto;
 }
+.inputRow {
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+}
 .recordList {
     white-space: nowrap; 
     height: 100%;
@@ -194,6 +199,7 @@ var appRoot = "<?php echo $app->config('root') ?>"
 var columnsToShow = ["name","filename"];
 $(document).ready(function(){
     $(".tableHead").on("click",onClickTableHead);
+    $(".entryHead").on("click",onClickEntryHead);
     $("button.entryButton").on("click",onClickEntry);
     $("input").keyup(onClickTableHead);
     $(".tableHead").click();
@@ -366,6 +372,13 @@ function onClickTableHead(event){
         order: order
     }),selectRowListCallback,"json");
 };
+function onClickEntryHead(event){
+    var table = $(".entryHead").text();
+    $(".entryButton").attr("name","insert");
+    $(".entryButton").text("new");
+    $("input").text("new");
+    $("input[name='id"+table+"']").val('');
+}
 function onDblClickRecordRow(el){
     $(".recordRow").removeClass('selector');
     $(el).addClass('selector');
@@ -448,6 +461,10 @@ function onDblClickRecordRow(el){
             createPreviewGallery(whereList[i])
         }
     }
+}
+function onHoverInputRow(el){
+    $(".previews").hide();
+    $(".gallery").hide();
 }
 function onHoverRecordRow(el){
     $(".previews").hide();
@@ -629,11 +646,15 @@ function createDefaultInputForm(table,rows) {
         if ((name.indexOf("color") >= 0) || (name.indexOf("Color") >= 0)) { type = 'type = "color" '; };
         if (name.slice(0,2) == "id") { ro = "readonly"; };
         if (name.slice(0,6) != "update") { 
-            rtn += '<input size=15 name="'+name+'" '+ val + type + ro +'><span class="colorEntry"> ' + name +'</span><br>';
+            rtn += '<p onmouseover="onHoverInputRow()" class="inputRow">';
+            rtn += '<input onmouseover="onHoverInputRow()" size=15 name="'+name+'" '+ val + type + ro +'><span class="colorEntry"> ' + name +'</span><br>';
+            rtn += '</p>';
         }
     }
     //rtn += '<input size=15 name="idList" style="display: none;" readonly>';
+    rtn += '<p onmouseover="onHoverInputRow()" class="inputRow"';
     rtn += '<input size=15 name="idList" readonly>';
+    rtn += '</p>';
     return rtn;
 }
 function createInputForm(table,row,modify) {
@@ -654,11 +675,15 @@ function createInputForm(table,row,modify) {
             if (i.slice(0,2) == "id") { ro = "readonly"; };
             if (modify) { val = 'value="' + row[i] + '" '; };
             if ((i.indexOf("color") >= 0) || (i.indexOf("Color") >= 0)) { type = 'type = "color" '; };
-            rtn += '<input size=15 name="'+i+'" ' + type + val + ro + '><span class="colorEntry"> ' + i +'</span><br>';
+            rtn += '<p onmouseover="onHoverInputRow()" class="inputRow">';
+            rtn += '<input onmouseover=""onHoverInputRow()" size=15 name="'+i+'" ' + type + val + ro + '><span class="colorEntry"> ' + i +'</span><br>';
+            rtn += '</p>';
         }
     }
     //rtn += '<input size=15 name="idList" style="display: none;" readonly>';
+    rtn += '<p onmouseover="onHoverInputRow()" class="inputRow"';
     rtn += '<input size=15 name="idList" readonly>';
+    rtn += '</p>';
     return rtn;
 }
 function getRowList(table,rows,cols,extrarowclass,hasHeader) {
