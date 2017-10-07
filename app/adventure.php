@@ -128,6 +128,11 @@ function fillOutPawns() {
       var pawnId = "pawn" + pawnProperty["idPawn"];
       pawnListHTML += pawnId + " <br>";
       var pawn = document.getElementById(pawnId);
+      // update the clip path name because each must be unique or
+      // a hidden path will be references and hence ignored
+      var clipPath = pawn.getElementsByTagName("clipPath");
+      var clipPathId = clipPath[0].getAttribute("id") + pawnProperty["idPawn"];
+      clipPath[0].setAttribute("id",clipPathId);
       var groups = pawn.getElementsByTagName("g");
       for(gIndex = 0; gIndex < groups.length; gIndex++) {
         pawnListHTML += " " + groups[gIndex].id +" <br>";
@@ -177,6 +182,7 @@ function fillOutPawns() {
           myImage[0].setAttribute("width",myImage[0].getAttribute("width")*pawnProperty["imageScale"]);
           myImage[0].setAttribute("y",1*myImage[0].getAttribute("y")+1*pawnProperty["imageY"]);
           myImage[0].setAttribute("x",1*myImage[0].getAttribute("x")+1*pawnProperty["imageX"]);
+          myImage[0].setAttribute("clip-path","url(#"+clipPathId+")");
           pawnListHTML +=  1*myImage[0].getAttribute("x")+1*pawnProperty["imageX"]+ "<br>";
         }
       }
