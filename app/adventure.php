@@ -182,7 +182,7 @@ function fillOutPawns() {
           myImage[0].setAttribute("width",myImage[0].getAttribute("width")*pawnProperty["imageScale"]);
           myImage[0].setAttribute("y",1*myImage[0].getAttribute("y")+1*pawnProperty["imageY"]);
           myImage[0].setAttribute("x",1*myImage[0].getAttribute("x")+1*pawnProperty["imageX"]);
-          myImage[0].setAttribute("clip-path","url(#"+clipPathId+")");
+          if (groups[gIndex].id == "roundImage") { myImage[0].setAttribute("clip-path","url(#"+clipPathId+")"); }
           pawnListHTML +=  1*myImage[0].getAttribute("x")+1*pawnProperty["imageX"]+ "<br>";
         }
       }

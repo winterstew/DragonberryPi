@@ -41,8 +41,8 @@ div#adventureSelect {
 	background-color: white;	
         padding:2px;
 	border:2px solid #00FF00;
-	top: 30%;
-	right: 50%;
+	top: 20%;
+	right: 5%;
 }
 th,td {
   padding-right: 10px;

@@ -616,7 +616,7 @@ function selectRowListCallback(rtnData,rtnStatus,xhr){
     if (rtnStatus == "success") {
         var table = rtnData.shift();
         var selector = "#div" + table + " > p:first-of-type";
-        if ($("#div" + table).parent().hasClass("row2")) { $(selector).toggleClass("short") }
+        if ($("#div" + table).parent().hasClass("row2")) { $(selector).addClass("short") }
         $(selector).empty();
         $(selector).append(getRowList(table,rtnData,columnsToShow));
     } 
@@ -627,7 +627,7 @@ function selectRowListCallbackSelected(rtnData,rtnStatus,xhr){
     if (rtnStatus == "success") {
         var table = rtnData.shift();
         var selector = "#div" + table + " > p:first-of-type";
-        if ($("#div" + table).parent().hasClass("row2")) { $(selector).toggleClass("short") }
+        if ($("#div" + table).parent().hasClass("row2")) { $(selector).addClass("short") }
         $(selector).empty();
         $(selector).append(getRowList(table,rtnData,columnsToShow,"selected"));
     } 
