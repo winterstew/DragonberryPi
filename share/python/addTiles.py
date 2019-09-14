@@ -68,6 +68,12 @@ associated with multiple Map entries or multiple places in the same Map.
     if (args.json and os.path.isfile(args.json)): 
         jsonfile = file(args.json,'r')
         params = json.load(jsonfile)
+        # Let's set ids based on where they are in the file
+        lnum = 10
+        for layer in params["layer"]:
+            layer["name"]
+            lnum += 2
+            params[layer['name']]['id'] = lnum
 
     eTiles = [];
     # If we are given a range of idImages use them all

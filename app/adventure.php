@@ -128,6 +128,11 @@ function fillOutPawns() {
       var pawnId = "pawn" + pawnProperty["idPawn"];
       pawnListHTML += pawnId + " <br>";
       var pawn = document.getElementById(pawnId);
+      // update the clip path name because each must be unique or
+      // a hidden path will be references and hence ignored
+      var clipPath = pawn.getElementsByTagName("clipPath");
+      var clipPathId = clipPath[0].getAttribute("id") + pawnProperty["idPawn"];
+      clipPath[0].setAttribute("id",clipPathId);
       var groups = pawn.getElementsByTagName("g");
       for(gIndex = 0; gIndex < groups.length; gIndex++) {
         pawnListHTML += " " + groups[gIndex].id +" <br>";
@@ -177,6 +182,7 @@ function fillOutPawns() {
           myImage[0].setAttribute("width",myImage[0].getAttribute("width")*pawnProperty["imageScale"]);
           myImage[0].setAttribute("y",1*myImage[0].getAttribute("y")+1*pawnProperty["imageY"]);
           myImage[0].setAttribute("x",1*myImage[0].getAttribute("x")+1*pawnProperty["imageX"]);
+          myImage[0].setAttribute("clip-path","url(#"+clipPathId+")");
           pawnListHTML +=  1*myImage[0].getAttribute("x")+1*pawnProperty["imageX"]+ "<br>";
         }
       }
@@ -328,7 +334,9 @@ function updatePawnStatsDisplay(p) {
     psHTML += '<td class="nameCell">' + pName +"</td>\n";
   }
   psHTML += '<td class="roleCell">'+ p.getAttribute("role") +":"+ p.getAttribute("rolename") +"</td>\n";
-  psHTML += '<td class="heightCell" style="color:'+ heightCellColor +'">'+ p.getAttribute("height") +"</td>\n";
+  psHTML += '<td class="heightCell" style="color:'+ heightCellColor +'">'+ p.getAttribute("height") ;
+  psHTML += ' vs ' + p.getAttribute("targetheight");
+  psHTML += "</td>\n";
   psHTML += '<td class="attackRangeCell" style="color:'+ attackRangeCellColor +'">'+ p.getAttribute("attackrange") +"</td>\n";
   psHTML += '<td class="modifiersListCell">'+ p.getAttribute("modifierlist") +"</td>\n";
   psHTML += '</tr><tr><th>key</th><th>name</th><th>role</th><th>height</th><th>atck rng</th><th>modifiers</th></tr>';
@@ -439,7 +447,11 @@ function updateHeightAndAttackRange(table,id,attribute) {
     myE.setAttribute("rolename",attribute["roleName"]);
     myE.setAttribute("height",attribute["height"]);
     myE.setAttribute("attackrange",attribute["attackRange"]);
-    if (myE.getAttribute("attacktype")!="Height") {myE.setAttribute("attacktype",attribute["attackType"]);}
+    if ((myE.getAttribute("attacktype")!="Height")&&(myE.getAttribute("attacktype")!="TargetHeight")) {
+      myE.setAttribute("attacktype",attribute["attackType"]);
+    }
+    // Since I do not have targetheight in the database yet, I will set this here
+    attribute["targetheight"] = myE.getAttribute("targetheight");
     var groups = myE.getElementsByTagName("g");
     for(gIndex = 0; gIndex < groups.length; gIndex++) {
       updateListHTML += groups[gIndex].id + "<br>";
@@ -466,11 +478,12 @@ function updateHeightAndAttackRange(table,id,attribute) {
               updateListHTML += " show<br>";
               attackGroups[agIndex].setAttribute("visibility",myE.getAttribute("visibility"));
               var heightScale = 0;
-              if (attribute["attackRange"] > Math.abs(attribute["height"])) {
-                // let assume the height indicator is showing height of the attacker relative to a height=0 defender
+              var deltaHeight = 1.0*attribute["height"] - 1.0*attribute["targetheight"];
+              if (attribute["attackRange"] > Math.abs(deltaHeight)) {
+                // use the relative height differece between height and targetheight
                 // then the size of the circle on the grid shown scale as per this height
                 // Even a Cone attack is spherical in its furthest extend, tough parabolic on the sides and back
-                heightScale = Math.sqrt(Math.pow(1*attribute["attackRange"],2)-Math.pow(1*attribute["height"],2));
+                heightScale = Math.sqrt(Math.pow(1.0*attribute["attackRange"],2)-Math.pow(deltaHeight,2));
               }
               var attackScale = heightScale/attribute["sizeFeet"];
               var tX = 285 - (attackScale*502.5);
@@ -894,9 +907,9 @@ function moveTileOrPawn(elem,type,mode,dir,res) {
     myHTML += oldTransform[0]+"<br>"+newTransform[0]+"<br>" ;
   } else if ((mode == "s")&&((mapMode != 'pc')||(elem.getAttribute("rolename").substr(0,6) == 'marker'))) {
     newTransform[5] = 1*oldTransform[5]+step
-    // if scale is less than one step from zero, apply another step to avoid screwing things up
-    while (Math.abs(newTransform[5]) < Math.abs(step)) {
-      newTransform[5] = 1*newTransform[5]+step
+    // if scale is less than one step from zero, do not take a step to avoid screwing things up
+    while (Math.abs(newTransform[5]) < 0.9*Math.abs(step)) {
+      newTransform[5] = 1*newTransform[5]-step
     }
     newTransform[6] = Math.abs(newTransform[5]);
     // since the scale is applied first, if I want it to scale about the center of the object
@@ -984,7 +997,7 @@ function interpretKeyDown(event) {
       selectedTileOrPawn.setAttribute("flip",-1.0*flip);
     }
   }
-  if (((key == 71) || (key == 191)) && (! keyHold)) { 
+  if ((key == 71) && (! keyHold)) { 
     alert('<?php echo $controlsText?>');
   } else if ((key == 83) && (! keyHold)) { 
     // save on an "s" but do not repeat if held
@@ -1081,7 +1094,7 @@ function interpretKeyDown(event) {
     var table = selectedTileOrPawn.getAttribute("class");
     var id = selectedTileOrPawn.id.slice(table.length);
     toggleVisibility(table,id);
-  } else if (((key == 65)||(key == 72)||(key == 74)||(key == 75)||(key == 76)||(key == 190)||(key == 187)||(key == 61)||(key == 188)) && selectedTileOrPawn.id && (! keyHold)) {
+  } else if (((key == 65)||(key == 72)||(key == 74)||(key == 75)||(key == 76)||(key == 190)||(key == 187)||(key == 61)||(key == 188)||(key == 191)) && selectedTileOrPawn.id && (! keyHold)) {
     // setting leader, ranges, height, etc with no repeat
     var table = selectedTileOrPawn.getAttribute("class");
     if (table == "Pawn") {
@@ -1144,6 +1157,17 @@ function interpretKeyDown(event) {
           updatePawnAttackType(selectedTileOrPawn.id.slice(4),"None");
         }
         adjustPawnIndicator(selectedTileOrPawn.id.slice(4),"attackRange",1,0)
+      } else if (key == 191) {
+        // h to turn off attackRange to adjust height
+        // only set the attribute attacktype to Height so I can leave on the 
+        // attackRange display while adjusting the height
+        // this causes a mismatch with the database however
+        if (selectedTileOrPawn.getAttribute("attacktype") == "TargetHeight") {;
+          selectedTileOrPawn.setAttribute("attacktype","None");
+          adjustPawnIndicator(selectedTileOrPawn.id.slice(4),"attackRange",1,0);
+        } else {
+          selectedTileOrPawn.setAttribute("attacktype","TargetHeight");
+        }
       } else if ((key == 190)||(key == 187)||(key == 61)||(key == 188)) {
         var adjust = 0;
         var multi = 1;
@@ -1155,9 +1179,13 @@ function interpretKeyDown(event) {
         if (ev.shiftKey) {adjust *= 0.5;
         } else if (ev.ctrlKey) {adjust *= 2.5}
         if ((key == 61) || (key == 187)) { multi = 0; }
-        if ((selectedTileOrPawn.getAttribute("attacktype") != "None")&&(selectedTileOrPawn.getAttribute("attacktype") != "Height")) {
+        if ((selectedTileOrPawn.getAttribute("attacktype") != "None")&&(selectedTileOrPawn.getAttribute("attacktype") != "Height")&&(selectedTileOrPawn.getAttribute("attacktype") != "TargetHeight")) {
           selectedTileOrPawn.setAttribute("attackrange",multi * (1.0*selectedTileOrPawn.getAttribute("attackrange") + adjust));
           adjustPawnIndicator(selectedTileOrPawn.id.slice(4),"attackRange",multi,adjust)
+        } else if (selectedTileOrPawn.getAttribute("attacktype") == "TargetHeight") {
+          selectedTileOrPawn.setAttribute("targetheight",multi * (1.0*selectedTileOrPawn.getAttribute("targetheight") + adjust));
+          // forse a reload from the database by setting the height
+          adjustPawnIndicator(selectedTileOrPawn.id.slice(4),"height",1,0)
         } else {
           selectedTileOrPawn.setAttribute("height",multi * (1.0*selectedTileOrPawn.getAttribute("height") + adjust));
           adjustPawnIndicator(selectedTileOrPawn.id.slice(4),"height",multi,adjust)
@@ -1798,6 +1826,7 @@ if ($displays->num_rows > 0) {
             echo 'role="'. $p["idRole"]. '" ';
             echo 'rolename="'. $p["roleName"]. '" ';
             echo 'height="'. $p["height"] .'" ';
+            echo 'targetheight="0" ';
             echo 'attackrange="'. $p["attackRange"] .'" ';
             echo 'attacktype="'. $p["attackType"] .'" ';
             echo 'modifierlist=" " ';
