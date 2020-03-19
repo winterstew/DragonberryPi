@@ -25,11 +25,13 @@ $checkList = json_decode( $jsondata, true ); // 2nd arg true to convert objects 
 //$log->info("checkList->".$checkList[1]."<-checkList");
 $aId = array_shift($checkList);
 $table = array_shift($checkList);
+//$log->info("aId->".$aId." table->".$table);
 
 // Create connection
 $conn = db_connect($app->config('db'));
 $rows = array($table);
 $count = 0;
+//$log->info("rows->".$rows[0]." count->".count($checkList));
 while (count($checkList) > 1) {
   $id =  array_shift($checkList);
   //array_push($rows,$id);
@@ -61,6 +63,9 @@ while (count($checkList) > 1) {
         if ($result2->num_rows == 1) {
           array_push($rows,$id);
           array_push($rows,$result2->fetch_assoc());
+          //if (! json_encode($result2->fetch_assoc())) {
+          //  $log->info("table->".$table." id->".$id." err->".json_last_error_msg());
+          //}
         }
         if ($table == "Pawn") {
           // reset the result2 back to the start
@@ -82,6 +87,22 @@ while (count($checkList) > 1) {
     }
   }
 }
+function encodeval($value,$key,$log) {
+  if (! json_encode($value)) {
+    $log->info("err->".json_last_error_msg()." key->".$key."value->".$value);
+  }
+}
+array_walk_recursive($rows,"encodeval",$log);
+$exitcount = count($rows);
+$lastindex = $exitcount - 1;
+$rowsencoded = json_encode($rows);
+$encode_err = "";
+if (! $rowsencoded) { $encode_err = "err->" . json_last_error_msg(); }
+$firstval = '';
+$lastval = '';
+if ($exitcount > 0) { $firstval = serialize($rows[0]);  }
+if ($lastindex >= 0) { $lastval = serialize($rows[$lastindex]); } 
+//$log->info($encode_err." exit-count->".$exitcount."rows[0];..;rows[".$lastindex."]->".$firstval."...;".$lastindex);
 
 //$count=0;
 //foreach($rows as $row) {

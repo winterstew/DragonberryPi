@@ -275,6 +275,7 @@ function updateAll() {
   }
   // Now lets check the update status
   var myT= ["Map","Tile","Pawn","Pointers"];
+  //var myT= ["Map","Pawn","Pointers"];
   var x,i;
   for (x in myT) {
     // build up a list as [tablename,id1,updated1,id2,updated2,...]
@@ -284,7 +285,8 @@ function updateAll() {
       myE.push(elements[index].id.slice(myT[x].length))
       myE.push(elements[index].getAttribute("updated"))
     }
-    //myHTML += myE;
+    if (myT[x] == 'Map') { myHTML += "MAP*" + myE + "*MAP<br>"; }
+    if (myT[x] == 'Tile') { myHTML += "TILE*" + myE + "*TILE<br>"; }
     updateFromDatabase(myE);
   }
   if (selectedTileOrPawn.id) {
@@ -364,6 +366,19 @@ function updateFromDatabase( table ) {
       updateListHTML += "<p>";
       //updateListHTML += req.responseText;
       var entries = JSON.parse(req.responseText);
+      //var entries = [];
+      //try {
+      //  entries = JSON.parse(req.responseText);
+      //}
+      //catch(err) {
+      //  updateListHTML += "****" + err.message + "****<br>";
+      //}
+      //finally {
+      //  updateListHTML += "length: " + req.responseText.length + "<br>";
+      //  updateListHTML += "status: " + req.statusText + "<br>";
+      //  updateListHTML += "start: " + req.responseText.slice(0,20) + "<br>";
+      //  updateListHTML += "end: " + req.responseText.slice(req.responseText.slice.length-20) + "<br>";
+      //}
       var table = entries.shift();
       updateListHTML += table + "<br>";
       while (entries.length > 1) {
@@ -1923,6 +1938,7 @@ var updateTimer = setInterval(updateAll,1000);
 //Don't think I want to save automatic
 var saveTimer;
 var singleUpdate = setTimeout(fillOutPawns,500);
+//var updateAgain = setTimeout(updateAll,5000);
 <?php if ($browserAlert) {echo "alert('$browserAlert')";} ?>
 </script>
 </body>
