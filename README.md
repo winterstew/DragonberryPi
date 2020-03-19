@@ -285,14 +285,16 @@ do not already have a record will be added (no duplicates).  Running
 in the other scripts.
 
 Next for pawnGrid Maps, and assuming the tile layers are all the same size as
-the original map image and the pieces have not been used, my plugin
+the original map image and the pieces have not been moved, my plugin
 [json_export][] will create a JSON file which can be used as an import for
-[addTiles][].  For pawnGrids, a Map record should already exist, and then can
-be references by [addTiles].  Other Tiles can be added with
-[addIllustrations][], this script can also add its own Map record.  The
-[addPawns][] record can be used to add Pawns to a Map with or without images
-for the Pawn.  All of the scripts take options including `-h` to get help on
-usage.
+[addTiles][].  Make sure that the deepest layers are on the bottom, Then 
+"Export Layers.." as PNG files with autocrop layers enabled.  Select
+"Filters->Python-Fu->Export Layer Properties.." For pawnGrids, a Map record
+should already exist, and then can be references by [addTiles].  Other Tiles
+can be added with [addIllustrations][], this script can also add its own Map
+record.  The [addPawns][] record can be used to add Pawns to a Map with or
+without images for the Pawn.  All of the scripts take options including `-h` to
+get help on usage.
 
 [Export Layers]: http://registry.gimp.org/node/28268
 [addIllustrations]: share/python/addIllustrations.py
