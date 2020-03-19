@@ -121,7 +121,7 @@ Any images already entered are skipped.
                                     fileIdent.pop()
                                     fileIdent.reverse()
                                 myType = fileIdent[0];
-                                if myType == "XCF": raise UnsupportedImageFomart
+                                if myType in ["XCF","DGO","JSON","PY"]: raise UnsupportedImageFomart
                                 print result.rowcount," ",childId," ",myFile,myType
                                 myWidth,myHeight = fileIdent[1].split('x')
                                 result = tImage.insert().values(idLocation=childId,
