@@ -51,7 +51,7 @@ any access to it.
 
 ## Installation
 
-[Install jessie][pi-install] on the Raspberry Pi.
+[Install buster][pi-install] on the Raspberry Pi.
 
 ### raspi-config
 
@@ -63,7 +63,8 @@ in a terminal type
 
     * choose *expand filesystem*
     * set you international options based on what you want
-    * turn on ssh.  This is useful for access if you want to do your adventure prep from a PC and just copy files over
+    * turn on ssh.  This is useful for access if you want to do your adventure
+      prep from a PC and just copy files over
     * reset your password
     * reboot
     
@@ -72,31 +73,41 @@ in a terminal type
 You will want to make sure everything is up to date and install the packages
 DragonberryPi needs
 
-    sudo apt-get update
-    sudo apt-get upgrade
+```
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get dist-upgrade
+```
 
 Gnome WebKit's Web does not work well for DragonberryPi, better to use
 Iceweasel.  Likewise Firefox is the best browser for viewing from a PC.
-Mysql-workbench, phpmyadm, and python-sqlalchemy are ways to work with the
-database of adventure prep (i.e. adding content).  I do not have custom
-browser-apps for that.  I use Gimp for slicing up the map into tiles, but
-typically I do it on the PC anyway.
-    
-    sudo apt-get install iceweasel
-    sudo apt-get intstall mariadb-server phpmyadmin mysql-workbench php5 apache2 gimp python-sqlalchemy python-mysqldb imagemagick
-    # enter a root password for mariadb
-    # point phpmyadmin to use apache
-    
+Mysql-workbench (not in buster) , phpmyadm, and python-sqlalchemy are ways to
+work with the database of adventure prep (i.e. adding content).  I do not have
+custom browser-apps for that.  I use Gimp for slicing up the map into tiles,
+but typically I do it on the PC anyway.
+
+```
+sudo apt install iceweasel mariadb-server phpmyadmin  php7.2 php7.2-mysql php7.2-mbstring apache2 gimp python-sqlalchemy python-mysqldb imagemagick
+# point phpmyadmin to use apache2
+# configure database for phpmyadmin with dbconfig-common
+# enter MySQL application password fro phpmyadmin
+# enter a root password for mysql 
+```
+
 ### Install DragonberryPi
 
 first clone the code
 
-    git clone https://github.com/winterstew/DragonberryPi
-    
-then create the user for installing the database.  I like mysql-workbench for
-this: 
+```
+git clone https://github.com/winterstew/DragonberryPi
+```
 
-    mysql-workbench
+then create the user for installing the database.  I like mysql-workbench for
+this, unfortunately it is not available in buster: 
+
+#### using MySQL Workbench
+
+`mysql-workbench`
 
 * with mysql-workbench do the following:
 
@@ -110,20 +121,40 @@ this:
 You can also use mysql-workbench to take a look at the database design layout,
 if you like.  
 
-    mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb
-    
-Install the database and/or the example dungeon.  If you are using MariaDB on
-jesse, you can have higher time resolution on the save states.
+`mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb`
 
-    cd DragonberryPi/share/mysql
-    # install empty dungeon schema
-    mysql -u dragon -p < DragonberryPi.sql
-    # install example dungeon schema
-    mysql -u dragon -p < ExampleDungeon.sql
-    # or to install it with higher timestamp resolution
-    sed 's/timestamp/timestamp(3)/' ExampleDungeon.sql | mysql -u dragon -p DragonberryPi
+#### using mysqlaccess
+
+```
+sudo mysql -e "CREATE USER 'dragon'@'localhost' IDENTIFIED BY 'berry';"
+sudo mysql -e "GRANT ALL on DragonberryPi.* TO 'dragon'@'localhost';"
+```
+
+If you want to run MySQL Workbench from another PC on your network do something like:
+
+```
+sudo mysql -e "CREATE USER 'dragon'@'192.168.%/255.255.0.0' IDENTIFIED BY 'berry';"
+sudo mysql -e "GRANT ALL on DragonberryPi.* TO 'dragon'@'192.168.%/255.255.0.0';"
+```
+
+You would also have to [allow remote][] connections to your database server.
+Alternatively you can tunnel port 3306 via an ssh to your RaspberryPi
+
+[allow remote]: https://mariadb.com/kb/en/configuring-mariadb-for-remote-client-access/
     
-Install Apache configuration 
+#### Install the database and/or the example dungeon.
+
+```
+cd DragonberryPi/share/mysql
+# install empty dungeon schema
+mysql -u dragon -p < DragonberryPi.sql
+# install example dungeon schema
+mysql -u dragon -p < ExampleDungeon.sql
+# or to install it with higher timestamp resolution
+sed 's/timestamp/timestamp(3)/' ExampleDungeon.sql | mysql -u dragon -p DragonberryPi
+```
+
+#### Install Apache configuration 
 
     cd ~/DragonberryPi/share/config
     sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
@@ -300,5 +331,5 @@ get help on usage.
 [addIllustrations]: share/python/addIllustrations.py
 [addImageFiles]: share/python/addImageFiles.py
 [addPawns]: share/python/addPawns.py
-[addTiles]: share/python/addTiles.py
+yy[addTiles]: share/python/addTiles.py
 [json_export]: share/python/json_export.py
