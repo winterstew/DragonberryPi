@@ -1,4 +1,7 @@
 <?php
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
+
 // Including global autoloader
 require_once dirname(__FILE__) . '/../vendor/autoload.php';
 
@@ -7,7 +10,7 @@ $config = array();
 
 // Basic config for Slim Application
 $config['app'] = array(
-    'name' => 'Any App',
+    'name' => 'DragonberryPi',
     'log.enabled' => true,
     'log.level' => Slim\Log::INFO,
     'log.writer' => new Slim\Extras\Log\DateTimeFileWriter(array(
@@ -44,7 +47,7 @@ function db_connect($conf) {
 }
 
 // Create application instance with config
-$app = new Slim\Slim($config['app']);
+$app = new Slim\App($config['app']);
 
 // Get logger
 $log = $app->getLog();
