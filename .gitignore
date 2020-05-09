@@ -220,3 +220,4 @@ RPG/
 *rpg_schema*
 share/mysql/dump-dragonberry.sh
 share/mysql/rebuild-dragonberry.sh
+vendor/*
