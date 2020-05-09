@@ -1,41 +1,48 @@
 <?php
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+use \Interop\Container\ContainerInterface as ContainerInterface;
+
 // Include application bootstrap
-require_once dirname(__FILE__) . '/../bootstrap.php';
+require_once dirname(__FILE__) . '/../app/bootstrap.php';
 
 // Defining routes
-$app->get('/hello(/:name)', function ($name = 'anonymous') use ($app, $log) {
-    $greeter = new SampleApp\Helpers\Hello($name);
-    echo $greeter->greet();
-    $log->info("Just logging $name visit...");
+$app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
+    $name = $args['name'];
+    $greeter = new \SampleApp\Helpers\Hello($name);
+    $response->getBody()->write($greeter->greet());
+    $this->logger->info("Just logging $name visit...");
+    
+    return $response;
 });
 
-// // Uncomment below to enable the about to check out variables
-// // Do not leave on though... security risk.
-// $app->get('/about', function () use ($app, $log) {
-//     echo "<h1>About ", $app->config('name'), "</h1>";
-//     echo "<h2>\$_SERVER</h2>";
-//     var_dump($_SERVER);
-//     echo "<h2>\$_ENV</h2>";
-//     var_dump($_ENV);
-//     echo "<h2>config('db')</h2>";
-//     var_dump($app->config('db'));
-//     echo "<h2>Browser</h2>";
-//     $browser = new Sinergi\BrowserDetector\Browser();
-//     $os = new Sinergi\BrowserDetector\Os();
-//     $device = new Sinergi\BrowserDetector\Device();
-//     $language = new Sinergi\BrowserDetector\Language();
-//     #echo $browser::IE . '<br>';
-//     #echo $browser::FIREFOX . '<br>';
-//     #echo $browser::CHROME . '<br>';
-//     echo $browser->getName() .'<br>';
-//     echo $browser->getVersion() .'<br>';
-//     echo $os->getName() .'<br>';
-//     echo $os->getVersion() .'<br>';
-//     echo $language->getLanguage() .'<br>';
-//     echo "<h2>Slim Mode</h2>";
-//     echo "<p><small>appRoot is: ", $app->config('root'), '</small></p>';
-//     echo "<p><small>Current mode is: ", $app->config('mode'), '</small></p>';
-// });
+// Uncomment below to enable the about to check out variables
+// Do not leave on though... security risk.
+$app->get('/about', function (Request $request, Response $response, array $args) {
+    $body = $response->getBody();
+    $body->write("<h1>About ", $this['settings']['name'], "</h1>");
+    $body->write("<h2>\$_SERVER</h2>");
+    $body->write('<pre>' . var_export($_SERVER, true) . '</pre>');
+    $auth_user = $_SERVER['PHP_AUTH_USER'];
+    $auth_pass = $_SERVER['PHP_AUTH_PW'];
+    $body->write("<h2>\$_ENV</h2>");
+    $body->write('<pre>' . var_export($_ENV, true) . '</pre>');
+    $body->write("<h2>settings</h2>");
+    $body->write('<pre>' . var_export($this['settings'], true) . '</pre>');
+    $body->write("<h2>Browser</h2>");
+    $browser = new Browser();
+    //if ( $browser->getBrowser() == Browser::BROWSER_FIREFOX && $browser->getVersion() >=10 ) {
+    //    $body->write("you have Firefox version 10 or greater");
+    //}
+    $body->write($browser->getBrowser() . " ");
+    $body->write($browser->getVersion() . " ");
+    $body->write($browser->getPlatform() . " ");
+    $body->write($browser->getUserAgent() . " ");
+    //$body->write($browser->isMobile() . " ");
+    //$body->write($browser->isTablet() . " ");
+});
+
+/*
 
 $app->get('/', function () use ($app, $log) {
     require dirname(__FILE__) . '/../sizer.php';
@@ -123,6 +130,7 @@ $app->get('/herolab/:mapId/:pawnName/:modifierName/toggle', function ($mapId, $p
     require dirname(__FILE__) . '/../toggleNamedPawnModifier.php';
 });
 
+*/
 
 // Important: run the app ;)
 $app->run();

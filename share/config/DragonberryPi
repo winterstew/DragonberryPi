@@ -1,16 +1,15 @@
-Alias /DragonberryPi /home/pi/DragonberryPi/app/public/
+Alias / /home/pi/DragonberryPi/public/
+DBDriver mysql
+DBDParams dbname=DragonberryPi,host=localhost,user=dragon,pass=berry
 
-<Directory "/home/pi/DragonberryPi/app/public">
-    Options Indexes FollowSymLinks 
+<Directory "/home/pi/DragonberryPi/public">
+    Options SymLinksIfOwnerMatch
+    # Allow .htaccess files to override
     AllowOverride All
-    # Apache 2.2
-    #Order allow,deny
-    #allow from all
-    # Apache 2.4
     Require all granted
     # The APP_ROOT is what should be the same as the Alias for this directory
     # If it has its own virtual site or some such thing this should be omitted
-    SetEnv APP_ROOT /DragonberryPi
+    SetEnv APP_ROOT /
     # This decides what ends up in the app logs
     SetEnv SLIM_MODE development
     # database connection
@@ -19,3 +18,27 @@ Alias /DragonberryPi /home/pi/DragonberryPi/app/public/
     SetEnv DB_NAME DragonberryPi
 </Directory>
 
+<Directory "/home/pi/DragonberryPi/public/images">
+    #Options Indexes FollowSymLinks 
+    Options SymLinksIfOwnerMatch
+    # Allow .htaccess files to override
+    AllowOverride All
+
+    # mod_authn_core and mod_auth_basic configuration
+    # for mod_authn_dbd
+    AuthType Basic
+    AuthName "DragonberryPi"
+
+    # To cache credentials, put socache ahead of dbd here
+    AuthBasicProvider socache dbd
+
+    # Also required for caching: tell the cache to cache dbd lookups!
+    AuthnCacheProvideFor dbd
+    AuthnCacheContext directory
+
+    # mod_authz_core configuration
+    Require valid-user
+
+    # mod_authn_dbd SQL query to authenticate a user
+    AuthDBDUserPWQuery "SELECT password FROM User WHERE login = %s"
+</Directory>

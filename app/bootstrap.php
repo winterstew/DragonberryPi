@@ -1,22 +1,13 @@
 <?php
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
+use \Monolog\Logger;
+use \Monolog\Handler\StreamHandler;
 
 // Including global autoloader
 require_once dirname(__FILE__) . '/../vendor/autoload.php';
 
-// Init config data
-$config = array();
-
 // Basic config for Slim Application
-$config['app'] = array(
-    'name' => 'DragonberryPi',
-    'log.enabled' => true,
-    'log.level' => Slim\Log::INFO,
-    'log.writer' => new Slim\Extras\Log\DateTimeFileWriter(array(
-        'path' => dirname(__FILE__) . '/../share/logs'
-    )),
-    'mode' => (!empty($_SERVER['SLIM_MODE'])) ? $_SERVER['SLIM_MODE']: 'production'
+$config = array(
+    'displayErrorDetails' => true,
 );
 
 // Load config file
@@ -26,9 +17,25 @@ if (is_readable($configFile)) {
     require_once $configFile;
 }
 
-function db_connect($conf) {
+// Create application instance with config
+$app = new \Slim\App(["settings" => $config]);
+
+$container = $app->getContainer();
+
+// add a logger
+$container['logger'] = function($c) {
+    $logger = new Logger($c['settings']['name']);
+    $level = array('development'=>Logger::DEBUG,'production'=>Logger::ERROR);
+    $file_handler = new StreamHandler($c['settings']['logfile'], $level[$c['settings']['mode']]);
+    $logger->pushHandler($file_handler);
+    return $logger;
+};
+
+// add a database connection
+$containter['connection'] = function ($c) {
     // Define connection as a static variable, to avoid connecting more than once 
     static $connection;
+    $conf = $c['settings']['db'];
     // Try and connect to the database, if a connection has not been established yet
     if(!isset($connection)) {
         // Load configuration as an array. Use the actual location of your configuration file
@@ -44,30 +51,4 @@ function db_connect($conf) {
         return mysqli_connect_error(); 
     }
     return $connection;
-}
-
-// Create application instance with config
-$app = new Slim\App($config['app']);
-
-// Get logger
-$log = $app->getLog();
-
-// Only invoked if mode is "production"
-$app->configureMode('production', function () use ($app) {
-    $app->config(array(
-        'log.enable' => true,
-        'log.level' => Slim\Log::WARN,
-        'debug' => false
-    ));
-});
-
-// Only invoked if mode is "development"
-$app->configureMode('development', function () use ($app) {
-    $app->config(array(
-        'log.enable' => true,
-        'log.level' => Slim\Log::DEBUG,
-        'debug' => true
-    ));
-});
-
-// Other config here (i.e. database, mail system, etc)...
+};

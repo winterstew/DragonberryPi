@@ -2,10 +2,12 @@
 /**
  * Sample configuration file
  */
-$config['app']['name'] = 'DragonberryPi';
-$config['app']['root'] = (!empty($_SERVER['APP_ROOT'])) ? $_SERVER['APP_ROOT'] : '';
+$config['name'] = 'DragonberryPi';
+$config['root'] = (!empty($_SERVER['APP_ROOT'])) ? $_SERVER['APP_ROOT'] : '';
+$config['logfile'] = dirname(__FILE__) . '/../../logs/app.log';
+$config['mode'] =  (!empty($_SERVER['SLIM_MODE'])) ? $_SERVER['SLIM_MODE']: 'production';
 
-$config['app']['db'] = array(
+$config['db'] = array(
     'driver'   => 'mysql',
     'host'     => 'localhost',
     'port'     => '3306',

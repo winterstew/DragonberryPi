@@ -33,14 +33,14 @@ different than using some sort of remote table-top RPG service.  My intention
 is to just replace the map, pawns, and pawn markers in my game.  DragonberryPi
 does that with minimal alteration to the rest of the RPG experience.
 
-DragonberryPi installs on a [Raspberry Pi] where it uses the [Apache]2 web
-server and MySQL or MariaDB database to display the maps and pawns.  It is a
-fully dynamic AJAX web app, which allows the GM to view the full map, PC, NPC,
-and monser pawns, while gradually reveling it to the players.  It
-simultaneously allows the players to view and control there pawns and move them
-where they want.  It is nothing that a good remote table-top service like
-[Roll20] cannot do.  It just runs on your own home network where you control
-any access to it.
+DragonberryPi installs on a [Raspberry Pi] where it uses the [Apache]2 (>= 2.4)
+web server and MySQL (>= 5.6.4) or MariaDB database to display the maps and
+pawns.  It is a fully dynamic AJAX web app, which allows the GM to view the
+full map, PC, NPC, and monser pawns, while gradually reveling it to the
+players.  It simultaneously allows the players to view and control there pawns
+and move them where they want.  It is nothing that a good remote table-top
+service like [Roll20] cannot do.  It just runs on your own home network where
+you control any access to it.
 
 [Raspberry Pi]: https://www.raspberrypi.org/
 [Apache]: http://www.apache.org/
@@ -87,7 +87,7 @@ custom browser-apps for that.  I use Gimp for slicing up the map into tiles,
 but typically I do it on the PC anyway.
 
 ```
-sudo apt install iceweasel mariadb-server phpmyadmin  php7.2 php7.2-mysql php7.2-mbstring apache2 gimp python-sqlalchemy python-mysqldb imagemagick
+sudo apt install iceweasel mariadb-server phpmyadmin  php7.2 php7.2-mysql php7.2-mbstring php7.2-xml apache2 gimp python-sqlalchemy python-mysqldb imagemagick libaprutil1-dbd-mysql
 # point phpmyadmin to use apache2
 # configure database for phpmyadmin with dbconfig-common
 # enter MySQL application password fro phpmyadmin
@@ -96,10 +96,20 @@ sudo apt install iceweasel mariadb-server phpmyadmin  php7.2 php7.2-mysql php7.2
 
 ### Install DragonberryPi
 
-first clone the code
+first clone the code and install the php dependencies via composer
 
 ```
-git clone https://github.com/winterstew/DragonberryPi
+git clone https://github.com/winterstew/DragonberryPi.git
+cd DragonberryPi
+php7.2 composer.phar install
+```
+
+we need to make sure that apache2 can write to the log
+
+```
+sudo usermod -aG www-data pi
+sudo chgrp www-data logs
+sudo chmod 2775 logs
 ```
 
 then create the user for installing the database.  I like mysql-workbench for
@@ -150,17 +160,18 @@ cd DragonberryPi/share/mysql
 mysql -u dragon -p < DragonberryPi.sql
 # install example dungeon schema
 mysql -u dragon -p < ExampleDungeon.sql
-# or to install it with higher timestamp resolution
-sed 's/timestamp/timestamp(3)/' ExampleDungeon.sql | mysql -u dragon -p DragonberryPi
 ```
 
 #### Install Apache configuration 
 
-    cd ~/DragonberryPi/share/config
-    sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
-    sudo a2enmod rewrite
-    sudo a2ensite DragonberryPi
-    sudo service apache2 reload
+```
+cd DragonberryPi/share/config
+sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
+sudo a2enmod rewrite dbd authn_dbd authn_socache socache_shmcb ssl
+sudo a2ensite default-ssl
+sudo a2ensite DragonberryPi
+sudo systemctl reload apache2
+```
     
 Try is out with firefox
 
