@@ -3,13 +3,16 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Interop\Container\ContainerInterface as ContainerInterface;
 
+// Start the session
+session_start();
+
 // Include application bootstrap
 require_once dirname(__FILE__) . '/../app/bootstrap.php';
 
 // Defining routes
 $app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
     $name = $args['name'];
-    $greeter = new \SampleApp\Helpers\Hello($name);
+    $greeter = new \AppLib\Helpers\Hello($name);
     $response->getBody()->write($greeter->greet());
     $this->logger->info("Just logging $name visit...");
     
@@ -27,6 +30,8 @@ $app->get('/about', function (Request $request, Response $response, array $args)
     $auth_pass = $_SERVER['PHP_AUTH_PW'];
     $body->write("<h2>\$_ENV</h2>");
     $body->write('<pre>' . var_export($_ENV, true) . '</pre>');
+    $body->write("<h2>\$_SESSION</h2>");
+    $body->write('<pre>' . var_export($_SESSION, true) . '</pre>');
     $body->write("<h2>settings</h2>");
     $body->write('<pre>' . var_export($this['settings'], true) . '</pre>');
     $body->write("<h2>Browser</h2>");
@@ -42,11 +47,42 @@ $app->get('/about', function (Request $request, Response $response, array $args)
     //$body->write($browser->isTablet() . " ");
 });
 
-/*
-
-$app->get('/', function () use ($app, $log) {
-    require dirname(__FILE__) . '/../sizer.php';
+$app->map(['GET', 'POST'], '/', function (Request $request, Response $response, array $args) {
+    if (isset($_POST['but_logout'])) {
+        session_unset();
+        session_destroy();
+    }
+    // If uname is already set the user is already logged in
+    if(!isset($_SESSION['uname'])){
+        require dirname(__FILE__) . '/../app/login.php';
+    } else {
+        require dirname(__FILE__) . '/../app/home.php';
+    }
 });
+
+/*
+$app->post('/checkUser', function (Request $request, Response $response, array $args) {
+    $logger = $this->logger;
+    $conn = $this->connection;
+    $requestBody = $request->getParsedBody();
+    $checkUser = new \AppLib\DatabaseCalls\checkUser($conn,$requestBody['username'],$requestBody['password'],$logger);
+    $check = $checkUser->isValid();
+    if ($check) {
+        // Lets save the username and password, both as indication of being logged in
+        //  and to use for feeding mod_dbd for the image pages
+        $_SESSION['uname'] = $requestBody['username'];
+        $_SESSION['pass'] = $requestBody['password'];
+        $_SERVER['PHP_AUTH_USER'] = $requestBody['username'];
+        $_SERVER['PHP_AUTH_PW'] = $requestBody['password'];
+        $_SERVER['AUTH_TYPE'] = 'Basic';
+    }
+    $response->getBody()->write($check);
+});
+
+$app->post('/adventure', function (Request $request, Response $response, array $args) {
+    echo "Let's Play!!!";
+});
+
 
 $app->get('/map/:mapMode/:aId/', function ($mapMode, $aId) use ($app, $log) {
     require dirname(__FILE__) . '/../adventure.php';
@@ -81,7 +117,7 @@ $app->post('/design/insertRecord', function () use ($app, $log) {
 });
 
 //$app->get('/herolab/:mapId/:pawnName/:modifierName/toggleNamedPawnModifier', function ($mapId, $pawnName, $modifierName) use ($app, $log) {
-//    $greeter = new SampleApp\Helpers\Hello("Toggle $pawnName's $modifierName status on map $mapId");
+//    $greeter = new AppLib\Helpers\Hello("Toggle $pawnName's $modifierName status on map $mapId");
 //    echo $greeter->greet();
 //    $log->info("Just logging $pawnName visit...");
 //});
