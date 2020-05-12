@@ -32,23 +32,24 @@ $container['logger'] = function($c) {
 };
 
 // add a database connection
-$containter['connection'] = function ($c) {
-    // Define connection as a static variable, to avoid connecting more than once 
+$container['connection'] = function ($c) {
+    // Define connection as a static variable, to avoid connecting more than once
     static $connection;
-    $conf = $c['settings']['db'];
     // Try and connect to the database, if a connection has not been established yet
     if(!isset($connection)) {
+        $conf = $c['settings']['db'];
         // Load configuration as an array. Use the actual location of your configuration file
         $connection = mysqli_connect($conf['host'],
                                      $conf['user'],
                                      $conf['password'],
                                      $conf['name'],
                                      $conf['port']);
-    }
-    // If connection was not successful, handle the error
-    if($connection === false) {
-        // Handle error - notify administrator, log to a file, show an error screen, etc.
-        return mysqli_connect_error(); 
+        // If connection was not successful, handle the error
+        if($connection === false) {
+            // Handle error - notify administrator, log to a file, show an error screen, etc.
+            return mysqli_connect_error(); 
+        }
     }
     return $connection;
 };
+

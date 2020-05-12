@@ -167,7 +167,7 @@ mysql -u dragon -p < ExampleDungeon.sql
 ```
 cd DragonberryPi/share/config
 sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf
-sudo a2enmod rewrite dbd authn_dbd authn_socache socache_shmcb ssl
+sudo a2enmod rewrite dbd authz_dbd authn_dbd authn_socache socache_shmcb ssl auth_form session session_dbd request 
 sudo a2ensite default-ssl
 sudo a2ensite DragonberryPi
 sudo systemctl reload apache2
