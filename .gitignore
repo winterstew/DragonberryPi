@@ -221,3 +221,4 @@ RPG/
 share/mysql/dump-dragonberry.sh
 share/mysql/rebuild-dragonberry.sh
 vendor/*
+public/jquery-*.js
