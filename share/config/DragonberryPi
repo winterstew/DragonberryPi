@@ -1,140 +1,10 @@
-# public login location aliased first
 Alias / /home/pi/DragonberryPi/public/
-# private authenticated location aliases second
-Alias /DragonberryPi/ /home/pi/DragonberryPi/private/
-# mod_dbd configuration
-DBDriver mysql
-DBDParams dbname=DragonberryPi,host=localhost,user=dragon,pass=berry
-# mod_session_dbd configuration
-DBDPrepareSQL "delete from Session where key = %s" deletesession
-DBDPrepareSQL "update Session set value = %s, expiry = %lld, key = %s where key = %s" updatesession
-DBDPrepareSQL "insert into Session (value, expiry, key) values (%s, %lld, %s)" insertsession
-DBDPrepareSQL "select value from Session where key = %s and (expiry = 0 or expiry > %lld)" selectsession
-DBDPrepareSQL "delete from Session where expiry != 0 and expiry < %lld" cleansession
-
-<Location /login>
-   SetHandler form-login-handler
-   AuthFormLoginRequiredLocation /index.php
-   AuthFormLoginSuccessLocation /DragonberryPi/about
-
-   # core authentication and mod_auth_basic configuration
-   # for mod_authn_dbd   
-
-   AuthType form
-   AuthName "DragonberryPi"
-   AuthFormProvider dbd
-   Session On
-   #SessionCryptoPassphrase secret
-   SessionCookieName session path=/    
-
-   # don't require user to already be logged in!
-   AuthDBDUserPWQuery "SELECT password FROM User WHERE user = %s AND locked = 'false'"
-
-   # dbd-login action executes a statement to log user in
-   Require dbd-login
-   AuthzDBDQuery "UPDATE User SET login = 'true' WHERE user = %s"
-
-   # return user to referring page (if any) after
-   # successful login
-   AuthzDBDLoginToReferer On
-</Location>
-
-
-<Directory "/home/pi/DragonberryPi/private">
-   # core authentication and mod_auth_basic configuration
-   # for mod_authn_dbd
-   AuthType form
-   AuthName "DragonberryPi"
-   AuthFormProvider dbd
-   AuthFormLoginRequiredLocation /index.php
-   Session On
-   #SessionCryptoPassphrase secret   
-   SessionCookieName session path=/
-
-   # core authorization configuration
-   Require valid-user
-
-   # mod_authn_dbd SQL query to authenticate a user
-   AuthDBDUserPWQuery "SELECT password FROM User WHERE user = %s AND locked = 'false' AND login = 'true'"
-      
-   ErrorDocument 401 /loginfail.php
-
-   <Files login.php>
-        # don't require user to already be logged in!
-        AuthDBDUserPWQuery "SELECT password FROM User WHERE user = %s AND locked = 'false'"
-
-        # dbd-login action executes a statement to log user in
-        Require dbd-login
-        AuthzDBDQuery "UPDATE User SET login = 'true' WHERE user = %s"
-
-         # return user to referring page (if any) after
-         # successful login
-         #AuthzDBDLoginToReferer On
-   </Files>
-</Directory>
 
 <Directory "/home/pi/DragonberryPi/public">
-    Options SymLinksIfOwnerMatch
-    # Allow .htaccess files to override
-    AllowOverride All
-    AuthType None
-    Require all granted
-</Directory>
-
-<Location "checkUser">
-    SetHandler form-login-handler
-    AuthType form
-    AuthName "DragonberryPi"
-    AuthFormLoginRequiredLocation "/about"
-    AuthFormLoginSuccessLocation "/about"
-    AuthFormProvider dbd
-    #AuthFormProvider socache dbd
-    #AuthnCacheProvideFor dbd
-    #AuthnCacheContext directory
-    AuthDBDUserPWQuery "SELECT password FROM User WHERE login = %s"
-    Session On
-    #SessionDBDCookieName session path=/
-    SessionCookieName session path=/
-    Require valid-user
-</Location>
-
-<Location "/logout">
-    SetHandler form-logout-handler
-    AuthName "DragonberryPi"
-    AuthFormLogoutLocation "/login"
-    Session On
-    SessionMaxAge 1
-    SessionCookieName session path=/
-</Location>
-
-<Directory "/home/pi/DragonberryPi/private">
     #Options Indexes FollowSymLinks 
-    Options SymLinksIfOwnerMatch
-    # Allow .htaccess files to override
+    Options SymLinksIfOwnerMatch 
     AllowOverride All
-
-    AuthType form
-    AuthName "DragonberryPi"
-
-    # To cache credentials, put socache ahead of dbd here
-    AuthFormProvider socache dbd
-    AuthFormLoginRequiredLocation "/login"
-
-    # Also required for caching: tell the cache to cache dbd lookups!
-    AuthnCacheProvideFor dbd
-    AuthnCacheContext directory
-
-    Session On
-    # Can not use per user cookies with AuthType form
-    #SessionDBDPerUser Off
-    #SessionDBDCookieName session path=/
-    SessionCookieName session path=/
-
-    Require valid-user
-
-    # mod_authn_dbd SQL query to authenticate a user
-    AuthDBDUserPWQuery "SELECT password FROM User WHERE login = %s"
-
+    Require all granted
     # The APP_ROOT is what should be the same as the Alias for this directory
     # If it has its own virtual site or some such thing this should be omitted
     SetEnv APP_ROOT /
@@ -145,3 +15,4 @@ DBDPrepareSQL "delete from Session where expiry != 0 and expiry < %lld" cleanses
     SetEnv DB_PASSWORD berry
     SetEnv DB_NAME DragonberryPi
 </Directory>
+

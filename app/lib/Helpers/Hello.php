@@ -1,6 +1,6 @@
 <?php
 
-namespace SampleApp\Helpers;
+namespace AppLib\Helpers;
 
 class Hello
 {

@@ -1,12 +1,40 @@
 <!doctype html>
 <html>
     <head>
-    <title>Login page with jQuery and AJAX</title>
+        <title>Home page</title>
+        <link href="style.css" rel="stylesheet" type="text/css">
+
+        <script src="jquery-3.5.1.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $("#but_about").click(function(){
+                    
+                }
+
+                $("#but_logout").click(function(){
+                    window.location = "/logout";
+                });
+
+            });
+        </script>
     </head>
     <body>
-        <h1>Homepage</h1>
-        <form method='post' action="">
-            <input type="submit" value="Logout" name="but_logout">
-        </form>
+        <div class="container">
+
+            <div id="div_logout">
+                <h1>Logout</h1>
+                <div id="message"></div>
+                <div id="options">
+                </div>
+                <div>
+                    <input type="button" value="About" name="but_about" id="but_about" />
+                </div>
+                <div>
+                    <input type="button" value="Logout" name="but_logout" id="but_logout" />
+                </div>
+            </div>
+
+        </div>
     </body>
 </html>
