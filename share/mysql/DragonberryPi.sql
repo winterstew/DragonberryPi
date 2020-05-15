@@ -372,15 +372,18 @@ DROP TABLE IF EXISTS `DragonberryPi`.`User` ;
 
 CREATE TABLE IF NOT EXISTS `DragonberryPi`.`User` (
   `idUser` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `login` VARCHAR(16) NOT NULL,
+  `user` VARCHAR(16) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
-  `password` CHAR(61) NOT NULL,
+  `hash` VARCHAR(255) NOT NULL,
   `created` DATETIME NOT NULL DEFAULT NOW(),
+  `type` ENUM('standard', 'administrator') NULL DEFAULT 'standard',
+  `login` TINYINT(1) NOT NULL DEFAULT 0,
   `locked` TINYINT(1) NOT NULL DEFAULT 0,
   `updated` TIMESTAMP(3) NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   `updatedBy` VARCHAR(240) NULL,
   PRIMARY KEY (`idUser`),
-  INDEX `updated` (`updated` ASC))
+  INDEX `updated` (`updated` ASC),
+  UNIQUE INDEX `user` (`user` ASC))
 ENGINE = InnoDB;
 
 
@@ -550,6 +553,20 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`PawnModifier` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+USE `DragonberryPi` ;
+
+-- -----------------------------------------------------
+-- Placeholder table for view `DragonberryPi`.`ValidUser`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ValidUser` (`idUser` INT, `user` INT, `email` INT, `hash` INT, `created` INT, `type` INT, `login` INT, `locked` INT, `updated` INT, `updatedBy` INT, `userName` INT, `selectColor` INT, `mapScale` INT);
+
+-- -----------------------------------------------------
+-- View `DragonberryPi`.`ValidUser`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `DragonberryPi`.`ValidUser` ;
+DROP TABLE IF EXISTS `DragonberryPi`.`ValidUser`;
+USE `DragonberryPi`;
+CREATE  OR REPLACE VIEW `ValidUser` AS SELECT User.*,userName,selectColor,mapScale FROM User LEFT JOIN UserPreferences USING (idUser) WHERE User.locked = False;
 USE `DragonberryPi`;
 
 DELIMITER $$
