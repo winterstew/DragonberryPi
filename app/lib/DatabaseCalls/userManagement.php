@@ -11,6 +11,19 @@ class userManagement
         $this->uname = mysqli_real_escape_string($conn,$uname);
         $this->pass = mysqli_real_escape_string($conn,$pass);
         $this->logger = $logger;
+        $this->uinfo = array();
+    }
+
+    public function isLoggedIn()
+    {
+        if ($this->uname != "") {
+            $sql_query = "SELECT idUser FROM ValidUser WHERE user='" . $this->uname . "';";
+            $result = $this->conn->query($sql_query);
+            if ($result->num_rows == 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function isValid()
@@ -22,6 +35,9 @@ class userManagement
                 $row = $result->fetch_assoc();
                 if (password_verify($this->pass,$row['hash'])) {
                     $this->logger->info($this->uname . " is a valid user with correct password");
+                    // set the user info, for the validated user
+                    $this->uinfo = $this->conn->query("SELECT * FROM ValidUser WHERE user='" . $this->uname ."';")->fetch_assoc();
+                    $this->uinfo['valid']=true;
                     return true;
                 } else {
                     $this->logger->info($this->uname . " is a valid user with WRONG password");
@@ -32,6 +48,7 @@ class userManagement
         } else {
             $this->logger->info("username and/or password is missing");
         }
+        $this->uinfo['valid']= false;
         return false;
     }
 
@@ -57,6 +74,8 @@ class userManagement
             if ($result) {
                 $_SESSION['uname'] = $this->uname;
                 $_SESSION['pass'] = $this->pass;
+                $_SESSION['idUser'] = $this->uinfo['idUser'];
+                $_SESSION['userType'] = $this->uinfo['type'];
                 $this->logger->info("session variables set for user and password");
                 return true;
             }

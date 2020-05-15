@@ -3,6 +3,7 @@ use \Monolog\Logger;
 use \Monolog\Handler\StreamHandler;
 use \Tuupola\Middleware\HttpBasicAuthentication;
 use \Tuupola\Middleware\HttpBasicAuthentication\PdoAuthenticator;
+use \AppLib\DatabaseCalls\userManagement as userManagement;
 
 // Including global autoloader
 require_once dirname(__FILE__) . '/../vendor/autoload.php';
@@ -21,8 +22,15 @@ if (is_readable($configFile)) {
 
 // Create application instance with config
 $app = new \Slim\App(["settings" => $config]);
+// Register Cache middleware
+$app->add(new \Slim\HttpCache\Cache('public', 86400));
 
 $container = $app->getContainer();
+
+// Register cache service provider
+$container['cache'] = function () {
+    return new \Slim\HttpCache\CacheProvider();
+};
 
 // add a logger
 $container['logger'] = function($c) {
@@ -86,26 +94,35 @@ $container['pdo'] = function ($c) {
 };
 
 $app->add(new HttpBasicAuthentication([
-    "path" => "/",
-    "ignore" => ["/login","/checkUser","/home","/logout"],
+    "path" => ["/adventure","/images","/home","/about"],
+#    "ignore" => ["/login","/checkUser","/home","/logout","/about"],
     "realm" => "DragonberryPi",
 #    "users" => [
 #        "gm" => '$2y$10$rtE03IHT3GfbYm8CJEFO8udE34zgP7BePodqgym/KjcJcavqdG/W6',
 #        "pc" => '$2y$10$TBqi/txEYuw00ebwB3rlD.oFlK3ZZRhyQx7bDrNT9cUxJsIyvgUP.'
 #    ],
+#    "error" => function ($response, $arguments) {
+#        $data = [];
+#        $data["headers"] = $response->getHeaders();
+#        $data["status"] = "error";
+#        $data["message"] = $arguments["message"];
+#        $body = $response->getBody();
+#        $body->write(json_encode($data,JSON_UNESCAPED_SLASHES));
+#    },
     "authenticator" => new PdoAuthenticator([
         "pdo" => $container->pdo,
         "table" => "ValidUser",
         "user" => "user",
         "hash" => "hash"
     ]),
-    "error" => function ($response, $arguments) {
-        $data = [];
-        $data["headers"] = $response->getHeaders();
-        $data["status"] = "error";
-        $data["message"] = $arguments["message"];
-
-        $body = $response->getBody();
-        $body->write(json_encode($data,JSON_UNESCAPED_SLASHES));
-    }
 ]));
+
+function loggedIn($conn,$logger){
+    // if we are logged in (SESSION idUser set), 
+    if (isset($_SESSION['idUser']) and $_SESSION['idUser'] > 0) {
+        // confirm that we were not logged out by administrative fiat
+        $user = new userManagement($conn,$_SESSION['uname'],$_SESSION['pass'],$logger);
+        return $user->isLoggedIn();
+    }
+    return false;
+}

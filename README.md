@@ -164,6 +164,16 @@ mysql -u dragon -p < ExampleDungeon.sql
 
 #### Install Apache configuration 
 
+If you want to make sure everything uses SSL add this to your virtual
+host definition for port 80 for your default site:
+
+```
+RewriteEngine On
+RewriteRule  ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+```
+
+Then configure the rest and restart
+
 ```
 cd DragonberryPi/share/config
 sudo cp DragonberryPi /etc/apache2/sites-available/DragonberryPi.conf

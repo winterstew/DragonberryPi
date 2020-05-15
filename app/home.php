@@ -9,13 +9,21 @@
         <script type="text/javascript">
             $(document).ready(function(){
                 $("#but_about").click(function(){
-                    
-                }
-
-                $("#but_logout").click(function(){
-                    window.location = "/logout";
+                    window.location = "/about";
                 });
 
+                $("#but_logout").click(function(){
+                    $(document).ajaxComplete(function(){
+                        window.location = "/";
+                    });
+                    $.ajax({
+                        url:"logout",
+                        //async:false,
+                        type:'post'
+                    });
+                });
+
+                $("#options").append("<a href='/images/Monsters/goblin.png'>Goblin</a>");
             });
         </script>
     </head>

@@ -9,64 +9,56 @@
         <script type="text/javascript">
             $(document).ready(function(){
 
-                $("#but_submit").click(function(){
+                $("#but_submit").click(function (){
                     var username = $("#txt_uname").val().trim();
                     var password = $("#txt_pwd").val().trim();
 
                     if( username != "" && password != "" ){
+                        // check if user login information is correct
                         $.ajax({
                             url:'checkUser',
                             type:'post',
                             data:{username:username,password:password},
-                            success:function(response){
+                            success:function(result){
                                 var msg = "";
-                                if(response == true){
-                                    var xhr = jQuery.ajaxSettings.xhr();
+                                var uinfo = JSON.parse(result);
+                                if(uinfo['valid'] == true){
+                                    // log in the now validated user (i.e. set session variables)
                                     $.ajax({
-                                        url: "/about",
-                                        username: username,
-                                        password: password,
-                                        beforeSend: function (xhr) {
-                                            // Authorization header 
-                                            xhr.setRequestHeader("Authorization", "Basic " + btoa(username+":"+password));
-                                            xhr.setRequestHeader("X-Mobile", "false");
-                                        },
-                                        success: function(result) {
-                                            alert("Authorization header should now be set...");
+                                        url: "checkUser",
+                                        type:'post',
+                                        //async:false,
+                                        //username:username,
+                                        //password:password,
+                                        //beforeSend: function (xhr) {
+                                        //    // Authorization header 
+                                        //    xhr.setRequestHeader("Authorization", "Basic " + btoa(username+":"+password));
+                                        //    xhr.setRequestHeader("X-Mobile", "false");
+                                        //},
+                                        data:{username:username,password:password,login:true},
+                                        success:function(result){
+                                            // take us back now that we are logged in
+                                            window.location.assign("https://" + username + ":" + password + "@" +
+                                                        window.location.hostname + "/home" );
                                         }
                                     });
-                                    window.location = "/about";
-/* example
-$.ajax({
-    url: url,
-    method: "POST",
-    dataType: "json",
-    crossDomain: true,
-    contentType: "application/json; charset=utf-8",
-    data: JSON.stringify(data),
-    cache: false,
-    beforeSend: function (xhr) {
-        // Authorization header 
-        xhr.setRequestHeader("Authorization", "Basic " + Utils.getUsernamePassword());
-        xhr.setRequestHeader("X-Mobile", "false");
-    },
-    success: function (data) {
-
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-
-    }
-});
-*/
                                 }else{
-                                    msg = "Invalid username and password!";
+                                    msg = "Invalid username and/or password!";
+                                    $.ajax({
+                                        url:"fail",
+                                        type:'get',
+                                        //async:false,
+                                        success:function(result){
+                                            // take us back without logging in
+                                            window.location = "/";
+                                        }
+                                    });
                                 }
                                 $("#message").html(msg);
                             }
                         });
                     }
                 });
-
             });
         </script>
     </head>
