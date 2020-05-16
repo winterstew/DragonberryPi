@@ -100,9 +100,9 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Map` (
   `backgroundColor` VARCHAR(45) NULL DEFAULT NULL,
   `updated` TIMESTAMP(3) NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   `updatedBy` VARCHAR(240) NULL,
-  `idAdventure` SMALLINT UNSIGNED NOT NULL,
-  `idMapType` SMALLINT UNSIGNED NOT NULL,
-  `idDisplay` SMALLINT UNSIGNED NOT NULL,
+  `idAdventure` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+  `idMapType` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+  `idDisplay` SMALLINT UNSIGNED NULL,
   PRIMARY KEY (`idMap`),
   INDEX `updated` (`updated` ASC),
   INDEX `dmVisible` (`dmVisible` ASC),
@@ -112,18 +112,18 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Map` (
   CONSTRAINT `fk_idAdventure2`
     FOREIGN KEY (`idAdventure`)
     REFERENCES `DragonberryPi`.`Adventure` (`idAdventure`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idMapType1`
     FOREIGN KEY (`idMapType`)
     REFERENCES `DragonberryPi`.`MapType` (`idMapType`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idDisplay1`
     FOREIGN KEY (`idDisplay`)
     REFERENCES `DragonberryPi`.`Display` (`idDisplay`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 COMMENT = 'define a map made up of tiles.  Every Map will be layed out in squares index by letter and number where A,0 is the upper left (before rotation).';
 
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Image` (
   `ruleLink` TINYTEXT NULL DEFAULT NULL COMMENT 'URL to any rules information related to the image',
   `updated` TIMESTAMP(3) NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   `updatedBy` VARCHAR(240) NULL,
-  `idSource` SMALLINT UNSIGNED NOT NULL,
+  `idSource` SMALLINT UNSIGNED NULL,
   `idLocation` SMALLINT UNSIGNED NOT NULL,
   PRIMARY KEY (`idImage`),
   INDEX `updated` (`updated` ASC),
@@ -194,13 +194,13 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Image` (
   CONSTRAINT `fk_idSource1`
     FOREIGN KEY (`idSource`)
     REFERENCES `DragonberryPi`.`Source` (`idSource`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idLocation1`
     FOREIGN KEY (`idLocation`)
     REFERENCES `DragonberryPi`.`Location` (`idLocation`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 COMMENT = 'Location of image files on disk.';
 
@@ -224,8 +224,8 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Tile` (
   `ruleLink` TINYTEXT NULL DEFAULT NULL COMMENT 'URL for any rules associated with the tile\nThis may override the image ruleLink',
   `updated` TIMESTAMP(3) NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   `updatedBy` VARCHAR(240) NULL,
-  `idMap` SMALLINT UNSIGNED NOT NULL,
-  `idImage` SMALLINT UNSIGNED NOT NULL,
+  `idMap` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+  `idImage` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`idTile`),
   INDEX `updated` (`updated` ASC),
   INDEX `dmVisible` (`dmVisible` ASC),
@@ -234,13 +234,13 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Tile` (
   CONSTRAINT `fk_idMap2`
     FOREIGN KEY (`idMap`)
     REFERENCES `DragonberryPi`.`Map` (`idMap`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idImage2`
     FOREIGN KEY (`idImage`)
     REFERENCES `DragonberryPi`.`Image` (`idImage`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 COMMENT = 'specify geometric location and the visibility of Tile elements which are part of a Map.  \nA Tile refrences only one Image, but can be in many Maps.';
 
@@ -270,10 +270,11 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`PawnMask` (
   `idPawnMask` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `description` TEXT NULL,
-  `maskSvg` BLOB NOT NULL,
+  `maskSvg` BLOB NOT NULL DEFAULT '<svg></svg>',
   `updated` TIMESTAMP(3) NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   `updatedBy` VARCHAR(240) NULL,
-  PRIMARY KEY (`idPawnMask`))
+  PRIMARY KEY (`idPawnMask`),
+  UNIQUE INDEX `name` (`name` ASC))
 ENGINE = InnoDB
 COMMENT = 'This is the SVG file used to mask the pawn image into the actual Pawn with the shape and colors we want';
 
@@ -306,11 +307,11 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Pawn` (
   `imageScale` DOUBLE NOT NULL DEFAULT 1.0,
   `updated` TIMESTAMP(3) NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   `updatedBy` VARCHAR(240) NULL,
-  `idMap` SMALLINT UNSIGNED NOT NULL,
-  `idRole` SMALLINT UNSIGNED NOT NULL,
-  `idMaster` SMALLINT UNSIGNED NULL DEFAULT NULL,
-  `idPawnMask` SMALLINT UNSIGNED NOT NULL,
-  `idImage` SMALLINT UNSIGNED NOT NULL,
+  `idMap` SMALLINT UNSIGNED NULL,
+  `idRole` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+  `idMaster` SMALLINT UNSIGNED NULL,
+  `idPawnMask` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+  `idImage` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`idPawn`),
   INDEX `updated` (`updated` ASC),
   INDEX `dmVisible` (`dmVisible` ASC),
@@ -322,13 +323,13 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Pawn` (
   CONSTRAINT `fk_idMap3`
     FOREIGN KEY (`idMap`)
     REFERENCES `DragonberryPi`.`Map` (`idMap`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idRole2`
     FOREIGN KEY (`idRole`)
     REFERENCES `DragonberryPi`.`Role` (`idRole`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idMaster`
     FOREIGN KEY (`idMaster`)
     REFERENCES `DragonberryPi`.`Pawn` (`idPawn`)
@@ -337,13 +338,13 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`Pawn` (
   CONSTRAINT `fk_idPawnMask1`
     FOREIGN KEY (`idPawnMask`)
     REFERENCES `DragonberryPi`.`PawnMask` (`idPawnMask`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idImage1`
     FOREIGN KEY (`idImage`)
     REFERENCES `DragonberryPi`.`Image` (`idImage`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 COMMENT = 'Pawn location on a Map.  Not \ngoing to impliment this right away, but for future reference.';
 
@@ -406,13 +407,13 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`AdventureAuthority` (
   CONSTRAINT `fk_idUser1`
     FOREIGN KEY (`idUser`)
     REFERENCES `DragonberryPi`.`User` (`idUser`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idAdventure1`
     FOREIGN KEY (`idAdventure`)
     REFERENCES `DragonberryPi`.`Adventure` (`idAdventure`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 COMMENT = 'grants authority to view and/or control all maps, pawns, and tiles belonging to the Adventure';
 
@@ -434,8 +435,8 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`UserPreferences` (
   CONSTRAINT `fk_idUser2`
     FOREIGN KEY (`idUser`)
     REFERENCES `DragonberryPi`.`User` (`idUser`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -457,13 +458,13 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`MapAuthority` (
   CONSTRAINT `fk_idUser3`
     FOREIGN KEY (`idUser`)
     REFERENCES `DragonberryPi`.`User` (`idUser`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idMap1`
     FOREIGN KEY (`idMap`)
     REFERENCES `DragonberryPi`.`Map` (`idMap`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 COMMENT = 'modifies view access authority granted by AdventureAuthority, tyipically to hide a map from players while working on it.';
 
@@ -486,13 +487,13 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`RoleAuthority` (
   CONSTRAINT `fk_idUser4`
     FOREIGN KEY (`idUser`)
     REFERENCES `DragonberryPi`.`User` (`idUser`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idRole1`
     FOREIGN KEY (`idRole`)
     REFERENCES `DragonberryPi`.`Role` (`idRole`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 COMMENT = 'modifies control access granted by AdventureAuthority to allow control of Pawns which a particular Role';
 
@@ -517,13 +518,13 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`PawnSelect` (
   CONSTRAINT `fk_idUser5`
     FOREIGN KEY (`idUser`)
     REFERENCES `DragonberryPi`.`User` (`idUser`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idPawn1`
     FOREIGN KEY (`idPawn`)
     REFERENCES `DragonberryPi`.`Pawn` (`idPawn`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -544,13 +545,13 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`PawnModifier` (
   CONSTRAINT `fk_idPawn2`
     FOREIGN KEY (`idPawn`)
     REFERENCES `DragonberryPi`.`Pawn` (`idPawn`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_idModifier1`
     FOREIGN KEY (`idModifier`)
     REFERENCES `DragonberryPi`.`Modifier` (`idModifier`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 USE `DragonberryPi` ;
