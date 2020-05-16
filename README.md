@@ -57,17 +57,19 @@ you control any access to it.
 
 in a terminal type
 
+```
     sudo rasi-config
+```
 
-* then in rasi-config do the following:
+then in rasi-config do the following:
 
-    * choose *expand filesystem*
-    * set you international options based on what you want
-    * turn on ssh.  This is useful for access if you want to do your adventure
-      prep from a PC and just copy files over
-    * reset your password
-    * reboot
-    
+* choose *expand filesystem*
+* set you international options based on what you want
+* turn on ssh.  This is useful for access if you want to do your adventure
+   prep from a PC and just copy files over
+* reset your password
+* reboot
+
 ### Install necessary packages
 
 You will want to make sure everything is up to date and install the packages
@@ -88,11 +90,12 @@ but typically I do it on the PC anyway.
 
 ```
 sudo apt install iceweasel mariadb-server phpmyadmin  php7.2 php7.2-mysql php7.2-mbstring php7.2-xml apache2 gimp python-sqlalchemy python-mysqldb imagemagick libaprutil1-dbd-mysql
-# point phpmyadmin to use apache2
-# configure database for phpmyadmin with dbconfig-common
-# enter MySQL application password fro phpmyadmin
-# enter a root password for mysql 
 ```
+
+* point phpmyadmin to use apache2
+* configure database for phpmyadmin with dbconfig-common
+* enter MySQL application password fro phpmyadmin
+* enter a root password for mysql 
 
 ### Install DragonberryPi
 
@@ -119,21 +122,19 @@ this, unfortunately it is not available in buster:
 
 `mysql-workbench`
 
-* with mysql-workbench do the following:
-
-    * open Local instance 3306
-    * ignore error
-    * Go to Users and Privileges
-    *  new Login => `dragon` password `berry` on localhost
-    *  Administrative Roles => DBDesigner
-    *  Schema Privileges => DragonberryPi: Everything but GRANT
+* open Local instance 3306
+* ignore error
+* Go to Users and Privileges
+*  new Login => `dragon` password `berry` on localhost
+*  Administrative Roles => DBDesigner
+*  Schema Privileges => DragonberryPi: Everything but GRANT
 
 You can also use mysql-workbench to take a look at the database design layout,
 if you like.  
 
 `mysql-workbench DragonberryPi/share/mysql/DragonberryPi.mwb`
 
-#### using mysqlaccess
+#### using mysql
 
 ```
 sudo mysql -e "CREATE USER 'dragon'@'localhost' IDENTIFIED BY 'berry';"
