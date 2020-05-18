@@ -1,8 +1,9 @@
 
 /* Container */
-.container{
-    width:40%;
+.bodyContainer{
+    width:50%;
     margin:0 auto;
+    font-size: small;
 }
 
 /* Login */
@@ -48,9 +49,32 @@
     text-align:center;
     color:red;
 }
+
+/* Title */
+.title{
+	font-size: x-large;
+	text-align: center;
+}
+
+/* Subtitle */
+.subtitle{
+	font-size: large;
+	text-align: center;
+}
+
+/* heading */
+.heading{ 
+	font-size: medium;
+}
+
+/* adventureContainer */
+/* preferencesContainer */
+/* userContainer */
+/* logoutContainer */
+
 /* media */
 @media screen and (max-width:720px){
-    .container{
+    .bodyContainer{
         width: 100%;
     }
     #div_login{
