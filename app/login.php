@@ -63,7 +63,7 @@
         </script>
     </head>
     <body>
-        <div class="container">
+        <div class="bodyContainer">
 
             <div id="div_login">
                 <h1>Login</h1>

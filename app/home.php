@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Home page</title>
+        <title>Adventure Home Page</title>
         <link href="style.css" rel="stylesheet" type="text/css">
 
         <script src="jquery-3.5.1.js" type="text/javascript"></script>
@@ -22,19 +22,25 @@
                         type:'post'
                     });
                 });
-
-                $("#options").append("<a href='/images/Monsters/goblin.png'>Goblin</a>");
             });
         </script>
     </head>
     <body>
-        <div class="container">
-
-            <div id="div_logout">
-                <h1>Logout</h1>
+        <div class="bodyContainer">
+				<div class="title">Welcome to <span class="database">DragonberryPi</span>, <span class="User.name">User</span>!</div>
+				<div class="subtitle">What would you like to do?</div>
+				<div class="adventureContainer"><div class="heading">Join an adventure</div>
+					<p class="adventureList"></p>			
+				</div>
+				<div class="preferenceContainer"><div class="heading">Edit your preferences</div>
+					<p class="preferenceList"></p>			
+				</div>
+				<div class="userContainer"><div class="heading">Update Users</div>
+					<p class="userList"></p>			
+				</div>
+            <div class="logoutContainer"><div class="heading">Logout</div>
                 <div id="message"></div>
-                <div id="options">
-                </div>
+                <div id="options"></div>
                 <div>
                     <input type="button" value="About" name="but_about" id="but_about" />
                 </div>
