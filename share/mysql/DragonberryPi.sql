@@ -419,11 +419,11 @@ COMMENT = 'grants authority to view and/or control all maps, pawns, and tiles be
 
 
 -- -----------------------------------------------------
--- Table `DragonberryPi`.`UserPreferences`
+-- Table `DragonberryPi`.`UserPreference`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `DragonberryPi`.`UserPreferences` ;
+DROP TABLE IF EXISTS `DragonberryPi`.`UserPreference` ;
 
-CREATE TABLE IF NOT EXISTS `DragonberryPi`.`UserPreferences` (
+CREATE TABLE IF NOT EXISTS `DragonberryPi`.`UserPreference` (
   `idUser` SMALLINT UNSIGNED NOT NULL,
   `userName` VARCHAR(45) NULL,
   `selectColor` VARCHAR(45) NOT NULL DEFAULT '#ff9900',
@@ -438,35 +438,6 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`UserPreferences` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `DragonberryPi`.`MapAuthority`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `DragonberryPi`.`MapAuthority` ;
-
-CREATE TABLE IF NOT EXISTS `DragonberryPi`.`MapAuthority` (
-  `idUser` SMALLINT UNSIGNED NOT NULL,
-  `idMap` SMALLINT UNSIGNED NOT NULL,
-  `canView` TINYINT(1) NOT NULL DEFAULT 0,
-  `updated` TIMESTAMP(3) NOT NULL DEFAULT NOW() ON UPDATE NOW(),
-  `updatedBy` VARCHAR(240) NULL,
-  PRIMARY KEY (`idUser`, `idMap`),
-  INDEX `fk_idMap1_idx` (`idMap` ASC),
-  INDEX `fk_idUser3_idx` (`idUser` ASC),
-  INDEX `updated` (`updated` ASC),
-  CONSTRAINT `fk_idUser3`
-    FOREIGN KEY (`idUser`)
-    REFERENCES `DragonberryPi`.`User` (`idUser`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_idMap1`
-    FOREIGN KEY (`idMap`)
-    REFERENCES `DragonberryPi`.`Map` (`idMap`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-COMMENT = 'modifies view access authority granted by AdventureAuthority, tyipically to hide a map from players while working on it.';
 
 
 -- -----------------------------------------------------
@@ -554,6 +525,21 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`PawnModifier` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `DragonberryPi`.`UpdateQueue`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `DragonberryPi`.`UpdateQueue` ;
+
+CREATE TABLE IF NOT EXISTS `DragonberryPi`.`UpdateQueue` (
+  `tableName` VARCHAR(45) NOT NULL,
+  `id` SMALLINT UNSIGNED NOT NULL,
+  `updated` TIMESTAMP(3) NOT NULL,
+  `updatedBy` VARCHAR(240) NULL,
+  PRIMARY KEY (`tableName`, `id`),
+  INDEX `updated` (`updated` ASC))
+ENGINE = InnoDB;
+
 USE `DragonberryPi` ;
 
 -- -----------------------------------------------------
@@ -562,35 +548,300 @@ USE `DragonberryPi` ;
 CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ValidUser` (`idUser` INT, `user` INT, `email` INT, `hash` INT, `created` INT, `type` INT, `login` INT, `locked` INT, `updated` INT, `updatedBy` INT, `userName` INT, `selectColor` INT, `mapScale` INT);
 
 -- -----------------------------------------------------
+-- Placeholder table for view `DragonberryPi`.`ViewableAdventureList`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ViewableAdventureList` (`idUser` INT, `idAdventure` INT, `name` INT, `description` INT, `updated` INT, `updatedBy` INT, `canView` INT, `canControl` INT);
+
+-- -----------------------------------------------------
+-- Placeholder table for view `DragonberryPi`.`ViewableMapList`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ViewableMapList` (`idUser` INT, `idMap` INT, `name` INT, `pixelsPerFoot` INT, `feetPerInch` INT, `widthInches` INT, `heightInches` INT, `rotate` INT, `scale` INT, `scaleY` INT, `translateX` INT, `translateY` INT, `visible` INT, `dmVisible` INT, `showName` INT, `dmShowName` INT, `depth` INT, `backgroundColor` INT, `updated` INT, `updatedBy` INT, `idAdventure` INT, `idMapType` INT, `idDisplay` INT, `description` INT, `canView` INT, `canControl` INT);
+
+-- -----------------------------------------------------
 -- View `DragonberryPi`.`ValidUser`
 -- -----------------------------------------------------
 DROP VIEW IF EXISTS `DragonberryPi`.`ValidUser` ;
 DROP TABLE IF EXISTS `DragonberryPi`.`ValidUser`;
 USE `DragonberryPi`;
-CREATE  OR REPLACE VIEW `ValidUser` AS SELECT User.*,userName,selectColor,mapScale FROM User LEFT JOIN UserPreferences USING (idUser) WHERE User.locked = False;
+CREATE  OR REPLACE VIEW `ValidUser` AS SELECT User.*,userName,selectColor,mapScale FROM User LEFT JOIN UserPreference USING (idUser) WHERE User.locked = False;
+
+-- -----------------------------------------------------
+-- View `DragonberryPi`.`ViewableAdventureList`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `DragonberryPi`.`ViewableAdventureList` ;
+DROP TABLE IF EXISTS `DragonberryPi`.`ViewableAdventureList`;
+USE `DragonberryPi`;
+CREATE  OR REPLACE VIEW `ViewableAdventureList` AS SELECT User.idUser,Adventure.*,AdventureAuthority.canView,AdventureAuthority.canControl FROM User JOIN AdventureAuthority ON User.idUser = AdventureAuthority.idUser JOIN Adventure ON AdventureAuthority.idAdventure=Adventure.idAdventure WHERE AdventureAuthority.canView = True;
+
+-- -----------------------------------------------------
+-- View `DragonberryPi`.`ViewableMapList`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `DragonberryPi`.`ViewableMapList` ;
+DROP TABLE IF EXISTS `DragonberryPi`.`ViewableMapList`;
+USE `DragonberryPi`;
+CREATE  OR REPLACE VIEW `ViewableMapList` AS SELECT User.idUser,Map.*,MapType.name,MapType.description,AdventureAuthority.canView,AdventureAuthority.canControl FROM User JOIN AdventureAuthority ON User.idUser = AdventureAuthority.idUser JOIN Adventure ON AdventureAuthority.idAdventure=Adventure.idAdventure JOIN Map ON Adventure.idAdventure = Map.idAdventure JOIN MapType ON Map.idMapType = MapType.idMapType WHERE AdventureAuthority.canView = True;
 USE `DragonberryPi`;
 
 DELIMITER $$
 
 USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Adventure_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Adventure_AFTER_UPDATE` AFTER UPDATE ON `Adventure` FOR EACH ROW
+BEGIN
+INSERT INTO `UpdateQueue` (tableName,id,updated,updatedBy) VALUES ('Adventure',NEW.idAdventure,NEW.updated,NEW.updatedBy) ON DUPLICATE KEY UPDATE updated=NEW.updated, updatedBy=NEW.updatedBy;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Display_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Display_AFTER_UPDATE` AFTER UPDATE ON `Display` FOR EACH ROW
+BEGIN
+INSERT INTO `UpdateQueue` (tableName,id,updated,updatedBy) VALUES ('Display',NEW.idDisplay,NEW.updated,NEW.updatedBy) ON DUPLICATE KEY UPDATE updated=NEW.updated, updatedBy=NEW.updatedBy;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Map_AFTER_INSERT` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Map_AFTER_INSERT` AFTER INSERT ON `Map` FOR EACH ROW
+BEGIN
+UPDATE `Adventure` SET updated=NOW(), updatedBy='Map' WHERE idAdventure=NEW.idAdventure;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Map_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Map_AFTER_UPDATE` AFTER UPDATE ON `Map` FOR EACH ROW
+BEGIN
+IF NEW.idAdventure != OLD.idAdventure THEN
+UPDATE `Adventure` SET updated=NEW.updated, updatedBy='Map' WHERE idAdventure=NEW.idAdventure AND NEW.updated>updated;
+END IF;
+IF NEW.idDisplay != OLD.idDisplay THEN
+UPDATE `Display` SET updated=NEW.updated, updatedBy='Map' WHERE idDisplay=NEW.idDisplay AND NEW.updated>updated;
+END IF;
+INSERT INTO `UpdateQueue` (tableName,id,updated,updatedBy) VALUES ('Map',NEW.idMap,NEW.updated,NEW.updatedBy) ON DUPLICATE KEY UPDATE updated=NEW.updated, updatedBy=NEW.updatedBy;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Map_AFTER_DELETE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Map_AFTER_DELETE` AFTER DELETE ON `Map` FOR EACH ROW
+BEGIN
+UPDATE `Adventure` SET updated=NOW(), updatedBy='Map' WHERE idAdventure=OLD.idAdventure;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Image_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Image_AFTER_UPDATE` AFTER UPDATE ON `Image` FOR EACH ROW
+BEGIN
+UPDATE `Tile` SET updated=NEW.updated, updatedBy='Image' WHERE idImage=NEW.idImage AND NEW.updated>updated;
+UPDATE `Pawn` SET updated=NEW.updated, updatedBy='Image' WHERE idImage=NEW.idImage AND NEW.updated>updated;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Tile_AFTER_INSERT` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Tile_AFTER_INSERT` AFTER INSERT ON `Tile` FOR EACH ROW
+BEGIN
+UPDATE `Map` SET updated=NOW(), updatedBy='Tile' WHERE idMap=NEW.idMap;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Tile_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Tile_AFTER_UPDATE` AFTER UPDATE ON `Tile` FOR EACH ROW
+BEGIN
+IF NEW.idMap != OLD.idMap THEN
+UPDATE `Map` SET updated=NEW.updated, updatedBy='Tile' WHERE ( idMap=NEW.idMap OR idMap=OLD.idMap ) AND NEW.updated>updated;
+END IF;
+INSERT INTO `UpdateQueue` (tableName,id,updated,updatedBy) VALUES ('Tile',NEW.idTile,NEW.updated,NEW.updatedBy) ON DUPLICATE KEY UPDATE updated=NEW.updated, updatedBy=NEW.updatedBy;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Tile_AFTER_DELETE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Tile_AFTER_DELETE` AFTER DELETE ON `Tile` FOR EACH ROW
+BEGIN
+UPDATE `Map` SET updated=NOW(), updatedBy='Tile' WHERE idMap=OLD.idMap;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Role_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Role_AFTER_UPDATE` AFTER UPDATE ON `Role` FOR EACH ROW
+BEGIN
+UPDATE `Pawn` SET updated=NEW.updated, updatedBy='Role' WHERE idRole=NEW.idRole AND NEW.updated>updated;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Pawn_AFTER_INSERT` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Pawn_AFTER_INSERT` AFTER INSERT ON `Pawn` FOR EACH ROW
+BEGIN
+UPDATE `Map` SET updated=NOW(), updatedBy='Pawn' WHERE idMap=NEW.idMap;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Pawn_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Pawn_AFTER_UPDATE` AFTER UPDATE ON `Pawn` FOR EACH ROW
+BEGIN
+IF NEW.idMap != OLD.idMap THEN
+UPDATE `Map` SET updated=NEW.updated, updatedBy='Pawn' WHERE ( idMap=NEW.idMap OR idMap=OLD.idMap ) AND NEW.updated>updated;
+END IF;
+INSERT INTO `UpdateQueue` (tableName,id,updated,updatedBy) VALUES ('Pawn',NEW.idPawn,NEW.updated,NEW.updatedBy) ON DUPLICATE KEY UPDATE updated=NEW.updated, updatedBy=NEW.updatedBy;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`Pawn_AFTER_DELETE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`Pawn_AFTER_DELETE` AFTER DELETE ON `Pawn` FOR EACH ROW
+BEGIN
+UPDATE `Map` SET updated=NOW(), updatedBy='Pawn' WHERE idMap=OLD.idMap;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`AdventureAuthority_BEFORE_INSERT` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`AdventureAuthority_BEFORE_INSERT` BEFORE INSERT ON `AdventureAuthority` FOR EACH ROW
+BEGIN
+IF NEW.canControl = True THEN
+SET NEW.canView = True;
+END IF;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`AdventureAuthority_AFTER_INSERT` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`AdventureAuthority_AFTER_INSERT` AFTER INSERT ON `AdventureAuthority` FOR EACH ROW
+BEGIN
+UPDATE `Adventure` SET updated=NOW(), updatedBy='AdventureAuthority' WHERE idAdventure=NEW.idAdventure;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`AdventureAuthority_BEFORE_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`AdventureAuthority_BEFORE_UPDATE` BEFORE UPDATE ON `AdventureAuthority` FOR EACH ROW
+BEGIN
+IF NEW.canControl = True THEN
+SET NEW.canView = True;
+END IF;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`AdventureAuthority_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`AdventureAuthority_AFTER_UPDATE` AFTER UPDATE ON `AdventureAuthority` FOR EACH ROW
+BEGIN
+UPDATE `Adventure` SET updated=NEW.updated, updatedBy='AdventureAuthority' WHERE idAdventure=NEW.idAdventure AND NEW.updated>updated;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`AdventureAuthority_AFTER_DELETE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`AdventureAuthority_AFTER_DELETE` AFTER DELETE ON `AdventureAuthority` FOR EACH ROW
+BEGIN
+UPDATE `Adventure` SET updated=NOW(), updatedBy='AdventureAuthority' WHERE idAdventure=OLD.idAdventure;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`RoleAuthority_AFTER_INSERT` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`RoleAuthority_AFTER_INSERT` AFTER INSERT ON `RoleAuthority` FOR EACH ROW
+BEGIN
+UPDATE `Role` SET updated=NOW(), updatedBy='RoleAuthority' WHERE idRole=NEW.idRole;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`RoleAuthority_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`RoleAuthority_AFTER_UPDATE` AFTER UPDATE ON `RoleAuthority` FOR EACH ROW
+BEGIN
+UPDATE `Role` SET updated=NEW.updated, updatedBy='RoleAuthority' WHERE idRole=NEW.idRole AND NEW.updated>updated;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`RoleAuthority_AFTER_DELETE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`RoleAuthority_AFTER_DELETE` AFTER DELETE ON `RoleAuthority` FOR EACH ROW
+BEGIN
+UPDATE `Role` SET updated=NOW(), updatedBy='RoleAuthority' WHERE idRole=OLD.idRole;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`PawnSelect_AFTER_INSERT` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`PawnSelect_AFTER_INSERT` AFTER INSERT ON `PawnSelect` FOR EACH ROW
+BEGIN
+UPDATE `Pawn` SET updated=NOW(), updatedBy='PawnSelect' WHERE idPawn=NEW.idPawn;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`PawnSelect_AFTER_UPDATE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`PawnSelect_AFTER_UPDATE` AFTER UPDATE ON `PawnSelect` FOR EACH ROW
+BEGIN
+UPDATE `Pawn` SET updated=NEW.updated, updatedBy='PawnSelect' WHERE idPawn=NEW.idPawn AND NEW.updated>updated;
+END$$
+
+
+USE `DragonberryPi`$$
+DROP TRIGGER IF EXISTS `DragonberryPi`.`PawnSelect_AFTER_DELETE` $$
+USE `DragonberryPi`$$
+CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`PawnSelect_AFTER_DELETE` AFTER DELETE ON `PawnSelect` FOR EACH ROW
+BEGIN
+UPDATE `Pawn` SET updated=NOW(), updatedBy='PawnSelect' WHERE idPawn=OLD.idPawn;
+END$$
+
+
+USE `DragonberryPi`$$
 DROP TRIGGER IF EXISTS `DragonberryPi`.`PawnModifier_AFTER_INSERT` $$
 USE `DragonberryPi`$$
 CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`PawnModifier_AFTER_INSERT` AFTER INSERT ON `PawnModifier` FOR EACH ROW
-UPDATE `Pawn` SET updated=NOW(), updatedBy='server' WHERE idPawn=NEW.idPawn$$
+BEGIN
+UPDATE `Pawn` SET updated=NOW(), updatedBy='PawnModifier' WHERE idPawn=NEW.idPawn;
+END$$
 
 
 USE `DragonberryPi`$$
 DROP TRIGGER IF EXISTS `DragonberryPi`.`PawnModifier_AFTER_UPDATE` $$
 USE `DragonberryPi`$$
 CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`PawnModifier_AFTER_UPDATE` AFTER UPDATE ON `PawnModifier` FOR EACH ROW
-UPDATE `Pawn` SET updated=NEW.updated, updatedBy='server' WHERE idPawn=NEW.idPawn AND NEW.updated>updated$$
+BEGIN
+UPDATE `Pawn` SET updated=NEW.updated, updatedBy='PawnModifier' WHERE idPawn=NEW.idPawn AND NEW.updated>updated;
+END$$
 
 
 USE `DragonberryPi`$$
 DROP TRIGGER IF EXISTS `DragonberryPi`.`PawnModifier_AFTER_DELETE` $$
 USE `DragonberryPi`$$
 CREATE DEFINER = CURRENT_USER TRIGGER `DragonberryPi`.`PawnModifier_AFTER_DELETE` AFTER DELETE ON `PawnModifier` FOR EACH ROW
-UPDATE `Pawn` SET updated=NOW(), updatedBy='server' WHERE idPawn=OLD.idPawn$$
+BEGIN
+UPDATE `Pawn` SET updated=NOW(), updatedBy='PawnModifier' WHERE idPawn=OLD.idPawn;
+END$$
 
 
 DELIMITER ;
