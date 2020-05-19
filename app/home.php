@@ -7,7 +7,11 @@
         <script src="jquery-3.5.1.js" type="text/javascript"></script>
 
         <script type="text/javascript">
+        		var getAdventureList = function(){
+        			return "I AM HERE";
+        		};
             $(document).ready(function(){
+            	 $(".adventureList").html(getAdventureList());
                 $("#but_about").click(function(){
                     window.location = "/about";
                 });
