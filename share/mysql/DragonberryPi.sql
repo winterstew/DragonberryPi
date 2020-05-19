@@ -270,7 +270,7 @@ CREATE TABLE IF NOT EXISTS `DragonberryPi`.`PawnMask` (
   `idPawnMask` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `description` TEXT NULL,
-  `maskSvg` BLOB NOT NULL DEFAULT '<svg></svg>',
+  `shapeSvg` BLOB NOT NULL DEFAULT '<svg></svg>',
   `updated` TIMESTAMP(3) NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   `updatedBy` VARCHAR(240) NULL,
   PRIMARY KEY (`idPawnMask`),
@@ -548,14 +548,43 @@ USE `DragonberryPi` ;
 CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ValidUser` (`idUser` INT, `user` INT, `email` INT, `hash` INT, `created` INT, `type` INT, `login` INT, `locked` INT, `updated` INT, `updatedBy` INT, `userName` INT, `selectColor` INT, `mapScale` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `DragonberryPi`.`ViewableAdventureList`
+-- Placeholder table for view `DragonberryPi`.`ViewableAdventure`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ViewableAdventureList` (`idUser` INT, `idAdventure` INT, `name` INT, `description` INT, `updated` INT, `updatedBy` INT, `canView` INT, `canControl` INT);
+CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ViewableAdventure` (`idUser` INT, `idAdventure` INT, `name` INT, `description` INT, `updated` INT, `updatedBy` INT, `canView` INT, `canControl` INT);
 
 -- -----------------------------------------------------
--- Placeholder table for view `DragonberryPi`.`ViewableMapList`
+-- Placeholder table for view `DragonberryPi`.`ViewableMap`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ViewableMapList` (`idUser` INT, `idMap` INT, `name` INT, `pixelsPerFoot` INT, `feetPerInch` INT, `widthInches` INT, `heightInches` INT, `rotate` INT, `scale` INT, `scaleY` INT, `translateX` INT, `translateY` INT, `visible` INT, `dmVisible` INT, `showName` INT, `dmShowName` INT, `depth` INT, `backgroundColor` INT, `updated` INT, `updatedBy` INT, `idAdventure` INT, `idMapType` INT, `idDisplay` INT, `description` INT, `canView` INT, `canControl` INT);
+CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ViewableMap` (`idUser` INT, `idMap` INT, `name` INT, `pixelsPerFoot` INT, `feetPerInch` INT, `widthInches` INT, `heightInches` INT, `rotate` INT, `scale` INT, `scaleY` INT, `translateX` INT, `translateY` INT, `visible` INT, `dmVisible` INT, `showName` INT, `dmShowName` INT, `depth` INT, `backgroundColor` INT, `updated` INT, `updatedBy` INT, `idAdventure` INT, `idMapType` INT, `idDisplay` INT, `mapTypeName` INT, `canView` INT, `canControl` INT);
+
+-- -----------------------------------------------------
+-- Placeholder table for view `DragonberryPi`.`ImageLocationSource`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DragonberryPi`.`ImageLocationSource` (`idImage` INT, `filename` INT, `type` INT, `width` INT, `height` INT, `ruleLink` INT, `updated` INT, `updatedBy` INT, `idSource` INT, `idLocation` INT, `path` INT, `filepath` INT, `sourceName` INT, `sourceUrl` INT, `sourceDescription` INT, `copyright` INT);
+
+-- -----------------------------------------------------
+-- function getFullName
+-- -----------------------------------------------------
+
+USE `DragonberryPi`;
+DROP function IF EXISTS `DragonberryPi`.`getFullName`;
+
+DELIMITER $$
+USE `DragonberryPi`$$
+CREATE FUNCTION getFullName (iid SMALLINT) RETURNS BLOB
+BEGIN
+  SELECT idLocation, idParent, depth, `name` INTO @startIdL, @cIdP, @d, @n FROM Location WHERE idLocation = iid;
+  SET @fullName = @n;
+  WHILE @d > 0 DO
+    SET @d = @d - 1;
+    SET @pIdP = @cIdP;
+    SELECT idLocation, idParent, depth, `name` INTO @cIdL, @cIdP, @cd, @cn FROM Location WHERE idLocation = @pIdP;
+    SET @fullName = CONCAT(@cn,@fullName);
+  END WHILE;
+  RETURN @fullname;
+  END$$
+
+DELIMITER ;
 
 -- -----------------------------------------------------
 -- View `DragonberryPi`.`ValidUser`
@@ -566,20 +595,37 @@ USE `DragonberryPi`;
 CREATE  OR REPLACE VIEW `ValidUser` AS SELECT User.*,userName,selectColor,mapScale FROM User LEFT JOIN UserPreference USING (idUser) WHERE User.locked = False;
 
 -- -----------------------------------------------------
--- View `DragonberryPi`.`ViewableAdventureList`
+-- View `DragonberryPi`.`ViewableAdventure`
 -- -----------------------------------------------------
-DROP VIEW IF EXISTS `DragonberryPi`.`ViewableAdventureList` ;
-DROP TABLE IF EXISTS `DragonberryPi`.`ViewableAdventureList`;
+DROP VIEW IF EXISTS `DragonberryPi`.`ViewableAdventure` ;
+DROP TABLE IF EXISTS `DragonberryPi`.`ViewableAdventure`;
 USE `DragonberryPi`;
-CREATE  OR REPLACE VIEW `ViewableAdventureList` AS SELECT User.idUser,Adventure.*,AdventureAuthority.canView,AdventureAuthority.canControl FROM User JOIN AdventureAuthority ON User.idUser = AdventureAuthority.idUser JOIN Adventure ON AdventureAuthority.idAdventure=Adventure.idAdventure WHERE AdventureAuthority.canView = True;
+CREATE  OR REPLACE VIEW `ViewableAdventure` AS SELECT User.idUser,Adventure.*,AdventureAuthority.canView,AdventureAuthority.canControl FROM User JOIN AdventureAuthority ON User.idUser = AdventureAuthority.idUser JOIN Adventure ON AdventureAuthority.idAdventure=Adventure.idAdventure WHERE AdventureAuthority.canView = True;
 
 -- -----------------------------------------------------
--- View `DragonberryPi`.`ViewableMapList`
+-- View `DragonberryPi`.`ViewableMap`
 -- -----------------------------------------------------
-DROP VIEW IF EXISTS `DragonberryPi`.`ViewableMapList` ;
-DROP TABLE IF EXISTS `DragonberryPi`.`ViewableMapList`;
+DROP VIEW IF EXISTS `DragonberryPi`.`ViewableMap` ;
+DROP TABLE IF EXISTS `DragonberryPi`.`ViewableMap`;
 USE `DragonberryPi`;
-CREATE  OR REPLACE VIEW `ViewableMapList` AS SELECT User.idUser,Map.*,MapType.name,MapType.description,AdventureAuthority.canView,AdventureAuthority.canControl FROM User JOIN AdventureAuthority ON User.idUser = AdventureAuthority.idUser JOIN Adventure ON AdventureAuthority.idAdventure=Adventure.idAdventure JOIN Map ON Adventure.idAdventure = Map.idAdventure JOIN MapType ON Map.idMapType = MapType.idMapType WHERE AdventureAuthority.canView = True;
+CREATE  OR REPLACE VIEW `ViewableMap` AS SELECT User.idUser,Map.*,MapType.name AS mapTypeName,AdventureAuthority.canView,AdventureAuthority.canControl FROM User JOIN AdventureAuthority ON User.idUser = AdventureAuthority.idUser JOIN Adventure ON AdventureAuthority.idAdventure=Adventure.idAdventure JOIN Map ON Adventure.idAdventure = Map.idAdventure JOIN MapType ON Map.idMapType = MapType.idMapType WHERE AdventureAuthority.canView = True;
+
+-- -----------------------------------------------------
+-- View `DragonberryPi`.`ImageLocationSource`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `DragonberryPi`.`ImageLocationSource` ;
+DROP TABLE IF EXISTS `DragonberryPi`.`ImageLocationSource`;
+USE `DragonberryPi`;
+CREATE  OR REPLACE VIEW `ImageLocationSource` AS SELECT Image.*,CAST(getFullName(Image.idLocation) AS CHAR) AS path,CAST(CONCAT(getFullName(Image.idLocation),"/",Image.filename) AS CHAR) AS filepath, Source.name AS sourceName, Source.url as sourceUrl, Source.description AS sourceDescription, Source.copyright from Image JOIN Source ON Image.idSource = Source.idSource;
+/*WITH RECURSIVE Tree AS (
+    SELECT idLocation, name, idParent, depth 
+    FROM Location WHERE idParent IS NULL
+    UNION ALL
+    SELECT loc.idLocation, CONCAT(t.name,loc.name), t.idParent, loc.depth
+    FROM Location loc, Tree t WHERE loc.idParent = t.idLocation
+)
+SELECT Image.*,CAST(Tree.name AS CHAR) AS path,CONCAT(CAST(Tree.name AS CHAR),"/",Image.filename) AS filepath, depth, Source.name AS sourceName, Source.url as sourceUrl, Source.description AS sourceDescription, Source.copyright from Image JOIN Tree ON Image.idLocation = Tree.idLocation JOIN Source ON Image.idSource;
+*/;
 USE `DragonberryPi`;
 
 DELIMITER $$

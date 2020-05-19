@@ -84,7 +84,7 @@ DEALLOCATE PREPARE stmt;
 
 # Since I did not have a PawnMask table before I need to add the svn data here:
 # PC
-SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET maskSvg = \'',
+SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET shapeSvg = \'',
 '<svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -285,7 +285,7 @@ EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 #NPC
-SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET maskSvg = \'',
+SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET shapeSvg = \'',
 '<svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -487,7 +487,7 @@ EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 #MONSTER
-SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET maskSvg = \'',
+SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET shapeSvg = \'',
 '<svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -689,7 +689,7 @@ EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 #LABEL
-SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET maskSvg = \'',
+SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET shapeSvg = \'',
 '<svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -832,7 +832,7 @@ EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 #TRAP
-SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET maskSvg = \'',
+SET @q = CONCAT('UPDATE ',@newdb,'.PawnMask SET shapeSvg = \'',
 '<svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
