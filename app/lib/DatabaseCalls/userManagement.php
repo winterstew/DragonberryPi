@@ -14,10 +14,24 @@ class userManagement
         $this->uinfo = array();
     }
 
+	// This function determines if a user is logged in based on the database and hence,
+	// if used as part of AJAX updates provides a means for the administrator to force a logout
     public function isLoggedIn()
     {
         if ($this->uname != "") {
             $sql_query = "SELECT idUser FROM ValidUser WHERE user='" . $this->uname . "';";
+            $result = $this->conn->query($sql_query);
+            if ($result->num_rows == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function isAdmin()
+    {
+        if ($this->uname != "") {
+            $sql_query = "SELECT type FROM ValidUser WHERE user='" . $this->uname . "' AND type LIKE 'admin%';";
             $result = $this->conn->query($sql_query);
             if ($result->num_rows == 1) {
                 return true;
