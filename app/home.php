@@ -7,11 +7,19 @@
         <script src="jquery-3.5.1.js" type="text/javascript"></script>
 
         <script type="text/javascript">
-        		var getAdventureList = function(){
-        			return "I AM HERE";
+        		function setAdventureList(){
+        			$.post("/selectRecord",{
+        					table:'ViewableAdventure',
+        					whereCol:['type','description','canView'],
+        					whereOp:['=','like','is'],
+        					whereVal:['PNG','%unge%',true],
+        					whereCat:['and','or'],
+        					orderBy:['updated',],
+        					orderDir:['ASC',]},function($data,$status){
+        				$(".adventureList").html($data);
+        			});
         		};
             $(document).ready(function(){
-            	 $(".adventureList").html(getAdventureList());
                 $("#but_about").click(function(){
                     window.location = "/about";
                 });
@@ -26,6 +34,7 @@
                         type:'post'
                     });
                 });
+                setAdventureList();
             });
         </script>
     </head>

@@ -3,12 +3,38 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Interop\Container\ContainerInterface as ContainerInterface;
 use \AppLib\DatabaseCalls\userManagement as userManagement;
+use \AppLib\DatabaseCalls\dbInteraction as dbInteraction;
 
 // Start the session
 session_start();
 
 // Include application bootstrap
 require_once dirname(__FILE__) . '/../app/bootstrap.php';
+
+// Remove and trailing slashes
+$app->add(function (Request $request, Response $response, callable $next) {
+    $uri = $request->getUri();
+    $path = $uri->getPath();
+    if ($path != '/' && substr($path, -1) == '/') {
+        // recursively remove slashes when its more than 1 slash
+        while(substr($path, -1) == '/') {
+            $path = substr($path, 0, -1);
+        }
+
+        // permanently redirect paths with a trailing slash
+        // to their non-trailing counterpart
+        $uri = $uri->withPath($path);
+        
+        if($request->getMethod() == 'GET') {
+            return $response->withRedirect((string)$uri, 301);
+        }
+        else {
+            return $next($request->withUri($uri), $response);
+        }
+    }
+
+    return $next($request, $response);
+});
 
 // Defining routes
 //$app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
@@ -175,6 +201,41 @@ $app->post('/checkUser', function (Request $request, Response $response, array $
     $response->getBody()->write(json_encode($user->uinfo));
 });
 
+$app->post('/{callas:showColumns|updateRecord|insertRecord|selectRecord}', function (Request $request, Response $response, array $args) {
+    // previously these functions were very insecure (which is fine when it is just on a RaspberryPi)
+    // they need to be cleaned up to do some validation but retaining some of their flexibility
+    // to wit: No SELECT columns can be chosen (always *)
+    //         All JOINs are done using Views in the database (the views also made to prevent name overlap in the select)
+    //         WHERE options are split with whereColumn (must be id"table", name, filename, or filepath) 
+    //                                 and whereArg must be integer (for id) or strings (for names)
+    //         ORDER BY must be one of id"table", name, filename, filepath, or updated
+    //         LIMITS set my a getNumber option
+    $body = $response->getBody();
+    $conn = $this->connection;
+    $logger = $this->logger;
+    $logger->info("starting the multi-purpose DB call as " . $args['callas']);
+    $user = loggedIn($conn,$logger);
+    $requestBody = $request->getParsedBody();
+    // This is a security measure to make it more difficult for a user to see stuff 
+    // that does not pertain to them.  If the table does not have the column
+    // the validation will put a warning in the log, but not crash
+    if (isset($_SESSION['userType']) and ($_SESSION['userType'] == "standard")) {
+    	// if this is a standard user make idUser = $_SESSION['idUser'] (the logged in user) a where clause
+    	if (!isset($requestBody['whereCol'])) {$requestBody['whereCol']= array();} 
+    	if (!isset($requestBody['whereOp'])) {$requestBody['whereOp']= array();} 
+    	if (!isset($requestBody['whereVal'])) {$requestBody['whereVal']= array();} 
+    	array_push($requestBody['whereCol'],"idUser");
+    	array_push($requestBody['whereOp'],"=");
+    	array_push($requestBody['whereVal'],$_SESSION['idUser']);
+    }
+    // TODO 
+    // check if we are doing an UPDATE or INSERT and idUser and canControl checks here
+    $dbInteraction = new dbInteraction($conn,$user,$requestBody,$args['callas'],$logger);
+    if ($dbInteraction->doRequest()) {
+	 	$body->write(json_encode($dbInteraction->getResult()));
+	 	$body->write(json_encode($_SESSION));
+	 } 
+});
 
 /*
 $app->get('/map/:mapMode/:aId/', function ($mapMode, $aId) use ($app, $log) {
