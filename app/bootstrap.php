@@ -94,7 +94,7 @@ $container['pdo'] = function ($c) {
 };
 
 $app->add(new HttpBasicAuthentication([
-    "path" => ["/adventure","/images","/home","/about"],
+    "path" => ["/adventure","/images","/home","/about","/design"],
 #    "ignore" => ["/login","/checkUser","/home","/logout","/about"],
     "realm" => "DragonberryPi",
 #    "users" => [
@@ -117,12 +117,14 @@ $app->add(new HttpBasicAuthentication([
     ]),
 ]));
 
+// This checks login status based on SESSION variable, but also 
+// based on the database.  It returns the user instance if logged in.
 function loggedIn($conn,$logger){
     // if we are logged in (SESSION idUser set), 
     if (isset($_SESSION['idUser']) and $_SESSION['idUser'] > 0) {
         // confirm that we were not logged out by administrative fiat
         $user = new userManagement($conn,$_SESSION['uname'],$_SESSION['pass'],$logger);
-        return $user->isLoggedIn();
+        if ($user->isLoggedIn()) { return $user; };
     }
     return false;
 }
