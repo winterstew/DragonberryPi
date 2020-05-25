@@ -10,10 +10,10 @@
         		function setAdventureList(){
         			$.post("/selectRecord",{
         					table:'ViewableAdventure',
-        					whereCol:['type','description','canView'],
-        					whereOp:['=','like','is'],
-        					whereVal:['PNG','%unge%',true],
-        					whereCat:['and','or'],
+        					whereCol:['canControl','type','description','canView'],
+        					whereOp:['is','=','like','is'],
+        					whereVal:[false,'PNG','%unge%',true],
+        					whereCat:['or','and','or'],
         					orderBy:['updated',],
         					orderDir:['ASC',]},function($data,$status){
         				$(".adventureList").html($data);

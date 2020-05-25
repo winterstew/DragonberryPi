@@ -194,7 +194,7 @@ class dbInteraction
 	   	   				$j = array_shift($this->param['whereCat']);
 	   	   			} 
 	   	   		}
-	   	   		// if the column is valid for the table add it to the new array
+	   	   		// if the column is valid for the table add it to the new array 
 	   	   		if (array_key_exists($c,$this->allowedColumns[$table])) {
 	   	   			array_push($newWhereCol,$c);
 	   	   			array_push($newWhereOp,$o);
@@ -394,8 +394,6 @@ class dbInteraction
     				$this->dbReturn(sprintf("LOCK TABLES %s WRITE;\n",$this->param['table']));
     				$this->dbReturn("UNLOCK TABLES;");
 /*
-$log->info(sprintf("LOCK TABLES %s WRITE;",$table));
-$conn->query(sprintf("LOCK TABLES %s WRITE;",$table));
 if (($table != 'None') && ($setList != '') && (! $id)) {
   $log->info(sprintf("INSERT INTO %s SET %s;",$table,$setList));
   $conn->query(sprintf("INSERT INTO %s SET %s;",$table,$setList));
@@ -415,6 +413,23 @@ $rows = array($table);
 
     				break;
     			case 'updateRecord':
+/*
+$log->info(sprintf("LOCK TABLES %s WRITE;",$table));
+$conn->query(sprintf("LOCK TABLES %s WRITE;",$table));
+if (($table != 'None') && ($setList != '') && ($id > 0)) {
+  $log->info(sprintf("UPDATE %s SET %s WHERE id%s = %d;",$table,$setList,$table,$id));
+  $conn->query(sprintf("UPDATE %s SET %s WHERE id%s = %d;",$table,$setList,$table,$id));
+}
+$log->info(sprintf("SELECT * FROM %s WHERE id%s = %d;",$table,$table,$id));
+$result = $conn->query(sprintf("SELECT * FROM %s WHERE id%s = %d;",$table,$table,$id));
+$log->info($result->num_rows);
+$log->info(sprintf("UNLOCK TABLES;"));
+$conn->query(sprintf("UNLOCK TABLES;"));
+if ($idList) {
+  $log->info(sprintf($idList,$table,$id));
+  $conn->query(sprintf($idList,$table,$id));
+}
+*/
     				break;
     		}
     		return true;
